@@ -1,0 +1,72 @@
+---
+# pipeline to validate pull_request
+trigger: none
+
+# Configuration for pull requests
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - develop
+
+pool:
+  vmImage: $(var_global_ms_agent_vm_image)
+
+# Define the repositories as resources.
+resources:
+  repositories:
+    # Reference the current repository (the one containing this pipeline file).
+    - repository: self
+
+    # Reference an external Git repository (digihub-deployments-common) with a specific tag.
+    - repository: digihub-deployments-common
+      type: git
+      name: Communication and Network/digihub-deployments-common
+      ref: refs/tags/v0.1.0
+    
+    # Reference an external Git repository (azdo-templates).
+    - repository: azdo-templates
+      type: git
+      name: SharedInfra/azdo-templates
+      ref: refs/tags/v1.55.1
+
+variables:
+  - template: vars/global.yaml@digihub-deployments-common
+
+
+stages:
+  # Stage: Linting
+  # Conditions: This stage runs only for pull requests.
+  - stage: Linting
+    condition: |
+      eq(variables.isPR, 'True')
+    jobs:
+      - job: commit_lint
+        displayName: Validate commit message
+        steps:
+          - checkout: self
+            fetchDepth: 5
+
+          - template: step/commit-lint/template.yml@azdo-templates
+            parameters:
+              COMMITLINT_WORKING_DIRECTORY: "$(System.DefaultWorkingDirectory)/.azuredevops"
+
+  # Stage: PrepareRelease
+  # Conditions: This stage runs only for pull requests originating from the 'develop' branch.
+  - stage: PrepareRelease
+    condition: |
+      eq(variables['System.PullRequest.SourceBranch'], 'refs/heads/develop')
+    displayName: Prepare Release
+    jobs:
+      - job: change_log
+        displayName: Generate change log
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+
+          - checkout: azdo-templates
+
+          - template: step/sv4git-prepare-release/template.yml@azdo-templates
+            parameters:
+              CHANGE_VERSION_IN_FILES: "README.md"

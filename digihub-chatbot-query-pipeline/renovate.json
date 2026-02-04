@@ -1,0 +1,90 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "local>SharedInfra/renovate-config#v0.3.3"
+    ],
+    "rebaseWhen": "behind-base-branch",
+    "ignorePaths": [
+        "pipelines/ams_web.yml",
+        "pipelines/ams_anywhere.yml"
+    ],
+    "packageRules": [
+        {
+            "description": [
+                "Combine all changes within .azuredevops to one PR"
+            ],
+            "groupName": ".azuredevops",
+            "matchManagers": [
+                "azure-pipelines"
+            ],
+            "matchFileNames": [
+                ".azuredevops/**"
+            ]
+        },
+        {
+            "description": [
+                "Combine all kluctl changes within ams_lz0_dev to one PR"
+            ],
+            "groupName": "kluctl ams_lz0_dev",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchFileNames": [
+                "**/ams_lz0_dev/k8s/kluctl/**"
+            ],
+            "commitMessageSuffix": " - ams_lz0_dev"
+        },
+        {
+            "description": [
+                "Combine all kluctl changes within ams_ref_dev to one PR"
+            ],
+            "groupName": "kluctl ams_ref_dev",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchFileNames": [
+                "**/ams_ref_dev/k8s/kluctl/**"
+            ],
+            "commitMessageSuffix": " - ams_ref_dev"
+        },
+        {
+            "description": [
+                "Combine all kluctl changes within sga_lad_prd to one PR"
+            ],
+            "groupName": "kluctl sga_lad_prd",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchFileNames": [
+                "**/sga_lad_prd/k8s/kluctl/**"
+            ],
+            "commitMessageSuffix": " - sga_lad_prd"
+        },
+        {
+            "description": [
+                "Create PRs per file in the pipelines folder"
+            ],
+            "matchManagers": [
+                "azure-pipelines"
+            ],
+            "additionalBranchPrefix": "{{packageFile}}-",
+            "matchFileNames": [
+                "pipelines/**"
+            ],
+            "commitMessageSuffix": " - {{packageFile}}"
+        },
+        {
+            "description": [
+                "Create PRs per file for K8s"
+            ],
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "additionalBranchPrefix": "{{packageFileDir}}-",
+            "commitMessageSuffix": " - {{packageFileDir}}",
+            "matchDepNames": [
+                "/^Azure Kubernetes Services/"
+            ]
+        }
+    ]
+}

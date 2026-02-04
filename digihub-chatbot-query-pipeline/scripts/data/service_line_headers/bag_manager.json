@@ -1,0 +1,8132 @@
+[
+  {
+    "heading": "Announcing the SITA BagManager User Group Conference 2017"
+  },
+  {
+    "heading": "Product Announcement"
+  },
+  {
+    "heading": "End Manufacture of Honeywell D99EX, G99GX, Intermec CK71"
+  },
+  {
+    "heading": "Microsoft End Support for Windows Mobile"
+  },
+  {
+    "heading": "Obsolescence Notice for the Datalogic Memor10 Mobile Computers"
+  },
+  {
+    "heading": "Critical Dates"
+  },
+  {
+    "heading": "BagManager API Specification Bag Enquiry"
+  },
+  {
+    "heading": "Revision History"
+  },
+  {
+    "heading": "Approvals"
+  },
+  {
+    "heading": "1. Introduction"
+  },
+  {
+    "heading": "2. API Description"
+  },
+  {
+    "heading": "2.1 Bag Enquiry API"
+  },
+  {
+    "heading": "2.1.1 Calling the API"
+  },
+  {
+    "heading": "2.1.2 Request Header Parameters"
+  },
+  {
+    "heading": "2.1.3 JSON Request Elements"
+  },
+  {
+    "heading": "2.1.4 Response Details"
+  },
+  {
+    "heading": "2.1.4.1 HTTP Response Details"
+  },
+  {
+    "heading": "2.1.4.2 JSON Response"
+  },
+  {
+    "heading": "2.1.4.2.1 Common Elements"
+  },
+  {
+    "heading": "2.1.4.2.2 Success Elements"
+  },
+  {
+    "heading": "2.1.4.2.2.1 bags Elements"
+  },
+  {
+    "heading": "2.1.4.2.2.2 paxInfo Elements"
+  },
+  {
+    "heading": "2.1.4.2.2.3 flightInfo Elements"
+  },
+  {
+    "heading": "2.1.4.3 JSON Response Possible Values"
+  },
+  {
+    "heading": "2.1.5 Sample Request and Responses"
+  },
+  {
+    "heading": "2.1.5.1 cURL POST Request with Bag Tag Id (Without optional parameters)"
+  },
+  {
+    "heading": "2.1.5.2 cURL POST Request with Bag Tag Id (With optional parameters)"
+  },
+  {
+    "heading": "2.1.5.3 cURL POST Request with Bag Sequence Number"
+  },
+  {
+    "heading": "2.1.5.4 cURL POST Request with Bag Sequence Number (for historical data)"
+  },
+  {
+    "heading": "2.1.5.5 cURL Success Response"
+  },
+  {
+    "heading": "2.1.5.6 cURL Failure Response"
+  },
+  {
+    "heading": "BagManager API Specification Departure Flight Bag List"
+  },
+  {
+    "heading": "2.1 Departure Flight Bag List API"
+  },
+  {
+    "heading": "2.1.5.1 cURL POST Request (Without optional parameters)"
+  },
+  {
+    "heading": "2.1.5.2 cURL POST Request (With optional parameters)"
+  },
+  {
+    "heading": "2.1.5.3 cURL Success Response"
+  },
+  {
+    "heading": "2.1.5.4 cURL Failure Response"
+  },
+  {
+    "heading": "BagManager API Specification Departure Flight Monitor"
+  },
+  {
+    "heading": "2.1 Departure Flight Monitor API"
+  },
+  {
+    "heading": "2.1.4.2.2.1 flights Elements"
+  },
+  {
+    "heading": "BagManager API Specification"
+  },
+  {
+    "heading": "Departure Flight ULD &amp; Hold List"
+  },
+  {
+    "heading": "2.1 Departure Flight ULD &amp; Hold List API"
+  },
+  {
+    "heading": "2.1.4.2.3 containers Elements"
+  },
+  {
+    "heading": "BagManager API Specification Load Bag To Hold"
+  },
+  {
+    "heading": "2.1  Load Bag To Hold API"
+  },
+  {
+    "heading": "2.1.1  Invoking the API"
+  },
+  {
+    "heading": "2.1.2  Request Header Parameters"
+  },
+  {
+    "heading": "2.2  JSON Request Elements"
+  },
+  {
+    "heading": "2.2.1 unknownBagDetails Elements"
+  },
+  {
+    "heading": "2.3  Response Details"
+  },
+  {
+    "heading": "2.3.1  HTTP Response"
+  },
+  {
+    "heading": "2.3.2  JSON Response"
+  },
+  {
+    "heading": "2.3.2.1 Common Elements"
+  },
+  {
+    "heading": "2.3.2.2 Success Elements"
+  },
+  {
+    "heading": "2.3.2.3 bags Elements"
+  },
+  {
+    "heading": "2.3.2.4 paxInfo Elements"
+  },
+  {
+    "heading": "2.3.2.5 flightInfo Elements"
+  },
+  {
+    "heading": "2.3.2.6 holdInfo Elements"
+  },
+  {
+    "heading": "2.3.2.7 JSON Response Possible Values"
+  },
+  {
+    "heading": "2.3.2.8 Secondary Action details"
+  },
+  {
+    "heading": "2.3.3  Sample Request and Responses"
+  },
+  {
+    "heading": "2.3.3.1 cURL POST Request with Bag Tag Id (Without optional parameters)"
+  },
+  {
+    "heading": "2.3.3.2 cURL POST Request with Bag Sequence Number and optional parameters"
+  },
+  {
+    "heading": "2.3.3.3 cURL POST Request with multiple Secondary Actions"
+  },
+  {
+    "heading": "2.3.3.4 cURL POST Request with unknownBagDetails field"
+  },
+  {
+    "heading": "2.3.3.5 cURL Success Response"
+  },
+  {
+    "heading": "2.3.3.6 cURL Failure Response"
+  },
+  {
+    "heading": "2.3.3.7 cURL Failure Response for duplicate bags."
+  },
+  {
+    "heading": "BagManager API Specification Load Bag ULD"
+  },
+  {
+    "heading": "2.1  Load Bag ULD API"
+  },
+  {
+    "heading": "2.2.1  unknownBagDetails Elements"
+  },
+  {
+    "heading": "2.3.2.6 uldInfo Elements"
+  },
+  {
+    "heading": "2.3.3.2 cURL POST Request with Bag Tag Id (With optional parameters)"
+  },
+  {
+    "heading": "2.3.3.3 cURL POST Request with Bag Sequence Number and Container Sheet Id"
+  },
+  {
+    "heading": "2.3.3.4 cURL POST Request with multiple Secondary Actions"
+  },
+  {
+    "heading": "2.3.3.5 cURL POST Request with unknownBagDetails field"
+  },
+  {
+    "heading": "2.3.3.6 cURL Success Response"
+  },
+  {
+    "heading": "2.3.3.7 cURL Failure Response"
+  },
+  {
+    "heading": "2.3.3.8 cURL Failure Response for duplicate bags."
+  },
+  {
+    "heading": "BagManager API Specification Application Login"
+  },
+  {
+    "heading": "2.1 Application Login API"
+  },
+  {
+    "heading": "2.1.4.2.2.1 userInfo Elements"
+  },
+  {
+    "heading": "2.1.4.2.2.2 privileges Elements"
+  },
+  {
+    "heading": "2.1.4.2.2.3 userTokenInfo Elements"
+  },
+  {
+    "heading": "2.1.5.1 cURL POST Request"
+  },
+  {
+    "heading": "2.1.5.2 cURL Success Response"
+  },
+  {
+    "heading": "2.1.5.3 cURL Failure Response"
+  },
+  {
+    "heading": "BagManager API Specification Offload Bag"
+  },
+  {
+    "heading": "2.1  Offload Bag API"
+  },
+  {
+    "heading": "2.3.2.6 JSON Response Possible Values"
+  },
+  {
+    "heading": "2.3.2.7 Secondary Action details"
+  },
+  {
+    "heading": "2.3.3.3 cURL POST Request with Bag Sequence Number"
+  },
+  {
+    "heading": "2.3.3.4 URL POST Request with multiple secondary actions"
+  },
+  {
+    "heading": "BagManager Frequently Asked Questions"
+  },
+  {
+    "heading": "© SITA 2011.  All Rights Reserved"
+  },
+  {
+    "heading": "2.1 What is a 'Baggage Management System' ?"
+  },
+  {
+    "heading": "2.2 What is a 'Baggage Reconciliation System' (BRS)?"
+  },
+  {
+    "heading": "a) Security"
+  },
+  {
+    "heading": "b) Cost reduction, Operational efficiency and passenger satisfaction"
+  },
+  {
+    "heading": "2.3 So which is more important - security or operational efficiency?"
+  },
+  {
+    "heading": "2.4 What does 'PPBM' refer to?"
+  },
+  {
+    "heading": "2.5 What is '100% HBS'?"
+  },
+  {
+    "heading": "2.6 If a bag misses its flight how is it reconciled ?"
+  },
+  {
+    "heading": "2.7 Why do airlines need BagManager ?"
+  },
+  {
+    "heading": "2.8 Is the use of BagManager mandated ?"
+  },
+  {
+    "heading": "2.9 Are all Baggage Reconciliation Systems automated ?"
+  },
+  {
+    "heading": "2.10 How does BagManager work?"
+  },
+  {
+    "heading": "2.11 So BagManager ensures the bag is on the correct aircraft?"
+  },
+  {
+    "heading": "2.12 What information does BagManager provide if a 'Load Error' response is given?"
+  },
+  {
+    "heading": "2.13 What happens if the passenger doesn't board the aircraft ?"
+  },
+  {
+    "heading": "2.14 What is a BSM message and what is in it?"
+  },
+  {
+    "heading": "2.15 What is a BPM?"
+  },
+  {
+    "heading": "2.16 What is a BUM?"
+  },
+  {
+    "heading": "2.17 What is a 'BIM'?"
+  },
+  {
+    "heading": "2.18 Who is using BagManager ?"
+  },
+  {
+    "heading": "2.19 What is the competition to BagManager ?"
+  },
+  {
+    "heading": "2.20 Is BagManager similar to CUTE ?"
+  },
+  {
+    "heading": "2.21 Can BagManager run on CUTE workstations?"
+  },
+  {
+    "heading": "2.22 How are BagManager and CUTE linked?"
+  },
+  {
+    "heading": "2.23 Do all baggage messages arrive to BagManager via BagMessage?"
+  },
+  {
+    "heading": "3.1 What equipment comprises a BagManager system ?"
+  },
+  {
+    "heading": "Hardware:"
+  },
+  {
+    "heading": "Software:"
+  },
+  {
+    "heading": "Services:"
+  },
+  {
+    "heading": "3.2 Where is BagManager end-user equipment installed ?"
+  },
+  {
+    "heading": "3.3 Why is equipment on the apron ?"
+  },
+  {
+    "heading": "3.4 Are all BagManager equipment installations the same?"
+  },
+  {
+    "heading": "4.1 Does BagManager handle all types of bags?"
+  },
+  {
+    "heading": "4.2 Even Crew bags?"
+  },
+  {
+    "heading": "4.3 How are gate bags dealt with?"
+  },
+  {
+    "heading": "4.4 What about mail and/or company mail. Can BagManager handle them?"
+  },
+  {
+    "heading": "4.5 Does BagManager handle bulk loaded and containerised flights?"
+  },
+  {
+    "heading": "4.6 What about group bags ?"
+  },
+  {
+    "heading": "4.7 What happens if a bag tag is damaged ?"
+  },
+  {
+    "heading": "4.8 What happens if there is no bar-code on the bag tag?"
+  },
+  {
+    "heading": "4.9 What happens if there is no bag-tag on the bag?"
+  },
+  {
+    "heading": "4.10 How does BagManager decide whether a bag may be loaded?"
+  },
+  {
+    "heading": "4.11 Does BagManager produce a baggage manifest?"
+  },
+  {
+    "heading": "4.12 What reports does BagManager produce?"
+  },
+  {
+    "heading": "4.13 How does a user assign a scanner to a flight?"
+  },
+  {
+    "heading": "4.14 How does a baggage supervisor assign containers (ULDs) to flights?"
+  },
+  {
+    "heading": "4.15 Can one scanner be used on multiple flights?"
+  },
+  {
+    "heading": "4.16 What is the normal response time?"
+  },
+  {
+    "heading": "4.17 How many flights can be loaded simultaneously?"
+  },
+  {
+    "heading": "4.18 How many users can be working on a single flight simultaneously?"
+  },
+  {
+    "heading": "5.1 What is a 'workstation'?"
+  },
+  {
+    "heading": "5.2 What Operating System do BagManager workstations use?"
+  },
+  {
+    "heading": "5.3 What can I do from an enquiry workstation?"
+  },
+  {
+    "heading": "5.4 Can I run other software concurrently on a workstation?"
+  },
+  {
+    "heading": "5.5 Do I need a workstation at every check-in desk?"
+  },
+  {
+    "heading": "5.6 Do I need a workstation at every gate?"
+  },
+  {
+    "heading": "5.7 Can I print using the CUTE document printer at the gate?"
+  },
+  {
+    "heading": "5.8 How many enquiry workstations do I need?"
+  },
+  {
+    "heading": "6.1 Why does BagManager support mobile scanners?"
+  },
+  {
+    "heading": "6.2 What functions are available on mobile scanners?"
+  },
+  {
+    "heading": "6.3 Can I control what each scanner is able to do?"
+  },
+  {
+    "heading": "6.4 Do users have to use specific scanners?"
+  },
+  {
+    "heading": "6.5 Does software have to be loaded into the scanner every time it is used?"
+  },
+  {
+    "heading": "6.6 What happens if the battery is exhausted?"
+  },
+  {
+    "heading": "6.7 How rugged are mobile scanners and what happens in bad weather?"
+  },
+  {
+    "heading": "7.1 Why is a DCS interface necessary?"
+  },
+  {
+    "heading": "7.2 Does each airline connect the DCS interface to BagManager?"
+  },
+  {
+    "heading": "7.3 Does BagManager work with SITA BagMessage Message Distribution Service?"
+  },
+  {
+    "heading": "7.4 What about carriers who are hosted on DCS by another carrier?"
+  },
+  {
+    "heading": "7.5 Can additional DCS systems be added?"
+  },
+  {
+    "heading": "7.6 What do we do if there is only 1 DCS system? Do we still need BagMessage?"
+  },
+  {
+    "heading": "7.7 What happens if the DCS connection fails?"
+  },
+  {
+    "heading": "7.8 What versions of BSMs are supported?"
+  },
+  {
+    "heading": "7.9 Can BagManager send BPMs to DCS?"
+  },
+  {
+    "heading": "8. The BagManager System"
+  },
+  {
+    "heading": "8.1 What type servers does SITA supply and support?"
+  },
+  {
+    "heading": "8.2 Can the customer provide their own hardware?"
+  },
+  {
+    "heading": "8.3 What is the difference between BagManager and BagManager Online?"
+  },
+  {
+    "heading": "8.4 What steps are taken in order to ensure high BagManager system availability?"
+  },
+  {
+    "heading": "8.5 How long does it take for the hot standby to take over?"
+  },
+  {
+    "heading": "8.6 Is data lost when the servers failover?"
+  },
+  {
+    "heading": "8.7 Is the database duplicated on the hot standby server?"
+  },
+  {
+    "heading": "8.8 Can the two severs be located in different places?"
+  },
+  {
+    "heading": "8.9 Does SITA offer Disaster Recovery?"
+  },
+  {
+    "heading": "8.10 Is BagManager expandable?"
+  },
+  {
+    "heading": "8.11 Is BagManager upgradeable?"
+  },
+  {
+    "heading": "8.12 Can other airports or remote locations be run remotely?"
+  },
+  {
+    "heading": "8.13 Is this what is called BagManager Online?"
+  },
+  {
+    "heading": "8.14 How secure is the BagManager baggage database?"
+  },
+  {
+    "heading": "8.15 Can other people view my data?"
+  },
+  {
+    "heading": "8.16 Can data be changed by other people?"
+  },
+  {
+    "heading": "8.17 What happens if two users try to change the same data?"
+  },
+  {
+    "heading": "8.18 How many flights can be stored in the database?"
+  },
+  {
+    "heading": "8.19 What happens to data for departed flights?"
+  },
+  {
+    "heading": "9.1 What wireless technology is used?"
+  },
+  {
+    "heading": "9.2 What about 802.11a?"
+  },
+  {
+    "heading": "9.3 Can we use cellphone technology with our HHTs ?"
+  },
+  {
+    "heading": "9.4 How resilient is the radio network?"
+  },
+  {
+    "heading": "9.5 Can someone eavesdrop on my communications?"
+  },
+  {
+    "heading": "9.6 What measures are taken to ensure the wireless transmissions are secure?"
+  },
+  {
+    "heading": "9.7 What coverage is available?"
+  },
+  {
+    "heading": "9.8 What happens if many mobiles are used in one area?"
+  },
+  {
+    "heading": "9.9 What happens if the radio link is broken?"
+  },
+  {
+    "heading": "9.10 Do I need to obtain licenses for frequencies?"
+  },
+  {
+    "heading": "10. WorldTracer"
+  },
+  {
+    "heading": "10.1 What is WorldTracer?"
+  },
+  {
+    "heading": "10.2 How is WorldTracer connected to BagManager?"
+  },
+  {
+    "heading": "10.3 What is the connection used for?"
+  },
+  {
+    "heading": "11. Glossary"
+  },
+  {
+    "heading": "Frequently Asked Questions"
+  },
+  {
+    "heading": "1.  Technical FAQ"
+  },
+  {
+    "heading": "1.1.1 What Java Version is required on the IWS?"
+  },
+  {
+    "heading": "1.1.2 Has this version of Java been certified to work under APC?"
+  },
+  {
+    "heading": "1.1.3 How is the JVM be distributed?"
+  },
+  {
+    "heading": "1.1.4 Will it clash with other Java versions required under APC e.g. AF, Amadeus, XSJTE?"
+  },
+  {
+    "heading": "1.1.5 What about non-APC client workstations?"
+  },
+  {
+    "heading": "1.2.1 How does a locally connected printer work?"
+  },
+  {
+    "heading": "1.2.2 Does it require setup of TCP/IP printing services on client workstations?"
+  },
+  {
+    "heading": "1.3.1 What browser plug-in is required to display a report on the screen, instead of printing?"
+  },
+  {
+    "heading": "1.4.1 Can client workstations use dynamic IP allocation (DHCP)?"
+  },
+  {
+    "heading": "1.4.2 What about client workstations behind a router?"
+  },
+  {
+    "heading": "1.5 Workstation Configuration"
+  },
+  {
+    "heading": "1.5.1 Is a change required to the CUTE Internet Explorer Lockdown Policy?"
+  },
+  {
+    "heading": "1.5.2 Opening new instances of IE is not allowed on APC"
+  },
+  {
+    "heading": "1.6.1 How are local languages implemented on the HHT?"
+  },
+  {
+    "heading": "1.6.2 Is the (infrared) sync option (fro BagManager v5) still available or required?"
+  },
+  {
+    "heading": "1.7.1 Why do I need to use a Naurtech  Web Browser when there is one already available with Windows Mobile?"
+  },
+  {
+    "heading": "1.8.1 How is the data from the existing BagManager system going to be imported into v6.0?"
+  },
+  {
+    "heading": "1.8.2 What languages are training courses given in?"
+  },
+  {
+    "heading": "1.9.1 Please explain how backups are done?"
+  },
+  {
+    "heading": "1.9.2 Oracle database backup"
+  },
+  {
+    "heading": "BagManager FAQ"
+  },
+  {
+    "heading": "1.9.3 How are Admin File changes copied to the passive machine?"
+  },
+  {
+    "heading": "1.10.1 Where is the certified equipment list for BagManager?"
+  },
+  {
+    "heading": "1.11.1 What RAID is been configured on the BRS disks?"
+  },
+  {
+    "heading": "1.11.2   I can see no PSN for passengers for airline 'xx'.  Why not?"
+  },
+  {
+    "heading": "2.1.1 When trying to logon to an HHT the first time, why must I change my password?"
+  },
+  {
+    "heading": "2.1.2 If I enter the password incorrectly, I get a message: \"Invalid Credentials \", but no hint if the user id or the password is wrong. Why not?"
+  },
+  {
+    "heading": "2.2 Flight Monitor"
+  },
+  {
+    "heading": "2.2.1 When I look at the flight monitor on the IWS, it does not display exactly the same display as on the HHT.  Why not?"
+  },
+  {
+    "heading": "2.3 Flight Configuration"
+  },
+  {
+    "heading": "2.3.1 When I change an item in the airline configuration it does not appear to take effect?"
+  },
+  {
+    "heading": "2.3.2 When I look at the passenger list for a flight, I notice that every bag is marked 'Not OK!Selectee.'  What is happening?"
+  },
+  {
+    "heading": "2.3.3 I updated the gate for a flight, but when I looked it was changed back to the wrong gate?"
+  },
+  {
+    "heading": "2.3.4 On the Departure flight menu there is a 'Flight Progress' item, but on the Flight Monitor the action says 'Loading Status - but they both show the same screen. Why?"
+  },
+  {
+    "heading": "2.4 Loading Bags"
+  },
+  {
+    "heading": "2.4.1 In Load Bag into BHE or Hold, if a bag cannot be loaded because it is a 'stopped' bag, can the user 'force' the bag onto the aircraft?"
+  },
+  {
+    "heading": "2.4.2 What happens when a BSM is received for a previously forced bag?"
+  },
+  {
+    "heading": "2.4.3 Why does the loading lateral show as ** during HHT Hold or BHE enquiry?"
+  },
+  {
+    "heading": "2.4.4 How does BagManager deal with 'not OK' bags (e.g. \"bags to offload\") during merging BHEs/Holds or positioning ULDs?"
+  },
+  {
+    "heading": "2.4.5 After I have loaded some bags, why do I see a Load sequence number greater than the number of bags in the BHE? e.g. 0KL9001876   52/50"
+  },
+  {
+    "heading": "2.5 Flight Schedule - Generating a Flight"
+  },
+  {
+    "heading": "2.5.1 I 'generated' a flight and I got the message 'Flight Generated Successfully', but the flight did not appear in the flight Monitor. Why not?"
+  },
+  {
+    "heading": "2.5.2 I was told I need to create an arrival flight schedule, even though the FIS creates arrival flights.  Why?"
+  },
+  {
+    "heading": "2.6 Help"
+  },
+  {
+    "heading": "2.6.1 When I press 'F1' to all up Help, why do I get the Internet Explorer Help page?"
+  },
+  {
+    "heading": "2.7.1 Please explain about 'Operational Range and 'Historical Range'"
+  },
+  {
+    "heading": "2.7.2 What is the Lilac coloured triangle in the upper right hand corner of some fields?"
+  },
+  {
+    "heading": "2.7.3 Sometimes I get a red box surrounding a field. What does it mean?"
+  },
+  {
+    "heading": "2.7.4 Can I start several browser tabs inside my browser and so have more than one screen available?"
+  },
+  {
+    "heading": "2.7.5 On the IWS if I display a stopped bag, the actions allow me to Stop the bag - even though it is already stopped.  Why?"
+  },
+  {
+    "heading": "2.8 GHA Management"
+  },
+  {
+    "heading": "2.9 WorldTracer"
+  },
+  {
+    "heading": "2.9.1 What charge is there to my airline/GHA for using WorldTracer from BagManager?"
+  },
+  {
+    "heading": "2.10 Activity Monitoring"
+  },
+  {
+    "heading": "2.10.1 There is a column showing HHT ID, but nothing for IWS ID?"
+  },
+  {
+    "heading": "2.10.2 Sometimes events seem out of sequence.  Why?"
+  },
+  {
+    "heading": "2.11.1  Under what circumstances does the system decide  I have an 'unknown' bags"
+  },
+  {
+    "heading": "2.12.1 If the WLAN has gone down due to some reason, can I do offline scanning of the baggage tags &amp; upload data via the cradle."
+  },
+  {
+    "heading": "2.13.1 On the Statistics report, what are 'Handled bags'"
+  },
+  {
+    "heading": "2.13.2 Why is the total of 'Not Loaded bags' on the flight detail report, not the same as shown in Flight Progress"
+  },
+  {
+    "heading": "2.13.3 Why is the total of 'Offloaded bags' on the flight detail report, not the same as shown in Flight Progress?"
+  },
+  {
+    "heading": "2.14 BSM Processing"
+  },
+  {
+    "heading": "2.14.1 What happens if a BSM arrives for a flight that has not yet been created?"
+  },
+  {
+    "heading": "2.15 Why is '9-10 digit matching needed?"
+  },
+  {
+    "heading": "2.16 Please explain about the timeouts on the HHT"
+  },
+  {
+    "heading": "3.1.1 When I configure a new HHT in SOTI, load the package to the HHT and then logon to BagManager, I get the response 'Device not Registered' on the HHT.  If I wait a while and try again it works. What's happening?"
+  },
+  {
+    "heading": "Honeywell"
+  },
+  {
+    "heading": "BagManager - Hand Held Terminal Compatibility   v3.3  February 2019"
+  },
+  {
+    "heading": "Zebra"
+  },
+  {
+    "heading": "Intermec"
+  },
+  {
+    "heading": "Datalogic"
+  },
+  {
+    "heading": "BagManager - Hand Held Terminal Compatibility   v2.0  October 2016)  3 Pages"
+  },
+  {
+    "heading": "MEMOR™ 10 - THE POWER OF A SMARTPHONE, DESIGNED FOR ENTERPRISE"
+  },
+  {
+    "heading": "TOP PERFORMANCE"
+  },
+  {
+    "heading": "WIRELESS CHARGING MEETS SWAPPABLE BATTERY"
+  },
+  {
+    "heading": "COMMUNICATIONS"
+  },
+  {
+    "heading": "FEATURES"
+  },
+  {
+    "heading": "INDUSTRY-APPLICATIONS"
+  },
+  {
+    "heading": "MEMOR™ 10"
+  },
+  {
+    "heading": "WIRELESS COMMUNICATIONS"
+  },
+  {
+    "heading": "DECODING CAPABILITY"
+  },
+  {
+    "heading": "ELECTRICAL"
+  },
+  {
+    "heading": "ENVIRONMENTAL"
+  },
+  {
+    "heading": "INTERFACES"
+  },
+  {
+    "heading": "SENSORS"
+  },
+  {
+    "heading": "ACALOGIC"
+  },
+  {
+    "heading": "PHYSICAL CHARACTERISTICS"
+  },
+  {
+    "heading": "READING PERFORMANCE"
+  },
+  {
+    "heading": "SAFETY &amp; REGULATORY"
+  },
+  {
+    "heading": "SOFTWARE"
+  },
+  {
+    "heading": "SYSTEM"
+  },
+  {
+    "heading": "WARRANTY"
+  },
+  {
+    "heading": "Miscellaneous"
+  },
+  {
+    "heading": "Untitled"
+  },
+  {
+    "heading": "INDUSTRY LEADING GOLD STANDARD FOR MOBILITY IN DEMANDING ENVIRONMENTS"
+  },
+  {
+    "heading": "Your Choice of OS"
+  },
+  {
+    "heading": "Mx - Making Android a More Robust Enterprise-class OS"
+  },
+  {
+    "heading": "Power for any Application"
+  },
+  {
+    "heading": "Proven Rugged Construction for your Most Challenging Environments"
+  },
+  {
+    "heading": "Switch Operating Systems"
+  },
+  {
+    "heading": "Government-grade Security"
+  },
+  {
+    "heading": "Your Choice of the Most Advanced Scan Engines"
+  },
+  {
+    "heading": "Interchangeable Keypads for Superior Customization"
+  },
+  {
+    "heading": "Compatible with Your Existing MC9000 Series Accessories"
+  },
+  {
+    "heading": "MC9200 Specifications Chart"
+  },
+  {
+    "heading": "PHYSICAL AND ENVIRONMENTAL CHARACTERISTICS"
+  },
+  {
+    "heading": "PERFORMANCE CHARACTERISTICS"
+  },
+  {
+    "heading": "USER ENVIRONMENT"
+  },
+  {
+    "heading": "USER ENVIRONMENT (continued)"
+  },
+  {
+    "heading": "WIRELESS DATA COMMUNICATIONS"
+  },
+  {
+    "heading": "VOICE AND AUDIO"
+  },
+  {
+    "heading": "ADDITIONAL MOBILITY DNA SOLUTIONS"
+  },
+  {
+    "heading": "PERIPHERALS AND ACCESSORIES"
+  },
+  {
+    "heading": "RECOMMENDED SERVICES"
+  },
+  {
+    "heading": "THE MC9200 IS AT HOME IN..."
+  },
+  {
+    "heading": "Warehousing/ Distribution"
+  },
+  {
+    "heading": "Retail"
+  },
+  {
+    "heading": "Airlines"
+  },
+  {
+    "heading": "BEAUTY, BRAWN AND BRAINS EVERYTHING YOUR WORKERS WANT, WITH EVERYTHING YOUR BUSINESS NEEDS"
+  },
+  {
+    "heading": "Active Edge™ Touch Zone for One-touch Access to the Features Your Workers Use the Most"
+  },
+  {
+    "heading": "Maximum Display Size with Advanced Technology"
+  },
+  {
+    "heading": "The Ultimate Scanning Performance"
+  },
+  {
+    "heading": "Automatically Capture and Process Entire Documents"
+  },
+  {
+    "heading": "Ultra-high Resolution Photos"
+  },
+  {
+    "heading": "The Processing Power to Do It All"
+  },
+  {
+    "heading": "Rugged and Ready for Business"
+  },
+  {
+    "heading": "SPECIFICATION SHEET"
+  },
+  {
+    "heading": "PowerPrecision+ Battery for Bestin-class Power and Manageability"
+  },
+  {
+    "heading": "Unsurpassed Security with Zebra's Mobility Extensions (Mx)"
+  },
+  {
+    "heading": "Multiple Configurations to Meet Different Business Needs"
+  },
+  {
+    "heading": "Get More Value out of your Devices with Mobility DNA"
+  },
+  {
+    "heading": "The Highest Quality Voice in its Class for Crystal Clear Voice Calls"
+  },
+  {
+    "heading": "The Most Powerful Family of Ready-To-Use Voice Solutions"
+  },
+  {
+    "heading": "FIPS 140-2 Validated"
+  },
+  {
+    "heading": "The Fastest, Most Dependable Wireless Connections Inside and Outside the Four Walls"
+  },
+  {
+    "heading": "A Complete Suite of Enterprise Accessories"
+  },
+  {
+    "heading": "INTERACTIVE SENSOR TECHNOLOGY (IST)"
+  },
+  {
+    "heading": "DATA CAPTURE"
+  },
+  {
+    "heading": "WIRELESS WAN DATA AND VOICE COMMUNICATIONS (TC56 ONLY)"
+  },
+  {
+    "heading": "WIRELESS LAN"
+  },
+  {
+    "heading": "WIRELESS PAN"
+  },
+  {
+    "heading": "TC75 Series Rugged Touch Computer"
+  },
+  {
+    "heading": "YOUR FRONT LINE TO A SMARTER ENTERPRISE"
+  },
+  {
+    "heading": "Mx - Making Android a More Robust Enterprise OS"
+  },
+  {
+    "heading": "World-class Data Capture"
+  },
+  {
+    "heading": "Maximum Data Entry Flexibility with an Industry Leading Dual Mode Touch Panel"
+  },
+  {
+    "heading": "Automatically Capture Data and Process Entire Documents"
+  },
+  {
+    "heading": "Superior Audio Quality and Functionality for a New Level of Voice Flexibility"
+  },
+  {
+    "heading": "Mobility DNA"
+  },
+  {
+    "heading": "PowerPrecision+ Battery for Best-In-ClassPower and Manageability 1"
+  },
+  {
+    "heading": "A Robust Accessory Family for Easy On-the-Go Device Management"
+  },
+  {
+    "heading": "Rugged and Ready for All-day Every Day Use Out in the Field"
+  },
+  {
+    "heading": "THE TC75 SERIES - THE RIGHT DEVICE MAKES ALL THE DIFFERENCE."
+  },
+  {
+    "heading": "Boost efficiency and customer service with the TC75 Series in:"
+  },
+  {
+    "heading": "T&amp;L"
+  },
+  {
+    "heading": "Field Service"
+  },
+  {
+    "heading": "Direct Store Distribution (DSD)/ Route Accounting"
+  },
+  {
+    "heading": "Government and Public Safety"
+  },
+  {
+    "heading": "TC75 Series Specifications"
+  },
+  {
+    "heading": "USER ENVIRONMENT (CONTINUED)"
+  },
+  {
+    "heading": "WIRELESS WAN DATA AND VOICE COMMUNICATIONS"
+  },
+  {
+    "heading": "TC75x"
+  },
+  {
+    "heading": "TC75 Series Specifications (continued)"
+  },
+  {
+    "heading": "COMMUNICATION AND MESSAGING"
+  },
+  {
+    "heading": "Mobile Computer"
+  },
+  {
+    "heading": "ACCESSORIES"
+  },
+  {
+    "heading": "What is in the box:"
+  },
+  {
+    "heading": "TECHNICAL SHEET"
+  },
+  {
+    "heading": "93DKZ012900L33"
+  },
+  {
+    "heading": "93DKZ014000L33"
+  },
+  {
+    "heading": "93DKZ013100L33"
+  },
+  {
+    "heading": "93DKZ013300L33"
+  },
+  {
+    "heading": "MEMOR ™  11 MOBILE COMPUTER"
+  },
+  {
+    "heading": "Optimized performance in a market-proven design"
+  },
+  {
+    "heading": "SUPERIOR PERFORMANCE"
+  },
+  {
+    "heading": "RUGGED AND COMPACT DESIGN IN AN ENTERPRISE/HyphenGRADE FORM FACTOR"
+  },
+  {
+    "heading": "HIGHER PROCESSING CAPABILITIES"
+  },
+  {
+    "heading": "ADVANCED BATTERY MANAGEMENT AND WIRELESS CHARGING"
+  },
+  {
+    "heading": "IMPROVED SCANNING PERFORMANCE"
+  },
+  {
+    "heading": "ENTERPRISE/HyphenREADY SOLUTION; A SECURE INVESTMENT"
+  },
+  {
+    "heading": "INDUSTRY /Hyphen APPLICATIONS"
+  },
+  {
+    "heading": "MEMOR 11 MOBILE COMPUTER"
+  },
+  {
+    "heading": "TECHNICAL SPECIFICATIONS"
+  },
+  {
+    "heading": "MEMOR™ 20"
+  },
+  {
+    "heading": "MEMOR™ 20 /Endash DARE TO BE THE BEST"
+  },
+  {
+    "heading": "TOP PERFORMANCE WHILE EXTREMELY RUGGED"
+  },
+  {
+    "heading": "AUTHENTICATION AND SECURITY"
+  },
+  {
+    "heading": "Ultra-Rugged Mobile Computer"
+  },
+  {
+    "heading": "FEATURES AND BENEFITS"
+  },
+  {
+    "heading": "CN75/CN75e Technical Specifications"
+  },
+  {
+    "heading": "POWER"
+  },
+  {
+    "heading": "OPERATING SYSTEM:"
+  },
+  {
+    "heading": "MULTI-ENGINE PROCESSOR ARCHITECTURE"
+  },
+  {
+    "heading": "MEMORY"
+  },
+  {
+    "heading": "DISPLAY"
+  },
+  {
+    "heading": "STANDARD COMMUNICATIONS"
+  },
+  {
+    "heading": "SOFTWARE APPLICATIONS AND COMPONENTS"
+  },
+  {
+    "heading": "DATA MANAGEMENT"
+  },
+  {
+    "heading": "INTEGRATED RADIOS"
+  },
+  {
+    "heading": "UMTS/HSPA+"
+  },
+  {
+    "heading": "GLOBAL POSITIONING SYSTEM"
+  },
+  {
+    "heading": "GPS dedicated AT commands"
+  },
+  {
+    "heading": "SENSOR TECHNOLOGY"
+  },
+  {
+    "heading": "AUDIO SUPPORT"
+  },
+  {
+    "heading": "INTEGRATED SCANNER"
+  },
+  {
+    "heading": "EA30 High-Performance Motion-Tolerant"
+  },
+  {
+    "heading": "INTEGRATED CAMERA"
+  },
+  {
+    "heading": "KEYPAD OPTIONS"
+  },
+  {
+    "heading": "CN75:"
+  },
+  {
+    "heading": "CN75e:"
+  },
+  {
+    "heading": "HONEYWELL GLOBAL SERVICES SUPPORT"
+  },
+  {
+    "heading": "CN75LAN, CN75WAN"
+  },
+  {
+    "heading": "NON-INCENDIVE VERSION"
+  },
+  {
+    "heading": "Honeywell Safety and Productivity Solutions"
+  },
+  {
+    "heading": "Mobile Computers"
+  },
+  {
+    "heading": "Dolphin CN80"
+  },
+  {
+    "heading": "FEATURES &amp; BENEFITS"
+  },
+  {
+    "heading": "Dolphin CN80 Technical Specifications"
+  },
+  {
+    "heading": "SYSTEM ARCHITECTURE"
+  },
+  {
+    "heading": "LASER LIGHT-DO NOT STARE INTO BEAM."
+  },
+  {
+    "heading": "Dimensions (L x W x H):"
+  },
+  {
+    "heading": "WIRELESS CONNECTIVITY"
+  },
+  {
+    "heading": "Technical Specifications"
+  },
+  {
+    "heading": "LTE Advanced Support"
+  },
+  {
+    "heading": "MECHANICAL"
+  },
+  {
+    "heading": "ADDITIONAL CERTIFICATIONS AND APPROVALS*"
+  },
+  {
+    "heading": "Small businesses need a tool that will help their mobile workers get more done in less time - working more effectively and efficiently every day."
+  },
+  {
+    "heading": "DISINFECTANT-READY HOUSINGS - NEW!"
+  },
+  {
+    "heading": "LED:"
+  },
+  {
+    "heading": "Honeywell Sensing and Productivity Solutions"
+  },
+  {
+    "heading": "ACCESSORIES (STANDARD)"
+  },
+  {
+    "heading": "ACCESSORIES (OPTIONAL)"
+  },
+  {
+    "heading": "Enterprise Mobile Computer"
+  },
+  {
+    "heading": "EDA61K Technical Specifications"
+  },
+  {
+    "heading": "Weight:"
+  },
+  {
+    "heading": "5 inch Full HD Display"
+  },
+  {
+    "heading": "IP67 sealing"
+  },
+  {
+    "heading": "6,700mAh Battery use in cold warehouse*"
+  },
+  {
+    "heading": "Long Range Scanner"
+  },
+  {
+    "heading": "Angled Scanner (25 degrees)"
+  },
+  {
+    "heading": "Defogging makes vivid window*"
+  },
+  {
+    "heading": "Specification"
+  },
+  {
+    "heading": "2 slot charging cradle"
+  },
+  {
+    "heading": "The ultimate Android™ ultra-rugged combination keypad/touch mobile computer"
+  },
+  {
+    "heading": "Maximum Processor Power and Memory"
+  },
+  {
+    "heading": "Power a Full Shift and Beyond with Maximum Battery Power"
+  },
+  {
+    "heading": "Dependably Superior WiFi Connections"
+  },
+  {
+    "heading": "A Lifetime Security Guard for Android"
+  },
+  {
+    "heading": "The Ultimate in Application Support"
+  },
+  {
+    "heading": "Run Your Terminal Emulation (TE) Apps, Right Out of the Box"
+  },
+  {
+    "heading": "Larger Touchscreen with Advanced Technology"
+  },
+  {
+    "heading": "Bluetooth Low Energy (BLE) 5.0 for Twice the Speed and Four Times the Range"
+  },
+  {
+    "heading": "Ultra High-Resolution Photos and Videos Improve Productivity"
+  },
+  {
+    "heading": "Rich Locationing Support"
+  },
+  {
+    "heading": "Advanced Industrial Scanning and an Extraordinary Scan Range"
+  },
+  {
+    "heading": "Vibrate Feedback Mode"
+  },
+  {
+    "heading": "The Best of Both Worlds - Touchscreen and Keypad Input"
+  },
+  {
+    "heading": "Capture Multiple Barcodes and Entire Forms with a Single Scan"
+  },
+  {
+    "heading": "Doubles as Walkie-Talkie"
+  },
+  {
+    "heading": "All Day Comfort in the Most Scan Intensive Apps"
+  },
+  {
+    "heading": "NFC for Simple Pairing"
+  },
+  {
+    "heading": "The Ultimate Ultra-Rugged Design for Every Environment"
+  },
+  {
+    "heading": "The Most Rugged Device in its Class"
+  },
+  {
+    "heading": "A Model for the Most Challenging Environments"
+  },
+  {
+    "heading": "The Ultimate Accessory Ecosystem"
+  },
+  {
+    "heading": "New Accessories Minimize Charging Time, Maximize Backroom Space and More"
+  },
+  {
+    "heading": "Cost-Effectively Upgrade with Backwards Accessory Compatibility"
+  },
+  {
+    "heading": "Specifications"
+  },
+  {
+    "heading": "Interactive Sensor Technology (IST)"
+  },
+  {
+    "heading": "Wireless LAN"
+  },
+  {
+    "heading": "Logistics"
+  },
+  {
+    "heading": "Manufacturing"
+  },
+  {
+    "heading": "Cold Chain"
+  },
+  {
+    "heading": "Government"
+  },
+  {
+    "heading": "Device Approvals and Compliance"
+  },
+  {
+    "heading": "Communication and Messaging"
+  },
+  {
+    "heading": "Environmental Compliance"
+  },
+  {
+    "heading": "Environment"
+  },
+  {
+    "heading": "Warranty"
+  },
+  {
+    "heading": "Recommended Services"
+  },
+  {
+    "heading": "Platforming"
+  },
+  {
+    "heading": "Footnotes"
+  },
+  {
+    "heading": "The ultimate cost-effective tool for small businesses - with big business features"
+  },
+  {
+    "heading": "The smartphone-style device that's made for work"
+  },
+  {
+    "heading": "Power all your apps - simultaneously"
+  },
+  {
+    "heading": "The best wireless has to offer"
+  },
+  {
+    "heading": "The best of Android - today and tomorrow"
+  },
+  {
+    "heading": "See more and scroll less with an advanced 6 in. FHD+ display"
+  },
+  {
+    "heading": "Capture barcodes in less time - with less effort"
+  },
+  {
+    "heading": "Ready for the world of contactless transactions"
+  },
+  {
+    "heading": "PRODUCT SPEC SHEET"
+  },
+  {
+    "heading": "Ergonomically designed for all day comfort"
+  },
+  {
+    "heading": "A durable design built to last for years"
+  },
+  {
+    "heading": "Power every minute of every workday"
+  },
+  {
+    "heading": "Purpose-built accessories make every job easier"
+  },
+  {
+    "heading": "The Zebra-only difference - Mobility DNA"
+  },
+  {
+    "heading": "Get a built-in advantage with no-cost Mobility DNA Professional"
+  },
+  {
+    "heading": "Maximize device functionality, workforce productivity and the user"
+  },
+  {
+    "heading": "Bring more value with added functionality"
+  },
+  {
+    "heading": "Create a mobile-driven workstation or hybrid Point-of-Sale (POS)"
+  },
+  {
+    "heading": "Create a lightning-fast RFID reader"
+  },
+  {
+    "heading": "Turn the TC22/TC27 into a two-way radio and PBX handset 8"
+  },
+  {
+    "heading": "Physical Characteristics"
+  },
+  {
+    "heading": "Performance Characteristics"
+  },
+  {
+    "heading": "User Environment"
+  },
+  {
+    "heading": "Data Capture"
+  },
+  {
+    "heading": "Wireless WAN Data and Voice Communications (TC27)"
+  },
+  {
+    "heading": "Hospitality"
+  },
+  {
+    "heading": "Field Mobility"
+  },
+  {
+    "heading": "Warehouse/wearable"
+  },
+  {
+    "heading": "Certifications"
+  },
+  {
+    "heading": "Wireless PAN"
+  },
+  {
+    "heading": "General Certifications"
+  },
+  {
+    "heading": "TC52/TC57 Series Touch Computer"
+  },
+  {
+    "heading": "Better enterprise-class touch computing"
+  },
+  {
+    "heading": "Improved user experience"
+  },
+  {
+    "heading": "Android for fast familiarity"
+  },
+  {
+    "heading": "Advanced touchscreen technology"
+  },
+  {
+    "heading": "Easily capture these - barcodes, labels and documents"
+  },
+  {
+    "heading": "Full shift power your workers can count on"
+  },
+  {
+    "heading": "Rugged and ready for the tough business day"
+  },
+  {
+    "heading": "A platform to handle your apps - today and tomorrow"
+  },
+  {
+    "heading": "Rich locationing support"
+  },
+  {
+    "heading": "Support for advanced WiFi enhancement improves WiFi range and speed - with less power"
+  },
+  {
+    "heading": "Higher quality voice"
+  },
+  {
+    "heading": "5 MP front-facing camera supports more advanced apps"
+  },
+  {
+    "heading": "Better cellular network flexibility with single device simplicity"
+  },
+  {
+    "heading": "High-resolution photos and videos"
+  },
+  {
+    "heading": "Bluetooth 5.0 for faster speed and wider range - with less power"
+  },
+  {
+    "heading": "Boost productivity with enterprise accessories"
+  },
+  {
+    "heading": "Drive workforce productivity, efficiency and device value with powerful Mobility DNA apps"
+  },
+  {
+    "heading": "WorryFree WiFi - delivered dependably excellent WiFi"
+  },
+  {
+    "heading": "PowerPrecision Console - prevent aging batteries from reducing workforce productivity"
+  },
+  {
+    "heading": "End-to-end outstanding control of the update process with LifeGuard"
+  },
+  {
+    "heading": "Easily manage access to Google Mobile Services (GMS) with Restricted Mode"
+  },
+  {
+    "heading": "Better device management options"
+  },
+  {
+    "heading": "Improve device value with Zebra's optional Visibility Services"
+  },
+  {
+    "heading": "Wireless WAN Data and Voice Communications (TC57 Only)"
+  },
+  {
+    "heading": "Retail Associates"
+  },
+  {
+    "heading": "Retail Managers"
+  },
+  {
+    "heading": "Direct Store Delivery Drivers"
+  },
+  {
+    "heading": "Field Service Technicians"
+  },
+  {
+    "heading": "Public Service"
+  },
+  {
+    "heading": "TC52/TC57 SERIES TOUCH COMPUTER"
+  },
+  {
+    "heading": "Mobility DNA Software"
+  },
+  {
+    "heading": "The ultimate in rugged design, performance, productivity and ease of use"
+  },
+  {
+    "heading": "A User Experience in a Class of its Own"
+  },
+  {
+    "heading": "Powerful Advanced Scanning for the Fastest, Easiest Data Capture"
+  },
+  {
+    "heading": "Maximize Productivity With Enterprise Accessories"
+  },
+  {
+    "heading": "Easily Find Misplaced Devices"
+  },
+  {
+    "heading": "Full Shift Power Your Workers Can Count On"
+  },
+  {
+    "heading": "Maximum Application Performance"
+  },
+  {
+    "heading": "Advanced Higher-Resolution Touchscreen Technology With Full HD"
+  },
+  {
+    "heading": "Get Double Functionality-Turn Your TC52ax Into a Mobile-Powered Workstation"
+  },
+  {
+    "heading": "Rugged and Ready for the Toughest Business Day"
+  },
+  {
+    "heading": "More Wi-Fi Range and Speed-With Less Power"
+  },
+  {
+    "heading": "The Highest Quality Voice in its Class"
+  },
+  {
+    "heading": "Complete Cellular Network Flexibility With Single Device Simplicity"
+  },
+  {
+    "heading": "Ultra High-Resolution Photos and Videos"
+  },
+  {
+    "heading": "5 MP Front-Facing Camera Supports More Advanced Apps"
+  },
+  {
+    "heading": "Bluetooth 5.x-2x Speed, 4x the Range, All With Less Power"
+  },
+  {
+    "heading": "Drive Workforce Productivity and Device Control to a New Level With the Powerful Mobility DNA™ Suite"
+  },
+  {
+    "heading": "So Many Tools, So Much Value"
+  },
+  {
+    "heading": "Wireless WAN, Data and Voice Communications (TC57x Only)"
+  },
+  {
+    "heading": "Parcel/Light Courier Drivers"
+  },
+  {
+    "heading": "The ultimate in ultra-rugged enterprise-class all-touch computing"
+  },
+  {
+    "heading": "Android for instant familiarity"
+  },
+  {
+    "heading": "Super simple data capture: barcodes, labels and documents"
+  },
+  {
+    "heading": "Complete cellular network flexibility with single device simplicity"
+  },
+  {
+    "heading": "Longer WiFi range and speed - with less power"
+  },
+  {
+    "heading": "Bluetooth 5.0 for twice the speed and four times the range"
+  },
+  {
+    "heading": "New 5 MP front-facing camera supports more advanced apps"
+  },
+  {
+    "heading": "Ultra high-resolution photos and videos"
+  },
+  {
+    "heading": "The highest quality voice in its class"
+  },
+  {
+    "heading": "The ultimate in ultra-rugged proven design"
+  },
+  {
+    "heading": "A platform to handle all your apps - today and tomorrow"
+  },
+  {
+    "heading": "Maximize productivity with enterprise accessories"
+  },
+  {
+    "heading": "Improve device value with Zebra's optional VisibilityIQ™ Services"
+  },
+  {
+    "heading": "Drive workforce productivity, efficiency and device value to a new level with powerful new Mobility DNA apps"
+  },
+  {
+    "heading": "WorryFree WiFi - dependably superior WiFi, delivered"
+  },
+  {
+    "heading": "PowerPrecision Console for better battery management"
+  },
+  {
+    "heading": "End-to-end revolutionary control of the update process"
+  },
+  {
+    "heading": "Easily manage access to Google Mobile Services (GMS)"
+  },
+  {
+    "heading": "TC72/TC77 Series Specifications"
+  },
+  {
+    "heading": "User Environment (continued)"
+  },
+  {
+    "heading": "Wireless WAN Data and Voice Communications"
+  },
+  {
+    "heading": "Transportation &amp; Logistics"
+  },
+  {
+    "heading": "Warehouse"
+  },
+  {
+    "heading": "Wireless LAN (continued)"
+  },
+  {
+    "heading": "CODiScan ™ Bluetooth ® wearable scanner"
+  },
+  {
+    "heading": "Handle more with Codiscan"
+  },
+  {
+    "heading": "HIGHLIGHTS"
+  },
+  {
+    "heading": "SLIM,  LIGHT, PORTABLE: UNFOLD MASSIVE PRODUCTIVITY"
+  },
+  {
+    "heading": "CUTTING/HyphenEDGE INNOVATION TO ASSIST YOUR WORKER"
+  },
+  {
+    "heading": "NO DOWNTIMES TO REACH YOUR TARGETS"
+  },
+  {
+    "heading": "EASY TO USE, EASY TO CONFIG, EASY TO DISPOSE"
+  },
+  {
+    "heading": "INDUSTRY /Hyphen APPLICATION"
+  },
+  {
+    "heading": "MOUNTINGS /Hyphen HAND TRIGGER"
+  },
+  {
+    "heading": "ADJUSTABLE TRIGGER"
+  },
+  {
+    "heading": "ADJUSTABLE STRAPS /Hyphen SIZE"
+  },
+  {
+    "heading": "CLOSING STRAP /Endash WEAR/REMOVE"
+  },
+  {
+    "heading": "MOUNTINGS /Hyphen EXTENSIBLE LANYARD FOR NECK, BELT AND POCKET"
+  },
+  {
+    "heading": "CHARGING SYSTEMS"
+  },
+  {
+    "heading": "CHARGERS /Hyphen 1X"
+  },
+  {
+    "heading": "MODULARITY SYSTEM"
+  },
+  {
+    "heading": "CHARGERS /Hyphen 2X"
+  },
+  {
+    "heading": "MODULE FEATURES"
+  },
+  {
+    "heading": "CHARGERS /Hyphen 12X"
+  },
+  {
+    "heading": "CONNECTIVITY"
+  },
+  {
+    "heading": "MOBILE ALADDIN APP"
+  },
+  {
+    "heading": "MAIN FEATURES"
+  },
+  {
+    "heading": "WIRELESS COMMUNICATION"
+  },
+  {
+    "heading": "MAX RADIO-FREQU. POWER TRANSMITTED"
+  },
+  {
+    "heading": "BLUETOOTH LOW ENERGY"
+  },
+  {
+    "heading": "BARCODE DECODING CAPABILITIES"
+  },
+  {
+    "heading": "ELECTRICAL PROPERTIES"
+  },
+  {
+    "heading": "MECHANICAL PROPERTIES"
+  },
+  {
+    "heading": "ENVIRONMENTAL CONDITIONS"
+  },
+  {
+    "heading": "SCANNER PROPERTIES"
+  },
+  {
+    "heading": "UTILITIES &amp; ACCESSORIES*"
+  },
+  {
+    "heading": "SCAN RANGES"
+  },
+  {
+    "heading": "STANDARD RANGE"
+  },
+  {
+    "heading": "MID RANGE"
+  },
+  {
+    "heading": "WARRANTY &amp; SLA"
+  },
+  {
+    "heading": "COUNTRY CERTIFICATION"
+  },
+  {
+    "heading": "MULTI RANGE"
+  },
+  {
+    "heading": "The 'go-everywhere' wearable scanner built for the enterprise"
+  },
+  {
+    "heading": "Superior Ergonomics, Ease-of-Use and Application Flexibility"
+  },
+  {
+    "heading": "Tiny and Practically Weightless For Extreme Comfort"
+  },
+  {
+    "heading": "Five Interchangeable Wearing Styles"
+  },
+  {
+    "heading": "Freedom From Cords and Cables"
+  },
+  {
+    "heading": "Programmable LEDs Provide Line-on-Sight User Feedback"
+  },
+  {
+    "heading": "Prevent the Spread of Germs With Personal Trigger Assemblies"
+  },
+  {
+    "heading": "Unmatched Versatility and Flexibility"
+  },
+  {
+    "heading": "Use With Practically Any Bluetooth-Enabled Device"
+  },
+  {
+    "heading": "Just Tap for Instant Pairing"
+  },
+  {
+    "heading": "An Advanced Removable and Replaceable Battery-and More"
+  },
+  {
+    "heading": "Choose the Scan Engine That Best Meets Your Needs"
+  },
+  {
+    "heading": "Flexible Notifications for Any Environment"
+  },
+  {
+    "heading": "Best-in-Class Scanning Performance"
+  },
+  {
+    "heading": "Fast and Accurate Capture of Virtually Any Barcode"
+  },
+  {
+    "heading": "Wider Field of View"
+  },
+  {
+    "heading": "Rugged Scanner Features"
+  },
+  {
+    "heading": "Long Life Triggers"
+  },
+  {
+    "heading": "Minimize Downtime With a Maximum Number of Replaceable Elements"
+  },
+  {
+    "heading": "Protection From Electrostatic Shock"
+  },
+  {
+    "heading": "Innovative Accessories Simplify the Backroom and Reduce Management Time and Cost"
+  },
+  {
+    "heading": "Save Time and Money With High Capacity Chargers"
+  },
+  {
+    "heading": "User Interface"
+  },
+  {
+    "heading": "Transportation and Logistics"
+  },
+  {
+    "heading": "SE4710"
+  },
+  {
+    "heading": "SE4770"
+  },
+  {
+    "heading": "RS5100 BLUETOOTH WEARABLE SCANNER"
+  },
+  {
+    "heading": "Peripherals and Accessories"
+  },
+  {
+    "heading": "Regulatory"
+  },
+  {
+    "heading": "Maximum versatility, power and performance"
+  },
+  {
+    "heading": "Small and Practically Weightless"
+  },
+  {
+    "heading": "Cordless or Corded-It's Your Choice"
+  },
+  {
+    "heading": "Use it Everywhere-Including The Freezer"
+  },
+  {
+    "heading": "Instant Pairing-Just Tap and Go"
+  },
+  {
+    "heading": "Direct Users With Programmable Line-of-Sight LEDs"
+  },
+  {
+    "heading": "Unmatched Advanced Range Scanning"
+  },
+  {
+    "heading": "An Advanced Removable and Replaceable Battery"
+  },
+  {
+    "heading": "Maximum Durability, Reliability and Management Simplicity"
+  },
+  {
+    "heading": "Rugged and Ready for Constant Use"
+  },
+  {
+    "heading": "No Wi-Fi™ Interference-Guaranteed"
+  },
+  {
+    "heading": "Triggers Built for Intensive Scanning"
+  },
+  {
+    "heading": "Minimize Downtime With Maximum Replaceable Parts"
+  },
+  {
+    "heading": "Easily and Cost-Effectively Upgrade From the RS5100"
+  },
+  {
+    "heading": "Decode Ranges (Typical) 1"
+  },
+  {
+    "heading": "SITA BAGMANAGER PRODUCT OVERVIEW"
+  },
+  {
+    "heading": "© SITA 2013"
+  },
+  {
+    "heading": "CONTENTS"
+  },
+  {
+    "heading": "Company Details"
+  },
+  {
+    "heading": "Contact Information"
+  },
+  {
+    "heading": "1. EXECUTIVE OVERVIEW"
+  },
+  {
+    "heading": "Benefits of BagManager"
+  },
+  {
+    "heading": "Objectives of BagManager"
+  },
+  {
+    "heading": "BagManager achieves these objectives by:"
+  },
+  {
+    "heading": "BagManager and BagManager Online"
+  },
+  {
+    "heading": "Product Features"
+  },
+  {
+    "heading": "System Components"
+  },
+  {
+    "heading": "Hand-Held Terminals (HHTs)"
+  },
+  {
+    "heading": "Workstations"
+  },
+  {
+    "heading": "BagManager Components"
+  },
+  {
+    "heading": "2. FEATURE OVERVIEW"
+  },
+  {
+    "heading": "BagManager for every type of operation"
+  },
+  {
+    "heading": "Real-time loading decisions on mobile devices"
+  },
+  {
+    "heading": "End-end tracking of arrival and departure bags"
+  },
+  {
+    "heading": "Segregating baggage in containers and printing container sheets"
+  },
+  {
+    "heading": "Displaying bag location and status"
+  },
+  {
+    "heading": "Information on the contents of a container at any time"
+  },
+  {
+    "heading": "Complete Data and User security"
+  },
+  {
+    "heading": "Real-time loading information about all flights being handled"
+  },
+  {
+    "heading": "Integrated multi-airport support"
+  },
+  {
+    "heading": "No Limits!"
+  },
+  {
+    "heading": "Intelligent Offloading Alerts"
+  },
+  {
+    "heading": "Reflighting mishandled bags"
+  },
+  {
+    "heading": "Dealing with disruptions"
+  },
+  {
+    "heading": "User Interface in different languages"
+  },
+  {
+    "heading": "Passing information to the next destination"
+  },
+  {
+    "heading": "Post Flight Enquiries"
+  },
+  {
+    "heading": "IATA and industry compatibility"
+  },
+  {
+    "heading": "The BagManager User Group"
+  },
+  {
+    "heading": "3. BAGMANAGER IN DETAIL"
+  },
+  {
+    "heading": "HHT and Workstation Functionality"
+  },
+  {
+    "heading": "Statistics, User Messages, Performance and Other Information"
+  },
+  {
+    "heading": "Statistics"
+  },
+  {
+    "heading": "Hourly Statistics"
+  },
+  {
+    "heading": "Bag Summary Count"
+  },
+  {
+    "heading": "Flight Events"
+  },
+  {
+    "heading": "User Messages"
+  },
+  {
+    "heading": "Managing HHTs"
+  },
+  {
+    "heading": "HHT Assignment"
+  },
+  {
+    "heading": "Assignment"
+  },
+  {
+    "heading": "User or HHT Activity"
+  },
+  {
+    "heading": "Reset user password"
+  },
+  {
+    "heading": "Managing Bags"
+  },
+  {
+    "heading": "Bag Enquiry"
+  },
+  {
+    "heading": "The user may:"
+  },
+  {
+    "heading": "Bag Irregularities"
+  },
+  {
+    "heading": "Expedite (\"RUSH\") Bags"
+  },
+  {
+    "heading": "Connecting Baggage"
+  },
+  {
+    "heading": "Connecting Baggage Matrix"
+  },
+  {
+    "heading": "Create Crew Tags"
+  },
+  {
+    "heading": "Merging bags"
+  },
+  {
+    "heading": "Marked Bags"
+  },
+  {
+    "heading": "Managing Departing Flights"
+  },
+  {
+    "heading": "Departure Monitor"
+  },
+  {
+    "heading": "Flight Progress"
+  },
+  {
+    "heading": "Flight Progress - Reconciliation"
+  },
+  {
+    "heading": "Flight Progress - Manifest"
+  },
+  {
+    "heading": "Flight Schedule"
+  },
+  {
+    "heading": "Flight Management"
+  },
+  {
+    "heading": "Merge Flights"
+  },
+  {
+    "heading": "Managing Arriving Flights"
+  },
+  {
+    "heading": "Arrival Summary"
+  },
+  {
+    "heading": "Arrival Manifest"
+  },
+  {
+    "heading": "Arrival Connecting Bags"
+  },
+  {
+    "heading": "Monitor Arrival Bags"
+  },
+  {
+    "heading": "Baggage Performance and Detail"
+  },
+  {
+    "heading": "Print Batch Container Sheets"
+  },
+  {
+    "heading": "Container Sheet Production"
+  },
+  {
+    "heading": "Flight Loading Template"
+  },
+  {
+    "heading": "Container Sheet Enquiry"
+  },
+  {
+    "heading": "Container Enquiry"
+  },
+  {
+    "heading": "Hold Enquiry"
+  },
+  {
+    "heading": "Tracking ULDs"
+  },
+  {
+    "heading": "Scanning Bags and Containers"
+  },
+  {
+    "heading": "Load Bag"
+  },
+  {
+    "heading": "Recommend ULD"
+  },
+  {
+    "heading": "Offload Bag"
+  },
+  {
+    "heading": "Cleared Bag List"
+  },
+  {
+    "heading": "Reflighting Bags"
+  },
+  {
+    "heading": "Reflight Bags"
+  },
+  {
+    "heading": "Quick Reflight"
+  },
+  {
+    "heading": "WorldTracer"
+  },
+  {
+    "heading": "FWD/FAH/FOH/FLZ"
+  },
+  {
+    "heading": "QOH"
+  },
+  {
+    "heading": "Tracking Bags"
+  },
+  {
+    "heading": "Alerts"
+  },
+  {
+    "heading": "Tracking Inventory"
+  },
+  {
+    "heading": "Location History"
+  },
+  {
+    "heading": "Reports"
+  },
+  {
+    "heading": "Baggage/ULD per flight"
+  },
+  {
+    "heading": "Statistical reports"
+  },
+  {
+    "heading": "Baggage History"
+  },
+  {
+    "heading": "Other reports"
+  },
+  {
+    "heading": "Historical data"
+  },
+  {
+    "heading": "4. SUPPORTING BAGGAGE MANAGEMENT"
+  },
+  {
+    "heading": "Flight Creation and Updating"
+  },
+  {
+    "heading": "Flight status"
+  },
+  {
+    "heading": "Loading Policy"
+  },
+  {
+    "heading": "Basic Checking"
+  },
+  {
+    "heading": "Security checking"
+  },
+  {
+    "heading": "'Assisted' Loading"
+  },
+  {
+    "heading": "Container Management"
+  },
+  {
+    "heading": "Registering Containers and Carts"
+  },
+  {
+    "heading": "Scanning and Loading Bags into Containers, Carts or Holds"
+  },
+  {
+    "heading": "Closing Containers and Offloading Bags"
+  },
+  {
+    "heading": "Positioning Containers"
+  },
+  {
+    "heading": "Baggage Handling"
+  },
+  {
+    "heading": "Connecting Bags"
+  },
+  {
+    "heading": "Offloading Bags"
+  },
+  {
+    "heading": "Selectee Bags"
+  },
+  {
+    "heading": "Rush Bags (aka Expedite Bags)"
+  },
+  {
+    "heading": "Crew Bags"
+  },
+  {
+    "heading": "Self-Tagged Bags"
+  },
+  {
+    "heading": "Outsized Bags"
+  },
+  {
+    "heading": "Bags belonging to Standby Passengers"
+  },
+  {
+    "heading": "Baggage Status on Departure and Arrival"
+  },
+  {
+    "heading": "Reflighting"
+  },
+  {
+    "heading": "5. SYSTEM TECHNICAL ARCHITECTURE"
+  },
+  {
+    "heading": "Objectives"
+  },
+  {
+    "heading": "BagManager Technology Matrix"
+  },
+  {
+    "heading": "Hardware Components"
+  },
+  {
+    "heading": "Application/Database Server"
+  },
+  {
+    "heading": "PC Workstations"
+  },
+  {
+    "heading": "Printers"
+  },
+  {
+    "heading": "Wireless Network"
+  },
+  {
+    "heading": "Wired Local Area Network"
+  },
+  {
+    "heading": "Wide Area Network"
+  },
+  {
+    "heading": "Mobile Device Management"
+  },
+  {
+    "heading": "BagManager Configurations - On-site Cluster"
+  },
+  {
+    "heading": "On-site Cluster with Multi-Airport Support"
+  },
+  {
+    "heading": "BagManager Online"
+  },
+  {
+    "heading": "High Availability"
+  },
+  {
+    "heading": "Business Continuity / Disaster Recovery (DR)"
+  },
+  {
+    "heading": "External Interfaces"
+  },
+  {
+    "heading": "WorldTracer Interface"
+  },
+  {
+    "heading": "BagMessage and Airline DCS Interfaces"
+  },
+  {
+    "heading": "FIDS Interface"
+  },
+  {
+    "heading": "6. SERVICE AND SUPPORT"
+  },
+  {
+    "heading": "Project Management Methodology"
+  },
+  {
+    "heading": "Implementation"
+  },
+  {
+    "heading": "Testing and Acceptance"
+  },
+  {
+    "heading": "Documentation"
+  },
+  {
+    "heading": "Training Services"
+  },
+  {
+    "heading": "Post Cutover Support"
+  },
+  {
+    "heading": "Software Upgrades"
+  },
+  {
+    "heading": "Integration"
+  },
+  {
+    "heading": "User Group Conference"
+  },
+  {
+    "heading": "BagManager Web Site"
+  },
+  {
+    "heading": "7. GLOSSARY"
+  },
+  {
+    "heading": "3. SERVICE AND SUPPORT"
+  },
+  {
+    "heading": "4. GLOSSARY"
+  },
+  {
+    "heading": "SITA Bag Manager Product Overview"
+  },
+  {
+    "heading": "1.0 EXECUTIVE OVERVIEW"
+  },
+  {
+    "heading": "1.1 Benefits of SITA Bag Manager"
+  },
+  {
+    "heading": "1.2 Objectives of SITA Bag Manager"
+  },
+  {
+    "heading": "SITA Bag Manager achieves these objectives by:"
+  },
+  {
+    "heading": "1.3 SITA Bag Manager Lite and SITA Bag Manager Full"
+  },
+  {
+    "heading": "1.4 Product Features"
+  },
+  {
+    "heading": "1.5 System Components"
+  },
+  {
+    "heading": "Application &amp; Database Server"
+  },
+  {
+    "heading": "RFID Readers"
+  },
+  {
+    "heading": "2.0 FEATURE OVERVIEW"
+  },
+  {
+    "heading": "2.1 SITA Bag Manager for Every Type of Operation"
+  },
+  {
+    "heading": "2.2 Real-time Loading Decisions on Mobile Devices"
+  },
+  {
+    "heading": "2.3 End-end Tracking of Arrival and Departure Bags"
+  },
+  {
+    "heading": "2.4 Segregating Baggage in Containers and Printing Container Sheets"
+  },
+  {
+    "heading": "2.5 Baggage Alerts for Potential Problem Bags"
+  },
+  {
+    "heading": "2.6 IATA Resolution 753"
+  },
+  {
+    "heading": "2.7 Displaying Bag Location and Status"
+  },
+  {
+    "heading": "2.8 Information on the Contents of a Container at Any Time"
+  },
+  {
+    "heading": "2.9 Complete Data and User Security"
+  },
+  {
+    "heading": "2.10 Real-time Loading Information About all Flights Being Handled"
+  },
+  {
+    "heading": "2.11 Integrated Multi-Airport Support"
+  },
+  {
+    "heading": "2.12 No Limits!"
+  },
+  {
+    "heading": "2.13 Intelligent Offloading Alerts"
+  },
+  {
+    "heading": "2.14 Reflighting Mishandled Bags"
+  },
+  {
+    "heading": "2.15 Dealing with Disruptions"
+  },
+  {
+    "heading": "2.16 User Interface in different languages"
+  },
+  {
+    "heading": "2.17 Passing Information to the Next Destination"
+  },
+  {
+    "heading": "2.18 Post Flight Enquiries"
+  },
+  {
+    "heading": "2.19 Integration with Airline or Airport Systems"
+  },
+  {
+    "heading": "2.20 IATA and Industry Compatibility"
+  },
+  {
+    "heading": "2.21 SITA Bag Manager User Group"
+  },
+  {
+    "heading": "3.0 SERVICE AND SUPPORT"
+  },
+  {
+    "heading": "3.1 Project Management Methodology"
+  },
+  {
+    "heading": "3.2 Implementation"
+  },
+  {
+    "heading": "3.3 Testing and Acceptance"
+  },
+  {
+    "heading": "3.4 Documentation"
+  },
+  {
+    "heading": "3.5 Training Services"
+  },
+  {
+    "heading": "3.6 Post Cutover Support"
+  },
+  {
+    "heading": "3.7 Software Upgrades"
+  },
+  {
+    "heading": "3.8 Integration"
+  },
+  {
+    "heading": "3.9 User Group Conference"
+  },
+  {
+    "heading": "3.10 SITA Bag Manager Web Site"
+  },
+  {
+    "heading": "4.0 GLOSSARY"
+  },
+  {
+    "heading": "SITA Bag Manager HHT"
+  },
+  {
+    "heading": "Bag Manager Introduction"
+  },
+  {
+    "heading": "Business Objectives"
+  },
+  {
+    "heading": "HHT Application Overview"
+  },
+  {
+    "heading": "View Your Company Information"
+  },
+  {
+    "heading": "Login"
+  },
+  {
+    "heading": "High Level Navigation"
+  },
+  {
+    "heading": "Add Favorites"
+  },
+  {
+    "heading": "View Settings"
+  },
+  {
+    "heading": "Use a Screen"
+  },
+  {
+    "heading": "Bag Overview"
+  },
+  {
+    "heading": "Bag Screens"
+  },
+  {
+    "heading": "Bag &gt; Load Bag into ULD"
+  },
+  {
+    "heading": "Load Bag into ULD"
+  },
+  {
+    "heading": "Actions"
+  },
+  {
+    "heading": "Warnings"
+  },
+  {
+    "heading": "Flight Warnings"
+  },
+  {
+    "heading": "ULD &amp; CS ID Warnings"
+  },
+  {
+    "heading": "Bag Warnings"
+  },
+  {
+    "heading": "Passenger Warnings"
+  },
+  {
+    "heading": "ULD Warnings"
+  },
+  {
+    "heading": "Bag &gt; Load Bag into Hold"
+  },
+  {
+    "heading": "Load Bag into Hold"
+  },
+  {
+    "heading": "Bag &gt; Offload Bag"
+  },
+  {
+    "heading": "Bag &gt; Bag Enquiry"
+  },
+  {
+    "heading": "Perform a Bag Enquiry"
+  },
+  {
+    "heading": "Notes:"
+  },
+  {
+    "heading": "Field Descriptions"
+  },
+  {
+    "heading": "Conditional Actions"
+  },
+  {
+    "heading": "Bag &gt; Pax Bag Enquiry"
+  },
+  {
+    "heading": "Display Passenger Details"
+  },
+  {
+    "heading": "3. Tap Search ."
+  },
+  {
+    "heading": "Bag &gt; Track Bag"
+  },
+  {
+    "heading": "Track a Bag"
+  },
+  {
+    "heading": "Location - Warnings"
+  },
+  {
+    "heading": "Bag &gt; Security Clearance"
+  },
+  {
+    "heading": "Confirm Security Clearance"
+  },
+  {
+    "heading": "Find Bag(s)"
+  },
+  {
+    "heading": "Force Bag(s)"
+  },
+  {
+    "heading": "Force Bag"
+  },
+  {
+    "heading": "Force Reasons"
+  },
+  {
+    "heading": "Create or Update Unknown Bag"
+  },
+  {
+    "heading": "Enter Unknown Bag Details"
+  },
+  {
+    "heading": "Mark Bag"
+  },
+  {
+    "heading": "ULD &amp; Hold Overview"
+  },
+  {
+    "heading": "ULD &amp; Hold Screens"
+  },
+  {
+    "heading": "Assign ULD"
+  },
+  {
+    "heading": "Container Sheet Warnings"
+  },
+  {
+    "heading": "Available Options"
+  },
+  {
+    "heading": "ULD Enquiry"
+  },
+  {
+    "heading": "View ULD Details"
+  },
+  {
+    "heading": "Perform Hold Enquiry"
+  },
+  {
+    "heading": "2. Enter a Hold ID ."
+  },
+  {
+    "heading": "Hold Warnings"
+  },
+  {
+    "heading": "Position ULD"
+  },
+  {
+    "heading": "1. Enter or scan a ULD ID or CS ID ."
+  },
+  {
+    "heading": "ULD &amp; CS Warnings"
+  },
+  {
+    "heading": "2. Enter or scan a Position ID ."
+  },
+  {
+    "heading": "Merge ULD to ULD"
+  },
+  {
+    "heading": "Merge a ULD"
+  },
+  {
+    "heading": "'Merge From' ULD Warnings"
+  },
+  {
+    "heading": "'Merge To' ULD Warnings"
+  },
+  {
+    "heading": "Create CS"
+  },
+  {
+    "heading": "Create Container Sheet"
+  },
+  {
+    "heading": "2. Select a ULD type ."
+  },
+  {
+    "heading": "4. If applicable:"
+  },
+  {
+    "heading": "Transfer Flight Warnings"
+  },
+  {
+    "heading": "Merge from/to Holds"
+  },
+  {
+    "heading": "Merge a ULD or Hold"
+  },
+  {
+    "heading": "'Merge From' ULD/Hold Warnings"
+  },
+  {
+    "heading": "'Merge To' Hold Warnings"
+  },
+  {
+    "heading": "Remove ULD"
+  },
+  {
+    "heading": "Remove the ULD"
+  },
+  {
+    "heading": "2. Tap Confirm ."
+  },
+  {
+    "heading": "3. Click Confirm ."
+  },
+  {
+    "heading": "Departures Overview"
+  },
+  {
+    "heading": "Departures Screens"
+  },
+  {
+    "heading": "Departure Flights &gt; Flight Monitor"
+  },
+  {
+    "heading": "Display Departing Flights"
+  },
+  {
+    "heading": "Departure Flights &gt; Loading Status"
+  },
+  {
+    "heading": "View Loading Status"
+  },
+  {
+    "heading": "Notes :"
+  },
+  {
+    "heading": "Departure Flights &gt; Bags to Load"
+  },
+  {
+    "heading": "View Bags to Load"
+  },
+  {
+    "heading": "View Bags by Destination"
+  },
+  {
+    "heading": "View Bags by Status"
+  },
+  {
+    "heading": "View Incoming Bags"
+  },
+  {
+    "heading": "View Bags by Location"
+  },
+  {
+    "heading": "View Bags by Class"
+  },
+  {
+    "heading": "Departure Flights &gt; Bags to Offload"
+  },
+  {
+    "heading": "View Bags to Offload"
+  },
+  {
+    "heading": "Offload Reasons"
+  },
+  {
+    "heading": "Departure Flights &gt; ULD/Hold List"
+  },
+  {
+    "heading": "View ULD/Hold List"
+  },
+  {
+    "heading": "ULD &amp; Hold &gt; Rush Bag Enquiry"
+  },
+  {
+    "heading": "View Rush Bags"
+  },
+  {
+    "heading": "Arrivals Overview"
+  },
+  {
+    "heading": "Arrivals Screens"
+  },
+  {
+    "heading": "Arrival Flights &gt; Flight Monitor"
+  },
+  {
+    "heading": "Display Flight Monitor"
+  },
+  {
+    "heading": "Arrival Flights &gt; Arrival Transfers"
+  },
+  {
+    "heading": "Display Arrival Transfers"
+  },
+  {
+    "heading": "Arrival Flight Warnings"
+  },
+  {
+    "heading": "Arrival Flights &gt; First and Last Bag"
+  },
+  {
+    "heading": "Register First &amp; Last Bag"
+  },
+  {
+    "heading": "2. Enter an Unload Location ."
+  },
+  {
+    "heading": "Unload Location Warnings"
+  },
+  {
+    "heading": "Arrival Flights &gt; Scan Arrival Bags"
+  },
+  {
+    "heading": "Scan Arrival Bags"
+  },
+  {
+    "heading": "Scan Location Warnings"
+  },
+  {
+    "heading": "Miscellaneous &gt; Overview"
+  },
+  {
+    "heading": "Miscellaneous Screens"
+  },
+  {
+    "heading": "Miscellaneous &gt; Change Password"
+  },
+  {
+    "heading": "Change Password"
+  },
+  {
+    "heading": "Possible Error Messages"
+  },
+  {
+    "heading": "Glossary"
+  },
+  {
+    "heading": "SITA Bag Manager"
+  },
+  {
+    "heading": "Introduction to Bag Manager"
+  },
+  {
+    "heading": "Use Bag Manager Securely"
+  },
+  {
+    "heading": "Overview of the HHT"
+  },
+  {
+    "heading": "Add Items to Your Favorites"
+  },
+  {
+    "heading": "Display All Menu Items"
+  },
+  {
+    "heading": "Color Coding"
+  },
+  {
+    "heading": "Flight fields"
+  },
+  {
+    "heading": "Bag columns"
+  },
+  {
+    "heading": "Bags Never on Aircraft"
+  },
+  {
+    "heading": "ETD/ATD"
+  },
+  {
+    "heading": "Bag tag ID"
+  },
+  {
+    "heading": "Location"
+  },
+  {
+    "heading": "Workflow: Load Bags using the HHT"
+  },
+  {
+    "heading": "Load Bags using the HHT"
+  },
+  {
+    "heading": "Create Container Sheets"
+  },
+  {
+    "heading": "Menu: ULD &amp; HOLD &gt; Create CS"
+  },
+  {
+    "heading": "ASSIGNED"
+  },
+  {
+    "heading": "Assign a ULD to a Container Sheet"
+  },
+  {
+    "heading": "Menu: ULD &amp; HOLD &gt; Assign ULD"
+  },
+  {
+    "heading": "Load Bags into a ULD"
+  },
+  {
+    "heading": "Menu: BAG &gt; Load Bag into ULD"
+  },
+  {
+    "heading": "Load Bags into the Hold"
+  },
+  {
+    "heading": "Menu: BAG &gt; Load Bag into Hold"
+  },
+  {
+    "heading": "Position a ULD on the Aircraft"
+  },
+  {
+    "heading": "Menu: ULD &amp; HOLD &gt; Position ULD"
+  },
+  {
+    "heading": "Monitor Loading of the Flight"
+  },
+  {
+    "heading": "Menu: DEPARTURES &gt; Loading Status"
+  },
+  {
+    "heading": "Resolve a Loading Error"
+  },
+  {
+    "heading": "Track Bags"
+  },
+  {
+    "heading": "Menu: BAG &gt; Track Bag"
+  },
+  {
+    "heading": "HHT Transactions List"
+  },
+  {
+    "heading": "Flights"
+  },
+  {
+    "heading": "Container Sheets"
+  },
+  {
+    "heading": "Bags"
+  },
+  {
+    "heading": "ULDs and Holds"
+  },
+  {
+    "heading": "Arrivals"
+  },
+  {
+    "heading": "Loading Errors"
+  },
+  {
+    "heading": "Bag Security Reasons"
+  },
+  {
+    "heading": "Baggage Segregation Reasons"
+  },
+  {
+    "heading": "Flight Reasons"
+  },
+  {
+    "heading": "Other Reasons"
+  },
+  {
+    "heading": "BagManager 6.33"
+  },
+  {
+    "heading": "HHT User Guide"
+  },
+  {
+    "heading": "Logout"
+  },
+  {
+    "heading": "Timeout"
+  },
+  {
+    "heading": "Password Expiration"
+  },
+  {
+    "heading": "Main Menu"
+  },
+  {
+    "heading": "Menu Options"
+  },
+  {
+    "heading": "Selecting a menu option"
+  },
+  {
+    "heading": "Dynamic Display Features"
+  },
+  {
+    "heading": "Selecting an option directly from the menu"
+  },
+  {
+    "heading": "HHT Features"
+  },
+  {
+    "heading": "Supported Models"
+  },
+  {
+    "heading": "2. Zebra MC9190-K"
+  },
+  {
+    "heading": "4. Honeywell D99EX"
+  },
+  {
+    "heading": "6. Zebra MC 95xx"
+  },
+  {
+    "heading": "7. Zebra MC 9200"
+  },
+  {
+    "heading": "HHT Field Descriptions"
+  },
+  {
+    "heading": "HHT Graphical User Interface"
+  },
+  {
+    "heading": "Usability"
+  },
+  {
+    "heading": "GUI Interaction"
+  },
+  {
+    "heading": "Keypad-Only Use"
+  },
+  {
+    "heading": "Screen Description"
+  },
+  {
+    "heading": "Header Area"
+  },
+  {
+    "heading": "Application Area"
+  },
+  {
+    "heading": "Display-only Group Area"
+  },
+  {
+    "heading": "Active Group Area"
+  },
+  {
+    "heading": "Navigation Area"
+  },
+  {
+    "heading": "Message/Status Area"
+  },
+  {
+    "heading": "HHT Screen Style"
+  },
+  {
+    "heading": "HHT Shortcut Keys"
+  },
+  {
+    "heading": "Capitalization Rules and Field Displayed Values"
+  },
+  {
+    "heading": "Default Flight for HHT Session"
+  },
+  {
+    "heading": "Operating the HHT"
+  },
+  {
+    "heading": "Loading Strategy"
+  },
+  {
+    "heading": "Dealing with Unknown Bags"
+  },
+  {
+    "heading": "Scan Determination"
+  },
+  {
+    "heading": "Bag &gt; Load Bag into BHE"
+  },
+  {
+    "heading": "Load Bag into BHE"
+  },
+  {
+    "heading": "2. Input the Baggage Tag Id ."
+  },
+  {
+    "heading": "Complete Bag Enquiry"
+  },
+  {
+    "heading": "Warning Sounds :"
+  },
+  {
+    "heading": "Bag &gt; Suggest BHE"
+  },
+  {
+    "heading": "Scan Determination :"
+  },
+  {
+    "heading": "Bag &gt; Reflight Bags"
+  },
+  {
+    "heading": "Examples :"
+  },
+  {
+    "heading": "Note :"
+  },
+  {
+    "heading": "Bag &gt; Send QoH"
+  },
+  {
+    "heading": "Bag &gt; Quick Reflight"
+  },
+  {
+    "heading": "Quick Reflight bag(s)"
+  },
+  {
+    "heading": "Bag &gt; Force Bag"
+  },
+  {
+    "heading": "Reasons :"
+  },
+  {
+    "heading": "Bag &gt; Force All Bags"
+  },
+  {
+    "heading": "Force All bags"
+  },
+  {
+    "heading": "Forced/unknown Bag from workstation view:"
+  },
+  {
+    "heading": "Bag &gt; Update Unknown"
+  },
+  {
+    "heading": "Update Unknown"
+  },
+  {
+    "heading": "Bag &gt; Mark Bag"
+  },
+  {
+    "heading": "Categories"
+  },
+  {
+    "heading": "Processing Notes"
+  },
+  {
+    "heading": "No Categories Available Message"
+  },
+  {
+    "heading": "BHE and Hold Overview"
+  },
+  {
+    "heading": "Assign BHE/ULD"
+  },
+  {
+    "heading": "BHE/ULD Enquiry"
+  },
+  {
+    "heading": "View specific BHE/ULD"
+  },
+  {
+    "heading": "View Hold Enquiry"
+  },
+  {
+    "heading": "Merge BHE to BHE"
+  },
+  {
+    "heading": "Merge BHE"
+  },
+  {
+    "heading": "Update Type"
+  },
+  {
+    "heading": "Update BHE or Hold type"
+  },
+  {
+    "heading": "Dest :"
+  },
+  {
+    "heading": "Transfer Flight s:"
+  },
+  {
+    "heading": "Merge Holds"
+  },
+  {
+    "heading": "Track ULD"
+  },
+  {
+    "heading": "Departure Flights Overview"
+  },
+  {
+    "heading": "Optional entries :"
+  },
+  {
+    "heading": "Optional entries"
+  },
+  {
+    "heading": "Display Bags to Load"
+  },
+  {
+    "heading": "You may also select to view:"
+  },
+  {
+    "heading": "Additional screens:"
+  },
+  {
+    "heading": "Find bags belonging to ULD"
+  },
+  {
+    "heading": "To offload bags"
+  },
+  {
+    "heading": "Current screen"
+  },
+  {
+    "heading": "Proposed screen"
+  },
+  {
+    "heading": "Offload Reason :"
+  },
+  {
+    "heading": "View BHE/Hold List"
+  },
+  {
+    "heading": "Posn (position) value:"
+  },
+  {
+    "heading": "Bag value : total loaded for the flight"
+  },
+  {
+    "heading": "Departure Flights &gt; Crew Bags"
+  },
+  {
+    "heading": "Create Crew Bags"
+  },
+  {
+    "heading": "Departure Flights &gt; Extra Crew Bags"
+  },
+  {
+    "heading": "Add Extra Crew Bags"
+  },
+  {
+    "heading": "Departrure Flights &gt; Flight Details"
+  },
+  {
+    "heading": "View Flight Details"
+  },
+  {
+    "heading": "Arrival Flights Overview"
+  },
+  {
+    "heading": "Arrival Flights &gt; First &amp; Last Bag"
+  },
+  {
+    "heading": "Message Center &gt; Overview"
+  },
+  {
+    "heading": "Message Center &gt; Manage Alerts"
+  },
+  {
+    "heading": "Manage Alerts"
+  },
+  {
+    "heading": "Delegate Alert"
+  },
+  {
+    "heading": "Message Center &gt; Received Messages"
+  },
+  {
+    "heading": "View and Reply to Received Messages"
+  },
+  {
+    "heading": "Message Center &gt; Send Messages"
+  },
+  {
+    "heading": "Send a message"
+  },
+  {
+    "heading": "Message Center &gt; Sent Messages"
+  },
+  {
+    "heading": "View Sent Messages"
+  },
+  {
+    "heading": "Miscellaneous &gt; Assign/Unassign Location"
+  },
+  {
+    "heading": "Assign or Unassign a Location"
+  },
+  {
+    "heading": "Miscellaneous &gt; HHT Details"
+  },
+  {
+    "heading": "View HHT Details"
+  },
+  {
+    "heading": "Miscellaneous &gt; Printer Selection"
+  },
+  {
+    "heading": "Select a Printer"
+  },
+  {
+    "heading": "ULD Management &gt; Overview"
+  },
+  {
+    "heading": "ULD Management &gt; Store ULD"
+  },
+  {
+    "heading": "Store ULD"
+  },
+  {
+    "heading": "Mark as Damaged"
+  },
+  {
+    "heading": "ULD Management &gt; Remove Stored ULD"
+  },
+  {
+    "heading": "Remove Stored ULD"
+  },
+  {
+    "heading": "ULD Management &gt; ULD Storage"
+  },
+  {
+    "heading": "View ULD Storage"
+  },
+  {
+    "heading": "Set ULD as Repaired or Damaged"
+  },
+  {
+    "heading": "Workstation User Guide"
+  },
+  {
+    "heading": "Getting Started"
+  },
+  {
+    "heading": "Login/Logout"
+  },
+  {
+    "heading": "Roles"
+  },
+  {
+    "heading": "Browsers and Operating Systems"
+  },
+  {
+    "heading": "Screen Resolutions"
+  },
+  {
+    "heading": "Network Characteristics"
+  },
+  {
+    "heading": "Scanners &amp; Printers"
+  },
+  {
+    "heading": "Messages"
+  },
+  {
+    "heading": "Icons"
+  },
+  {
+    "heading": "Available Actions"
+  },
+  {
+    "heading": "Working with Message Center"
+  },
+  {
+    "heading": "Working with Alerts"
+  },
+  {
+    "heading": "Alert field descriptions"
+  },
+  {
+    "heading": "Filter"
+  },
+  {
+    "heading": "(Alert Information)"
+  },
+  {
+    "heading": "Working With Received Messages"
+  },
+  {
+    "heading": "(Message Information)"
+  },
+  {
+    "heading": "Working with Sent Messages"
+  },
+  {
+    "heading": "Sent Messages field descriptions"
+  },
+  {
+    "heading": "(Message Information) Block"
+  },
+  {
+    "heading": "Working with Message Center Configuration"
+  },
+  {
+    "heading": "Note : Normal processing does not allow you to send and receive messages to o from other companies. Users entered in this tab can send you messages."
+  },
+  {
+    "heading": "Message Center Configuration field descriptions"
+  },
+  {
+    "heading": "User Id Block"
+  },
+  {
+    "heading": "(Added User) Block"
+  },
+  {
+    "heading": "Settings"
+  },
+  {
+    "heading": "Favorites"
+  },
+  {
+    "heading": "Assigning Favorites"
+  },
+  {
+    "heading": "Favorites field descriptions"
+  },
+  {
+    "heading": "Company Menu"
+  },
+  {
+    "heading": "Create Roles"
+  },
+  {
+    "heading": "Search Roles"
+  },
+  {
+    "heading": "Display Role"
+  },
+  {
+    "heading": "Note : You are able to Update the Role from this page, click Update Role at the bottom of the screen."
+  },
+  {
+    "heading": "Delete Role"
+  },
+  {
+    "heading": "Clone Role"
+  },
+  {
+    "heading": "Update Role"
+  },
+  {
+    "heading": "Create / Update / Clone field descriptions"
+  },
+  {
+    "heading": "Role Info"
+  },
+  {
+    "heading": "User Groups"
+  },
+  {
+    "heading": "Search User Group"
+  },
+  {
+    "heading": "Create User Group"
+  },
+  {
+    "heading": "Display User Group"
+  },
+  {
+    "heading": "Update User Group"
+  },
+  {
+    "heading": "Delete User Group"
+  },
+  {
+    "heading": "User Group field descriptions"
+  },
+  {
+    "heading": "Users"
+  },
+  {
+    "heading": "Create User"
+  },
+  {
+    "heading": "Display User"
+  },
+  {
+    "heading": "Update User"
+  },
+  {
+    "heading": "Clone User"
+  },
+  {
+    "heading": "Activate Users"
+  },
+  {
+    "heading": "Disable Users"
+  },
+  {
+    "heading": "Delete User"
+  },
+  {
+    "heading": "Create/Update User field descriptions"
+  },
+  {
+    "heading": "User Info tab"
+  },
+  {
+    "heading": "My Account"
+  },
+  {
+    "heading": "Display Account"
+  },
+  {
+    "heading": "Update Account"
+  },
+  {
+    "heading": "Audit Info"
+  },
+  {
+    "heading": "Search Audit Info"
+  },
+  {
+    "heading": "Search Audit Info field descriptions"
+  },
+  {
+    "heading": "Assume User Identity"
+  },
+  {
+    "heading": "Applications"
+  },
+  {
+    "heading": "Standard Field Descriptions"
+  },
+  {
+    "heading": "Standard Procedures"
+  },
+  {
+    "heading": "Selecting Records"
+  },
+  {
+    "heading": "Sorting Records"
+  },
+  {
+    "heading": "Standard Icon and Screen Controls"
+  },
+  {
+    "heading": "Printing"
+  },
+  {
+    "heading": "Flight fields:"
+  },
+  {
+    "heading": "Bag columns:"
+  },
+  {
+    "heading": "Bags Requiring Attention fields:"
+  },
+  {
+    "heading": "Tag Id column:"
+  },
+  {
+    "heading": "Location column:"
+  },
+  {
+    "heading": "Query Panel"
+  },
+  {
+    "heading": "Paging and Scrolling"
+  },
+  {
+    "heading": "Query field descriptions"
+  },
+  {
+    "heading": "ETD Range"
+  },
+  {
+    "heading": "Route"
+  },
+  {
+    "heading": "Area"
+  },
+  {
+    "heading": "Display Flight Progress"
+  },
+  {
+    "heading": "Manage Flights"
+  },
+  {
+    "heading": "Manage ULDs"
+  },
+  {
+    "heading": "View Connecting Bags"
+  },
+  {
+    "heading": "View Manifest"
+  },
+  {
+    "heading": "View Reconciliation"
+  },
+  {
+    "heading": "View Missing Departure Bags"
+  },
+  {
+    "heading": "Flight Monitor field descriptions"
+  },
+  {
+    "heading": "Flight and Bag Information Panel"
+  },
+  {
+    "heading": "Flight Monitor Display"
+  },
+  {
+    "heading": "To Load"
+  },
+  {
+    "heading": "OK to Load"
+  },
+  {
+    "heading": "Not OK to Load"
+  },
+  {
+    "heading": "Note : If the number is more than 0, the background of this field is red."
+  },
+  {
+    "heading": "Departure Flights &gt; Flight Progress"
+  },
+  {
+    "heading": "Update ETD"
+  },
+  {
+    "heading": "Note : This is enabled for open and closed flights only."
+  },
+  {
+    "heading": "Update Flight"
+  },
+  {
+    "heading": "View Bag Enquiry"
+  },
+  {
+    "heading": "View Passenger Summary"
+  },
+  {
+    "heading": "Scan Bingo Sheet"
+  },
+  {
+    "heading": "Loading Status"
+  },
+  {
+    "heading": "Loading Status field descriptions"
+  },
+  {
+    "heading": "Bags Requiring Attention"
+  },
+  {
+    "heading": "Additional Information"
+  },
+  {
+    "heading": "Not Loaded"
+  },
+  {
+    "heading": "Offloaded"
+  },
+  {
+    "heading": "Loaded"
+  },
+  {
+    "heading": "On Aircraft"
+  },
+  {
+    "heading": "Flight Route"
+  },
+  {
+    "heading": "Reconciliation"
+  },
+  {
+    "heading": "Note : These two sections of the screen are independent of each other."
+  },
+  {
+    "heading": "View ULD/Hold/Bag Enquiry"
+  },
+  {
+    "heading": "Reconciliation field descriptions"
+  },
+  {
+    "heading": "ULD/Hold"
+  },
+  {
+    "heading": "Manifest"
+  },
+  {
+    "heading": "Display bag details for a specific ULD/Hold Id"
+  },
+  {
+    "heading": "Display the loading details"
+  },
+  {
+    "heading": "Manifest field descriptions"
+  },
+  {
+    "heading": "Bag Id"
+  },
+  {
+    "heading": "On-Conn"
+  },
+  {
+    "heading": "On-Conn field descriptions"
+  },
+  {
+    "heading": "Flight"
+  },
+  {
+    "heading": "Onward"
+  },
+  {
+    "heading": "Flight History"
+  },
+  {
+    "heading": "Flight History field descriptions"
+  },
+  {
+    "heading": "Bag Information"
+  },
+  {
+    "heading": "Departure Flights &gt; Connecting Bags"
+  },
+  {
+    "heading": "Departure Filters"
+  },
+  {
+    "heading": "View Departure Manifest"
+  },
+  {
+    "heading": "View Departure Reconciliation"
+  },
+  {
+    "heading": "View Departure Loading Status"
+  },
+  {
+    "heading": "View Arrival Manifest"
+  },
+  {
+    "heading": "Load Bags"
+  },
+  {
+    "heading": "Offload Bags"
+  },
+  {
+    "heading": "Stop Bags"
+  },
+  {
+    "heading": "Unstop Bags"
+  },
+  {
+    "heading": "Departure Flights"
+  },
+  {
+    "heading": "Display Arrival Connecting Bags for a Departure Flight"
+  },
+  {
+    "heading": "Departure Flights field descriptions"
+  },
+  {
+    "heading": "Departure Flight Status"
+  },
+  {
+    "heading": "Departure Flight"
+  },
+  {
+    "heading": "Arrival Connections"
+  },
+  {
+    "heading": "Arrival Connections field descriptions"
+  },
+  {
+    "heading": "Arrival Flights"
+  },
+  {
+    "heading": "View bag details"
+  },
+  {
+    "heading": "Connecting Bags field descriptions"
+  },
+  {
+    "heading": "Monitor Departure Bags"
+  },
+  {
+    "heading": "Generate CSV Report"
+  },
+  {
+    "heading": "Monitor Departure Bags field descriptions"
+  },
+  {
+    "heading": "Filters"
+  },
+  {
+    "heading": "Local Bags"
+  },
+  {
+    "heading": "Crew Bags field descriptions"
+  },
+  {
+    "heading": "Crew Bag Information"
+  },
+  {
+    "heading": "Departure Flights &gt; Bag List Enquiry"
+  },
+  {
+    "heading": "View"
+  },
+  {
+    "heading": "Display Bag Enquiry"
+  },
+  {
+    "heading": "Authorize Bags"
+  },
+  {
+    "heading": "Add Bag Remarks"
+  },
+  {
+    "heading": "Delete Bag Remarks"
+  },
+  {
+    "heading": "Bag List Enquiry field descriptions"
+  },
+  {
+    "heading": "Passenger Summary"
+  },
+  {
+    "heading": "Pax Information"
+  },
+  {
+    "heading": "Display bag details"
+  },
+  {
+    "heading": "Loads Bags"
+  },
+  {
+    "heading": "Passenger Information field descriptions"
+  },
+  {
+    "heading": "Move Flight Contents"
+  },
+  {
+    "heading": "Move flight contents"
+  },
+  {
+    "heading": "Note : If the ULD or Hold is already in use for the new flight, the Move button is disabled and the message ULD already in use for new flight displays."
+  },
+  {
+    "heading": "Move To popup field descriptions"
+  },
+  {
+    "heading": "Step 1 of 2: Enter To Flight Details"
+  },
+  {
+    "heading": "Step 2 of 2: Enter ULD/Hold Details"
+  },
+  {
+    "heading": "· Original ULD/Hold Information:"
+  },
+  {
+    "heading": "· New ULD/Hold Information:"
+  },
+  {
+    "heading": "ULD/BHE and Hold Information field descriptions"
+  },
+  {
+    "heading": "Departure Flights &gt; Statistics"
+  },
+  {
+    "heading": "Date Range"
+  },
+  {
+    "heading": "Print"
+  },
+  {
+    "heading": "Departure Flights &gt; Manage Flights"
+  },
+  {
+    "heading": "Close Flight"
+  },
+  {
+    "heading": "Reopen Flight"
+  },
+  {
+    "heading": "Depart Flight"
+  },
+  {
+    "heading": "Manage CS Templates"
+  },
+  {
+    "heading": "Offload Flight"
+  },
+  {
+    "heading": "Cancel Flight"
+  },
+  {
+    "heading": "Freeze Flight"
+  },
+  {
+    "heading": "Unfreeze Flight"
+  },
+  {
+    "heading": "Set FAM"
+  },
+  {
+    "heading": "Unset FAM"
+  },
+  {
+    "heading": "Update / Add / View Flight"
+  },
+  {
+    "heading": "Add/update/view field descriptions"
+  },
+  {
+    "heading": "Flight Information"
+  },
+  {
+    "heading": "Addition Flight Information"
+  },
+  {
+    "heading": "Personnel Information"
+  },
+  {
+    "heading": "Lateral Information"
+  },
+  {
+    "heading": "Flight Policies"
+  },
+  {
+    "heading": "Missing Departure Bags"
+  },
+  {
+    "heading": "Source of Missing Bags"
+  },
+  {
+    "heading": "Missing Bags"
+  },
+  {
+    "heading": "3. Click Ok ."
+  },
+  {
+    "heading": "Update Segregation"
+  },
+  {
+    "heading": "About Display of Arrival ULDs"
+  },
+  {
+    "heading": "BHE Enquiry field descriptions"
+  },
+  {
+    "heading": "Hold Enquiry field descriptions"
+  },
+  {
+    "heading": "Hold Content Information"
+  },
+  {
+    "heading": "ULD/BHE/Hold &gt; Print Container Sheet"
+  },
+  {
+    "heading": "Print Container Sheet"
+  },
+  {
+    "heading": "Print Container Sheet field descriptions"
+  },
+  {
+    "heading": "Print Details"
+  },
+  {
+    "heading": "· STD Range"
+  },
+  {
+    "heading": "· Flight Range"
+  },
+  {
+    "heading": "· Location"
+  },
+  {
+    "heading": "General Notes:"
+  },
+  {
+    "heading": "· Container Sheet Type Selection"
+  },
+  {
+    "heading": "· Sort Order"
+  },
+  {
+    "heading": "Manage Container Sheets and ULDs"
+  },
+  {
+    "heading": "Print Bingo Sheet"
+  },
+  {
+    "heading": "Note: The Fax option is replaced with an Email to self option in the printer popup."
+  },
+  {
+    "heading": "Use CS Template"
+  },
+  {
+    "heading": "Clone CS(s)"
+  },
+  {
+    "heading": "Print CS(s)"
+  },
+  {
+    "heading": "Assign BHE(s)"
+  },
+  {
+    "heading": "Unassign BHE(s)"
+  },
+  {
+    "heading": "Open BHE(s)"
+  },
+  {
+    "heading": "Close BHE(s)"
+  },
+  {
+    "heading": "Position ULD(s)"
+  },
+  {
+    "heading": "Remove ULD(s)"
+  },
+  {
+    "heading": "Delete CS(s)"
+  },
+  {
+    "heading": "Save as CS Template"
+  },
+  {
+    "heading": "Merge BHE / Hold"
+  },
+  {
+    "heading": "Manage Container Sheets and ULDs field descriptions"
+  },
+  {
+    "heading": "CS or Hold Information"
+  },
+  {
+    "heading": "ULD/BHE Tracking Inventory"
+  },
+  {
+    "heading": "Display BHE/ULD details"
+  },
+  {
+    "heading": "Remove Location"
+  },
+  {
+    "heading": "ULD/BHE Tracking Inventory field descriptions"
+  },
+  {
+    "heading": "Track"
+  },
+  {
+    "heading": "Departure"
+  },
+  {
+    "heading": "Arrival"
+  },
+  {
+    "heading": "ULD/BHE Tracking Location History"
+  },
+  {
+    "heading": "Filters :"
+  },
+  {
+    "heading": "Generate CSV"
+  },
+  {
+    "heading": "ULD/BHE Tracking Location History field descriptions"
+  },
+  {
+    "heading": "Bag &gt; Overview"
+  },
+  {
+    "heading": "Time Range"
+  },
+  {
+    "heading": "Display audit details"
+  },
+  {
+    "heading": "Display BIM details"
+  },
+  {
+    "heading": "Note : Only authorized users can offload bags from a closed or departed flight."
+  },
+  {
+    "heading": "Reprint Tags"
+  },
+  {
+    "heading": "Bag Route tab field descriptions"
+  },
+  {
+    "heading": "Flight types include:"
+  },
+  {
+    "heading": "Bag History tab field descriptions"
+  },
+  {
+    "heading": "All Station History tab field descriptions"
+  },
+  {
+    "heading": "Event Types include:"
+  },
+  {
+    "heading": "Bag &gt; Load Bags"
+  },
+  {
+    "heading": "Flight Status"
+  },
+  {
+    "heading": "Bag Already Loaded in Select BHE or Hold"
+  },
+  {
+    "heading": "Bag Already Loaded on Different Flight"
+  },
+  {
+    "heading": "Wrong Segregation"
+  },
+  {
+    "heading": "BHE Capacity Reached"
+  },
+  {
+    "heading": "Bag &gt; Manage Irregularities"
+  },
+  {
+    "heading": "Irregularity Sub Type"
+  },
+  {
+    "heading": "Authorize Bag(s)"
+  },
+  {
+    "heading": "Delete Crew Bag(s)"
+  },
+  {
+    "heading": "Delete Unknown Bag(s)"
+  },
+  {
+    "heading": "Update Unknown Bag (if a single bag is selected)"
+  },
+  {
+    "heading": "Print Offload Request"
+  },
+  {
+    "heading": "Unstop Bag(s)"
+  },
+  {
+    "heading": "Bag &gt; Not Authorized Bags"
+  },
+  {
+    "heading": "Not Authorized field descriptions"
+  },
+  {
+    "heading": "Note : The manually entered flight cannot be more than 7 days into the future."
+  },
+  {
+    "heading": "Enter WorldTracer Details field descriptions"
+  },
+  {
+    "heading": "Reason for Loss"
+  },
+  {
+    "heading": "New Reflight Bag(s)"
+  },
+  {
+    "heading": "Enter Rush Tag#"
+  },
+  {
+    "heading": "Remove Bag"
+  },
+  {
+    "heading": "Re-enter Flight Details"
+  },
+  {
+    "heading": "Reflight Bags field descriptions"
+  },
+  {
+    "heading": "Outbound Flight"
+  },
+  {
+    "heading": "Onward Flight"
+  },
+  {
+    "heading": "Bag List"
+  },
+  {
+    "heading": "Bag &gt; Forward On Hand Bag"
+  },
+  {
+    "heading": "Forward Bag"
+  },
+  {
+    "heading": "Forward On Hand field descriptions"
+  },
+  {
+    "heading": "WorldTracer Details"
+  },
+  {
+    "heading": "Bag &gt; Forward Held Bag"
+  },
+  {
+    "heading": "Forward Bags"
+  },
+  {
+    "heading": "Enter Bag Details"
+  },
+  {
+    "heading": "Modify Contact Details"
+  },
+  {
+    "heading": "Forward Held Bag field descriptions"
+  },
+  {
+    "heading": "Bags List"
+  },
+  {
+    "heading": "Bag &gt; Forward Bag to LZ"
+  },
+  {
+    "heading": "Forward Bag to LZ field descriptions"
+  },
+  {
+    "heading": "Bag &gt; Rush Bags Enquiry"
+  },
+  {
+    "heading": "Delete Bags"
+  },
+  {
+    "heading": "Rush Bags Enquiry field descriptions"
+  },
+  {
+    "heading": "Summary tab"
+  },
+  {
+    "heading": "Bag &gt; Tracking Inventory Enquiry"
+  },
+  {
+    "heading": "Tracking Inventory Enquiry field descriptions"
+  },
+  {
+    "heading": "Bag &gt; Tracking Location History"
+  },
+  {
+    "heading": "Tracking Inventory History field descriptions"
+  },
+  {
+    "heading": "Bag &gt; Marked Bags"
+  },
+  {
+    "heading": "Marked Bags field descriptions"
+  },
+  {
+    "heading": "Arrival Flights &gt; Overview"
+  },
+  {
+    "heading": "ETA Range"
+  },
+  {
+    "heading": "View Arrival Status"
+  },
+  {
+    "heading": "View Baggage Details"
+  },
+  {
+    "heading": "View Delivery Performance"
+  },
+  {
+    "heading": "Due"
+  },
+  {
+    "heading": "Exceptions"
+  },
+  {
+    "heading": "Terminating"
+  },
+  {
+    "heading": "Connecting"
+  },
+  {
+    "heading": "Arrival Flight Progress"
+  },
+  {
+    "heading": "Update ETA"
+  },
+  {
+    "heading": "Arrival Status"
+  },
+  {
+    "heading": "View Bag List Enquiry"
+  },
+  {
+    "heading": "Arrival Status field descriptions"
+  },
+  {
+    "heading": "Arriving"
+  },
+  {
+    "heading": "Departing"
+  },
+  {
+    "heading": "BHE/ULD/Hold"
+  },
+  {
+    "heading": "Transfer"
+  },
+  {
+    "heading": "Transfer field descriptions"
+  },
+  {
+    "heading": "Arrival Bag List Enquiry"
+  },
+  {
+    "heading": "Filter Arrival Bag List Enquiry"
+  },
+  {
+    "heading": "View specific bag details"
+  },
+  {
+    "heading": "Arrival Bag List Enquiry field descriptions"
+  },
+  {
+    "heading": "Arrival Flights &gt; Connecting Bags"
+  },
+  {
+    "heading": "Arrival Filters"
+  },
+  {
+    "heading": "Transfer Alerting"
+  },
+  {
+    "heading": "Display a departure connection"
+  },
+  {
+    "heading": "Arrival Flights field descriptions"
+  },
+  {
+    "heading": "Departure Connections"
+  },
+  {
+    "heading": "Departure Connections field descriptions"
+  },
+  {
+    "heading": "Display a Bag Enquiry"
+  },
+  {
+    "heading": "Flight Selection"
+  },
+  {
+    "heading": "View Baggage Detail"
+  },
+  {
+    "heading": "Monitor Arrival Bags field descriptions"
+  },
+  {
+    "heading": "UnLoaded"
+  },
+  {
+    "heading": "About"
+  },
+  {
+    "heading": "Prerequisites"
+  },
+  {
+    "heading": "FIDS"
+  },
+  {
+    "heading": "Terminating and Connecting BSMs"
+  },
+  {
+    "heading": "Processing Scanned Arrival Bags"
+  },
+  {
+    "heading": "Bag Types"
+  },
+  {
+    "heading": "Known Bag Categories"
+  },
+  {
+    "heading": "Arrival Flights &gt; Baggage Detail"
+  },
+  {
+    "heading": "View Bag Count Information"
+  },
+  {
+    "heading": "Baggage Detail field descriptions"
+  },
+  {
+    "heading": "Flight Details"
+  },
+  {
+    "heading": "· (Graph)"
+  },
+  {
+    "heading": "Delivery Performance"
+  },
+  {
+    "heading": "Generate Statistics"
+  },
+  {
+    "heading": "Delivery Performance field descriptions"
+  },
+  {
+    "heading": "Unassigned Unknown Bags"
+  },
+  {
+    "heading": "Print Bags Report"
+  },
+  {
+    "heading": "Unassigned Unknown Bags field descriptions"
+  },
+  {
+    "heading": "Bag Details"
+  },
+  {
+    "heading": "Arrival Flights &gt; Statistics"
+  },
+  {
+    "heading": "Print Missing Bags"
+  },
+  {
+    "heading": "Statistics field descriptions"
+  },
+  {
+    "heading": "Arrival Flights &gt; Manage Flights"
+  },
+  {
+    "heading": "Arrive Flight"
+  },
+  {
+    "heading": "Un-Arrive Flight"
+  },
+  {
+    "heading": "Un-Cancel Flight"
+  },
+  {
+    "heading": "Update / Add / View Flight field descriptions"
+  },
+  {
+    "heading": "Belt Information"
+  },
+  {
+    "heading": "Miscellaneous Overview"
+  },
+  {
+    "heading": "Activity Reporting"
+  },
+  {
+    "heading": "Note : Hourly Event Counts can only be displayed for a single day."
+  },
+  {
+    "heading": "Activity Reporting field descriptions"
+  },
+  {
+    "heading": "Activity Details tab"
+  },
+  {
+    "heading": "ULD Inventory"
+  },
+  {
+    "heading": "Mark as Repaired"
+  },
+  {
+    "heading": "ULD Inventory field descriptions"
+  },
+  {
+    "heading": "Tracking Inventory Details"
+  },
+  {
+    "heading": "Configuration Overview"
+  },
+  {
+    "heading": "Manage HHT Assignments"
+  },
+  {
+    "heading": "Approve / Reject HHT Requests"
+  },
+  {
+    "heading": "Assign HHTs"
+  },
+  {
+    "heading": "Note : The OK button is disabled until the HHT Id and User ID fields are completed."
+  },
+  {
+    "heading": "Unassign HHT"
+  },
+  {
+    "heading": "Manage HHT Assignments field descriptions"
+  },
+  {
+    "heading": "User"
+  },
+  {
+    "heading": "HHT Request"
+  },
+  {
+    "heading": "Add / Update a Template"
+  },
+  {
+    "heading": "Delete a Template"
+  },
+  {
+    "heading": "Manage CS Templates field descriptions"
+  },
+  {
+    "heading": "Container Sheet Templates"
+  },
+  {
+    "heading": "Manage Flight Schedules"
+  },
+  {
+    "heading": "Create / Update Flight Schedules"
+  },
+  {
+    "heading": "Generate Flights"
+  },
+  {
+    "heading": "Create Schedule From"
+  },
+  {
+    "heading": "Delete Flight Schedule"
+  },
+  {
+    "heading": "Manage Flight Schedules field descriptions"
+  },
+  {
+    "heading": "Operational Range"
+  },
+  {
+    "heading": "Manage Tracking Locations"
+  },
+  {
+    "heading": "Delete Action/Alert"
+  },
+  {
+    "heading": "Print Location Sheets"
+  },
+  {
+    "heading": "Add or Update Action/Alert"
+  },
+  {
+    "heading": "Update Action / Alert field descriptions"
+  },
+  {
+    "heading": "Location Details"
+  },
+  {
+    "heading": "Tracking"
+  },
+  {
+    "heading": "ULD Tracking"
+  },
+  {
+    "heading": "Manage Printers"
+  },
+  {
+    "heading": "Display Printer"
+  },
+  {
+    "heading": "Delete Printer"
+  },
+  {
+    "heading": "Disable Printer"
+  },
+  {
+    "heading": "Create / Update Printer"
+  },
+  {
+    "heading": "Create / Update Printer field descriptions"
+  },
+  {
+    "heading": "Printer Id"
+  },
+  {
+    "heading": "Printer Attributes"
+  },
+  {
+    "heading": "Manage Email Addresses"
+  },
+  {
+    "heading": "Email Addresses tab"
+  },
+  {
+    "heading": "Add Email Address"
+  },
+  {
+    "heading": "Update Email Address"
+  },
+  {
+    "heading": "Delete Email Address"
+  },
+  {
+    "heading": "Update From Address"
+  },
+  {
+    "heading": "Email Groups tab"
+  },
+  {
+    "heading": "Add Email Group"
+  },
+  {
+    "heading": "Delete Email Groups"
+  },
+  {
+    "heading": "Update Email Group"
+  },
+  {
+    "heading": "SITA Bag Manager Lite"
+  },
+  {
+    "heading": "Getting Started with Bag Manager"
+  },
+  {
+    "heading": "Bag Manager User Interface"
+  },
+  {
+    "heading": "Open the Menu"
+  },
+  {
+    "heading": "Open the Search Panel"
+  },
+  {
+    "heading": "The Menu Bar"
+  },
+  {
+    "heading": "Action Menu"
+  },
+  {
+    "heading": "Hyperlinks"
+  },
+  {
+    "heading": "Entering Information"
+  },
+  {
+    "heading": "Screen Automatic Refresh"
+  },
+  {
+    "heading": "Screen Manual Refresh"
+  },
+  {
+    "heading": "Bag Manager V6 to V7"
+  },
+  {
+    "heading": "Menu Item Differences"
+  },
+  {
+    "heading": "Display Departure Flight Monitor and Bag Summary"
+  },
+  {
+    "heading": "Display the Flight Monitor using Bag Manager Workstation"
+  },
+  {
+    "heading": "Display the Flight Monitor using Bag Manager HHT"
+  },
+  {
+    "heading": "Display Flight Progress using Bag Manager Workstation"
+  },
+  {
+    "heading": "Display Flight Progress using Bag Manager HHT"
+  },
+  {
+    "heading": "Print Barcodes using Bag Manager Workstation"
+  },
+  {
+    "heading": "Display Connecting Flights and Bags"
+  },
+  {
+    "heading": "Display the Connecting Bags Dashboard"
+  },
+  {
+    "heading": "To monitor by departure flight"
+  },
+  {
+    "heading": "To monitor by arrival flight"
+  },
+  {
+    "heading": "Display Connecting Bags for your Current Flight"
+  },
+  {
+    "heading": "Menu: Flight Progress &gt; Connecting Bags"
+  },
+  {
+    "heading": "Display Connecting Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Manage Flights using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Departures &gt; Manage Flights"
+  },
+  {
+    "heading": "Create or Update a Flight Schedule"
+  },
+  {
+    "heading": "Create a Flight Schedule"
+  },
+  {
+    "heading": "Generate Flights in Bag Manager from Schedules"
+  },
+  {
+    "heading": "Create a Flight Schedule from an Existing Schedule"
+  },
+  {
+    "heading": "Update an Existing Flight Schedule"
+  },
+  {
+    "heading": "Create an Ad Hoc Flight"
+  },
+  {
+    "heading": "Create an Ad Hoc Flight using Bag Manager Workstation"
+  },
+  {
+    "heading": "Manage Container Sheets"
+  },
+  {
+    "heading": "What Is a Container Sheet?"
+  },
+  {
+    "heading": "Create Container Sheet Templates"
+  },
+  {
+    "heading": "Create a Container Sheet Template from Scratch"
+  },
+  {
+    "heading": "Menu: Configuration &gt; Manage CS Templates"
+  },
+  {
+    "heading": "Print Container Sheets for Multiple Flights"
+  },
+  {
+    "heading": "Print Container Sheets using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: ULD &amp; Hold &gt; Print Container Sheet Batch"
+  },
+  {
+    "heading": "Print Container Sheet Batch Window"
+  },
+  {
+    "heading": "Create and Print Container Sheets for a Single Flight"
+  },
+  {
+    "heading": "Create Container Sheets using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Flight Progress &gt; ULD &amp; Hold tab"
+  },
+  {
+    "heading": "Create Container Sheets From a Template using Bag Manager"
+  },
+  {
+    "heading": "Create Container Sheets using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: ULD &amp; Hold &gt; Create CS"
+  },
+  {
+    "heading": "Assign a ULD to a Container Sheet using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Flight Progress &gt; ULD &amp; Hold tab."
+  },
+  {
+    "heading": "Assign a ULD to a Container Sheet using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: ULD &amp; Hold &gt; Assign ULD"
+  },
+  {
+    "heading": "Manage Bags"
+  },
+  {
+    "heading": "Load Bags into ULD or Hold"
+  },
+  {
+    "heading": "Load Bags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Load Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: Bag &gt; Load Bag into ULD"
+  },
+  {
+    "heading": "Menu: Bag &gt; Load Bag into Hold"
+  },
+  {
+    "heading": "Force Bags"
+  },
+  {
+    "heading": "Offload a Bag using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Flight Progress"
+  },
+  {
+    "heading": "Offload a Bag using Bag Manager HHT"
+  },
+  {
+    "heading": "Stop a Bag using Bag Manager Workstation"
+  },
+  {
+    "heading": "Stop a Bag using Bag Manager HHT"
+  },
+  {
+    "heading": "Display Bag Details and History"
+  },
+  {
+    "heading": "Bag Event History"
+  },
+  {
+    "heading": "Display Bag Details using Bag Manager Workstation"
+  },
+  {
+    "heading": "Display Bag Details using Bag Manager HHT"
+  },
+  {
+    "heading": "Display Marked Bags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Bag &gt; Marked Bags"
+  },
+  {
+    "heading": "Mark a Bag using Bag Manager HHT"
+  },
+  {
+    "heading": "Display Rush Bags"
+  },
+  {
+    "heading": "Display Rush Bags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Flight Progress &gt; Loading Status tab"
+  },
+  {
+    "heading": "Rush bags by date, flight, destination:"
+  },
+  {
+    "heading": "Menu: Bag &gt; Rush Bag Enquiry"
+  },
+  {
+    "heading": "Display Rush Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Manage Tracked Bags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Track Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: Bag &gt; Track Bag"
+  },
+  {
+    "heading": "Manage Irregular Bags"
+  },
+  {
+    "heading": "Manage Irregular Bags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Manage ULDs and Holds"
+  },
+  {
+    "heading": "About ULDs and Holds"
+  },
+  {
+    "heading": "Position ULDs"
+  },
+  {
+    "heading": "Position ULDs using Bag Manager Workstation"
+  },
+  {
+    "heading": "Position a ULD using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: ULD &amp; Hold &gt; Position ULD"
+  },
+  {
+    "heading": "Merge Bags into a ULD or Hold"
+  },
+  {
+    "heading": "Merge Bags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Merge Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Display ULD Contents and History"
+  },
+  {
+    "heading": "Display ULD Details using Bag Manager Workstation"
+  },
+  {
+    "heading": "Display ULD Details using Bag Manager HHT"
+  },
+  {
+    "heading": "Manage Arrivals"
+  },
+  {
+    "heading": "Use the Hand-held Terminal (HHT)"
+  },
+  {
+    "heading": "Overview of HHT"
+  },
+  {
+    "heading": "Display Bags to Load using Bag Manager HHT"
+  },
+  {
+    "heading": "Find Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Find a Single Bag"
+  },
+  {
+    "heading": "Find Bags to Offload on a Flight"
+  },
+  {
+    "heading": "Manage Unknown Bag using Bag Manager HHT"
+  },
+  {
+    "heading": "Reports, Statistics and Monitoring"
+  },
+  {
+    "heading": "What Reports Can I Print?"
+  },
+  {
+    "heading": "Print an Ad Hoc Report"
+  },
+  {
+    "heading": "Reports Available"
+  },
+  {
+    "heading": "Generate a Predefined Statistics Report"
+  },
+  {
+    "heading": "Display or Download Statistics"
+  },
+  {
+    "heading": "Tip:"
+  },
+  {
+    "heading": "Display Bag Manager Events"
+  },
+  {
+    "heading": "Manage HHT Inventory"
+  },
+  {
+    "heading": "Menu: Configuration &gt; Manage HHT Inventory"
+  },
+  {
+    "heading": "Manage Tracking Location and Tracking Alerts"
+  },
+  {
+    "heading": "Create a Tracking Location Action/Alert"
+  },
+  {
+    "heading": "Menu: Configuration &gt; Manage Tracking Locations"
+  },
+  {
+    "heading": "5. Click Configure ."
+  },
+  {
+    "heading": "Tracking Actions for Tracking Location Type = Arrival (Bags):"
+  },
+  {
+    "heading": "Display Printers using Bag Manager Workstation"
+  },
+  {
+    "heading": "Manage Users and System Access"
+  },
+  {
+    "heading": "About User Management"
+  },
+  {
+    "heading": "Workflow: Setting Up Users and Roles"
+  },
+  {
+    "heading": "Manage Roles"
+  },
+  {
+    "heading": "Create a Role using Bag Manager Workstation"
+  },
+  {
+    "heading": "Manage Users, User Groups and Departments"
+  },
+  {
+    "heading": "Create a User using Bag Manager Workstation"
+  },
+  {
+    "heading": "User Info Tab"
+  },
+  {
+    "heading": "Roles Tab"
+  },
+  {
+    "heading": "Groups Tab"
+  },
+  {
+    "heading": "Create a User Group using Bag Manager Workstation"
+  },
+  {
+    "heading": "Create a Department using Bag Manager Workstation"
+  },
+  {
+    "heading": "User Management Audits"
+  },
+  {
+    "heading": "Audit User Updates using Bag Manager Workstation"
+  },
+  {
+    "heading": "Change or Reset Password"
+  },
+  {
+    "heading": "Change My Password using Bag Manager Workstation"
+  },
+  {
+    "heading": "Reset the Password for Another User using Bag Manager Work-"
+  },
+  {
+    "heading": "station"
+  },
+  {
+    "heading": "Change My Password using Bag Manager HHT"
+  },
+  {
+    "heading": "FAQs"
+  },
+  {
+    "heading": "What is the historical date range for a flight?"
+  },
+  {
+    "heading": "How do I reprint a container sheet?"
+  },
+  {
+    "heading": "Why does a bag have a status of To Reflight when the flight has not yet departed?"
+  },
+  {
+    "heading": "How to I configure missing bag highlighting in the Flight Monitor screen?"
+  },
+  {
+    "heading": "How do I print a bingo sheet for a flight?"
+  },
+  {
+    "heading": "How do I print a flight manifest?"
+  },
+  {
+    "heading": "Bag Status and Bag Types"
+  },
+  {
+    "heading": "Departure Bag Status"
+  },
+  {
+    "heading": "Arrival Bag Status"
+  },
+  {
+    "heading": "Bag Manager Field Abbreviations"
+  },
+  {
+    "heading": "Baggage Information Messages (BIM)"
+  },
+  {
+    "heading": "BSM - Baggage Source Message"
+  },
+  {
+    "heading": "BSM"
+  },
+  {
+    "heading": ".S/Y/03A/C/001/001"
+  },
+  {
+    "heading": "BSM CHG"
+  },
+  {
+    "heading": "BSM DEL"
+  },
+  {
+    "heading": "BPM - Baggage Processed Message"
+  },
+  {
+    "heading": "BUM - Baggage Unload Message"
+  },
+  {
+    "heading": "BNS - Baggage Not Seen Message"
+  },
+  {
+    "heading": "BMM - Baggage Manifest Message"
+  },
+  {
+    "heading": "BCM - Baggage Control Message"
+  },
+  {
+    "heading": "What Is Transfer Alerting?"
+  },
+  {
+    "heading": "100% ULD reconciliation"
+  },
+  {
+    "heading": "9-digit tag number matching"
+  },
+  {
+    "heading": "Active bag"
+  },
+  {
+    "heading": "AODB"
+  },
+  {
+    "heading": "Arrival Scanning"
+  },
+  {
+    "heading": "Arrival Tracking"
+  },
+  {
+    "heading": "Asset"
+  },
+  {
+    "heading": "Asset Management"
+  },
+  {
+    "heading": "ATD"
+  },
+  {
+    "heading": "ATT"
+  },
+  {
+    "heading": "Authorized Bag ."
+  },
+  {
+    "heading": "Auto Unassign"
+  },
+  {
+    "heading": "Bag"
+  },
+  {
+    "heading": "Bag Attribute"
+  },
+  {
+    "heading": "Bag ID"
+  },
+  {
+    "heading": "Bag Status"
+  },
+  {
+    "heading": "Bag Tag"
+  },
+  {
+    "heading": "Bag Type"
+  },
+  {
+    "heading": "Baggage Tag Status"
+  },
+  {
+    "heading": "BCM"
+  },
+  {
+    "heading": "BHE"
+  },
+  {
+    "heading": "Baggage Segregation Type"
+  },
+  {
+    "heading": "Baggage Handling System"
+  },
+  {
+    "heading": "BIM"
+  },
+  {
+    "heading": "Bingo Sheet"
+  },
+  {
+    "heading": "BMM"
+  },
+  {
+    "heading": "CCTN"
+  },
+  {
+    "heading": "Connecting Bag"
+  },
+  {
+    "heading": "Container"
+  },
+  {
+    "heading": "Container Sheet (CS)"
+  },
+  {
+    "heading": "Container Sheet ID"
+  },
+  {
+    "heading": "Continuous Mode"
+  },
+  {
+    "heading": "Crew bags"
+  },
+  {
+    "heading": "Damaged Bag"
+  },
+  {
+    "heading": "DCS"
+  },
+  {
+    "heading": "Deleted Bag"
+  },
+  {
+    "heading": "Delivered For Arrival"
+  },
+  {
+    "heading": "Duplicate Bag"
+  },
+  {
+    "heading": "Early Bags Storage (EBS)"
+  },
+  {
+    "heading": "Expedite Bag"
+  },
+  {
+    "heading": "FAH"
+  },
+  {
+    "heading": "Fallback Sortation Tag"
+  },
+  {
+    "heading": "Flight ID"
+  },
+  {
+    "heading": "FOH"
+  },
+  {
+    "heading": "Forward"
+  },
+  {
+    "heading": "FQTV"
+  },
+  {
+    "heading": "Frozen Flight"
+  },
+  {
+    "heading": "FST"
+  },
+  {
+    "heading": "FWD"
+  },
+  {
+    "heading": "Gate Bags"
+  },
+  {
+    "heading": "Ground Handling Agent (GHA)"
+  },
+  {
+    "heading": "Hand Held Terminal (HHT)"
+  },
+  {
+    "heading": "HHT ID"
+  },
+  {
+    "heading": "Historical (data) Range"
+  },
+  {
+    "heading": "Hold"
+  },
+  {
+    "heading": "Hold ID"
+  },
+  {
+    "heading": "Hot Bag"
+  },
+  {
+    "heading": "Hub ULD"
+  },
+  {
+    "heading": "IATA"
+  },
+  {
+    "heading": "ICAO"
+  },
+  {
+    "heading": "Inactive Bag"
+  },
+  {
+    "heading": "Inbound Bag"
+  },
+  {
+    "heading": "Issuer Code"
+  },
+  {
+    "heading": "Joining Bags"
+  },
+  {
+    "heading": "Lateral"
+  },
+  {
+    "heading": "License Plate Number (LPN)"
+  },
+  {
+    "heading": "Load Sequence Number (LSeq)"
+  },
+  {
+    "heading": "Local Checked In Bag"
+  },
+  {
+    "heading": "Loose Loading"
+  },
+  {
+    "heading": "Manual bags"
+  },
+  {
+    "heading": "Mapped Class Code"
+  },
+  {
+    "heading": "MHUB (Segregation type)"
+  },
+  {
+    "heading": "Misconnect bag"
+  },
+  {
+    "heading": "Mishandled bag"
+  },
+  {
+    "heading": "Multi-airport"
+  },
+  {
+    "heading": "Never on Aircraft (NoA)"
+  },
+  {
+    "heading": "Not Authorized bag"
+  },
+  {
+    "heading": "Not OK Bag"
+  },
+  {
+    "heading": "Offload Reason"
+  },
+  {
+    "heading": "OK Bag"
+  },
+  {
+    "heading": "On Hand Bag"
+  },
+  {
+    "heading": "Onward Connection"
+  },
+  {
+    "heading": "Open"
+  },
+  {
+    "heading": "Overrule Bag"
+  },
+  {
+    "heading": "Parking Stand or Stand"
+  },
+  {
+    "heading": "Passenger Seat"
+  },
+  {
+    "heading": "Passenger Security Number"
+  },
+  {
+    "heading": "Passenger Sequence Number"
+  },
+  {
+    "heading": "Passenger Serial Number (PSN)"
+  },
+  {
+    "heading": "Passenger Status"
+  },
+  {
+    "heading": "Quality of Service (QoS)"
+  },
+  {
+    "heading": "Reconciled Bag"
+  },
+  {
+    "heading": "RFID"
+  },
+  {
+    "heading": "RP1745"
+  },
+  {
+    "heading": "Rush Bag"
+  },
+  {
+    "heading": "Seat Number"
+  },
+  {
+    "heading": "Security Checking"
+  },
+  {
+    "heading": "Security Clearance"
+  },
+  {
+    "heading": "Security Number"
+  },
+  {
+    "heading": "Selectee"
+  },
+  {
+    "heading": "Sequence Number"
+  },
+  {
+    "heading": "SITA Bag Message"
+  },
+  {
+    "heading": "Sortation System"
+  },
+  {
+    "heading": "STA"
+  },
+  {
+    "heading": "Standby"
+  },
+  {
+    "heading": "Station"
+  },
+  {
+    "heading": "STD"
+  },
+  {
+    "heading": "Stopped bag"
+  },
+  {
+    "heading": "Surname"
+  },
+  {
+    "heading": "Tail to Tail Transfer"
+  },
+  {
+    "heading": "Terminating Bag"
+  },
+  {
+    "heading": "Thru Bag"
+  },
+  {
+    "heading": "To Reflight"
+  },
+  {
+    "heading": "To Stop"
+  },
+  {
+    "heading": "Tracing"
+  },
+  {
+    "heading": "Tracking Location"
+  },
+  {
+    "heading": "Transfer Bags"
+  },
+  {
+    "heading": "ULD"
+  },
+  {
+    "heading": "ULD and Hold Baggage Segregation"
+  },
+  {
+    "heading": "ULD ID"
+  },
+  {
+    "heading": "Reference"
+  },
+  {
+    "heading": "ULD Position"
+  },
+  {
+    "heading": "Unaccompanied Bag"
+  },
+  {
+    "heading": "Unknown Bag (UNK Bag)"
+  },
+  {
+    "heading": "Unloaded"
+  },
+  {
+    "heading": "User ID"
+  },
+  {
+    "heading": "2023 ANNUAL MEETING MINUTES"
+  },
+  {
+    "heading": "Attendees"
+  },
+  {
+    "heading": "1 Welcome and Intros"
+  },
+  {
+    "heading": "3 Bag Manager v7 Preview"
+  },
+  {
+    "heading": "4 Customer Portal"
+  },
+  {
+    "heading": "1 Open Discussion"
+  },
+  {
+    "heading": "2 Specific V7 Demos upon Request"
+  },
+  {
+    "heading": "V6 Arrival configuration"
+  },
+  {
+    "heading": "3 1-1 Meetings"
+  },
+  {
+    "heading": "DEAR BAG MANAGER CUSTOMERS"
+  },
+  {
+    "heading": "PREFACE"
+  },
+  {
+    "heading": "WHAT IS A MISHANDLED BAG?"
+  },
+  {
+    "heading": "ABOUT SITA'S BAGGAGE REPORT 2012"
+  },
+  {
+    "heading": "2011 BAGGAGE FACTS-AT-A-GLANCE"
+  },
+  {
+    "heading": "FIVE-YEAR STATS: INDUSTRY IMPROVEMENTS SINCE 2007"
+  },
+  {
+    "heading": "KEY STATISTICS"
+  },
+  {
+    "heading": "Mishandled Bags 2011"
+  },
+  {
+    "heading": "Year on Year Change in Mishandled Bags"
+  },
+  {
+    "heading": "TRANSFER BAGS REMAIN THE NUMBER ONE CONCERN"
+  },
+  {
+    "heading": "Delayed Bags 2011"
+  },
+  {
+    "heading": "LOOKING AHEAD"
+  },
+  {
+    "heading": "STAR ALLIANCE TARGETS TRANSIT BAGS"
+  },
+  {
+    "heading": "LEE HOCK LYE"
+  },
+  {
+    "heading": "REGIONAL PERSPECTIVES"
+  },
+  {
+    "heading": "Year On Year Percentage Change In Mishandling Bag Rate"
+  },
+  {
+    "heading": "IMPROVING THE PASSENGER EXPERIENCE"
+  },
+  {
+    "heading": "OPPORTUNITIES TO DELIVER BETTER SERVICES"
+  },
+  {
+    "heading": "Airline and Airport Plans Versus Passenger Interest"
+  },
+  {
+    "heading": "Self bag tagging"
+  },
+  {
+    "heading": "Reporting of mislaid bags via kiosk"
+  },
+  {
+    "heading": "IT'S ALREADY GETTING BETTER FOR PASSENGERS"
+  },
+  {
+    "heading": "EXPERIENCING THE BAG JOURNEY OF THE FUTURE"
+  },
+  {
+    "heading": "THE SELF-SERVICE JOURNEY TODAY"
+  },
+  {
+    "heading": "SELF-SERVICE BAG DROP 24X7"
+  },
+  {
+    "heading": "IF IT SAVES ME TIME - I WILL GLADLY DO IT"
+  },
+  {
+    "heading": "WHAT'S HAPPENING TO MY BAGS?"
+  },
+  {
+    "heading": "TRACK YOUR BAG - JUST LIKE A PARCEL"
+  },
+  {
+    "heading": "CAN BAG-HANDLING SYSTEMS KEEP PACE WITH PASSENGERS?"
+  },
+  {
+    "heading": "INTELLIGENT TECHNOLOGY POISED TO TAKE THE LEAD BEHIND THE SCENES"
+  },
+  {
+    "heading": "IMPROVED INTEGRATION AND GREATER AVAILABILITY OF DATA FROM BAGGAGE HANDLING SYSTEMS IS ON THE WAY. EFFECTIVE MANAGEMENT OF THIS DATA WILL BE THE CRITICAL NEXT STEP IN SUSTAINING ENHANCEMENTS TO THE PASSENGER EXPERIENCE."
+  },
+  {
+    "heading": "END-TO-END QUALITY IS A MUST BUT IT DEPENDS ON GOOD DATA"
+  },
+  {
+    "heading": "SHAPING THE FUTURE OF BAGGAGE HANDLING"
+  },
+  {
+    "heading": "INDUSTRY INITIATIVES ARE NEEDED TO STANDARDIZE DATA, SUPPORT SHARING OF INFORMATION AND SYSTEMS, WHILE ALSO USING EXISTING DATA MORE INTELLIGENTLY"
+  },
+  {
+    "heading": "IATA BAGGAGE QUALITY PROGRAM STANDARDIZING THE DATA"
+  },
+  {
+    "heading": "IATA, 2012"
+  },
+  {
+    "heading": "AIRPORTS WORKING ON STANDARDIZING BAGGAGE DATA"
+  },
+  {
+    "heading": "SITA - ENABLING VISIBILITY THROUGH MORE INTELLIGENT USE OF DATA"
+  },
+  {
+    "heading": "CONCLUSIONS"
+  },
+  {
+    "heading": "SITA AT-A-GLANCE"
+  },
+  {
+    "heading": "OTHER KEY FACTS ABOUT SITA"
+  },
+  {
+    "heading": "South Europe"
+  },
+  {
+    "heading": "AIR TRANSPORT INDUSTRY INSIGHTS"
+  },
+  {
+    "heading": "THE Baggage report"
+  },
+  {
+    "heading": "2012 BAGGAGE FACTS -AT-A GlANCE"
+  },
+  {
+    "heading": "HIGHlIGHTS"
+  },
+  {
+    "heading": "2011 vERSUS 2012"
+  },
+  {
+    "heading": "Short term trends for mishandled bags"
+  },
+  {
+    "heading": "long term trends for mishandled bags"
+  },
+  {
+    "heading": "THE SIx YEAR TREND"
+  },
+  {
+    "heading": "2011-2012 change in reasons for delayed bags 2011-2012 change in reason for delayed bags"
+  },
+  {
+    "heading": "The reasons for delayed bags The reason for delayed bags"
+  },
+  {
+    "heading": "TAKING CONTROl OF TRANSFER BAG"
+  },
+  {
+    "heading": "IBERIA"
+  },
+  {
+    "heading": "RODRIGO zAPARDIEl GENTO"
+  },
+  {
+    "heading": "HElSINKI AIRPORT"
+  },
+  {
+    "heading": "THE AIRPORT PERSPECTIvE"
+  },
+  {
+    "heading": "Airport analysis: mishandled bags per 000 passengers"
+  },
+  {
+    "heading": "Airport analysis: mishandled bag rate par airport size across regions"
+  },
+  {
+    "heading": "REGIONAl AIRlINE PERSPECTIvES"
+  },
+  {
+    "heading": "Trends across regions: mishandled bags per 000 passengers"
+  },
+  {
+    "heading": "ASIA PACIFIC"
+  },
+  {
+    "heading": "USA"
+  },
+  {
+    "heading": "vICTORIA DAY"
+  },
+  {
+    "heading": "EUROPE"
+  },
+  {
+    "heading": "liberalization is the key to further improvements"
+  },
+  {
+    "heading": "ImPROvING THE PASSENGER ExPERIENCE"
+  },
+  {
+    "heading": "PASSENGER DEmAND"
+  },
+  {
+    "heading": "AIR TRANSPORT INDUSTRY INvESTmENT"
+  },
+  {
+    "heading": "Investment plan for self service by the industry  by end of 2015 Investment plan for self service by the industry"
+  },
+  {
+    "heading": "CUSTOmER FACING INNOvATIONS"
+  },
+  {
+    "heading": "lUKE HAYHOE"
+  },
+  {
+    "heading": "HOmE BAG TAG PRINTING TO SPEED UP BAG DROP"
+  },
+  {
+    "heading": "AIRPORT-AIRlINE COllABORATION BEHIND THE SCENES"
+  },
+  {
+    "heading": "AlEjANDRO RIvERA GIl"
+  },
+  {
+    "heading": "SCAlING FOR ExPANSION"
+  },
+  {
+    "heading": "THE RIGHT BAG AT THE RIGHT TImE"
+  },
+  {
+    "heading": "jOHN BEASlEY"
+  },
+  {
+    "heading": "SHAPING THE FUTURE"
+  },
+  {
+    "heading": "INBAG: REDUCING mISHANDlING, ImPROvING EFFICIENCY AND ENABlING INNOvATION"
+  },
+  {
+    "heading": "The InBag Program has three objectives:"
+  },
+  {
+    "heading": "BAGGAGE CONTINUES TO BE A TOP PRIORITY FOR AIRPORT OPERATORS"
+  },
+  {
+    "heading": "THE ImPACT OF SElF-SERvICE ON BAGGAGE HANDlING SYSTEmS"
+  },
+  {
+    "heading": "ENABlING SmARTER TRANSFER BAG DECISION mAKING"
+  },
+  {
+    "heading": "wHAT IS A mISHANDlED BAG?"
+  },
+  {
+    "heading": "SCOPE OF THE 2013 BAGGAGE REPORT"
+  },
+  {
+    "heading": "Baggage statistics since 2007"
+  },
+  {
+    "heading": "mishandled bags per 000 passenger across regions"
+  },
+  {
+    "heading": "NOTES AND REFERENCES"
+  },
+  {
+    "heading": "SITA AT A GlANCE"
+  },
+  {
+    "heading": "The air transport industry is the most dynamic and exciting community on earth - and SITA is its heart."
+  },
+  {
+    "heading": "2013 BAGGAGE FACTS AT-A-GlANCE"
+  },
+  {
+    "heading": "2013 VERSUS 2012"
+  },
+  {
+    "heading": "Short term trends for mishandled bags Short term trends for mishandled bags"
+  },
+  {
+    "heading": "2013 Breakdown of mishandled bags 2013 Breakdown of mishandled bags"
+  },
+  {
+    "heading": "TEN-YEAR TREND IN BAG HANDlING: 2003 - 2013"
+  },
+  {
+    "heading": "Long term trends for mishandled bags long term trends for mishandled bags"
+  },
+  {
+    "heading": "Trend of passengers enplaned and bags mishandled"
+  },
+  {
+    "heading": "REGIONAl OVERVIEWS"
+  },
+  {
+    "heading": "THE AIRPORT PERSPECTIVE"
+  },
+  {
+    "heading": "THE AIRlINE PERSPECTIVE"
+  },
+  {
+    "heading": "Europe"
+  },
+  {
+    "heading": "Mishandled bags per thousand passengers across regions Mishandled bags per thousand passengers across regions"
+  },
+  {
+    "heading": "Asia Pacific"
+  },
+  {
+    "heading": "JOHN HEIMlICH"
+  },
+  {
+    "heading": "HANDlING THE TRANSFER CHAllENGE"
+  },
+  {
+    "heading": "TRANSFER BAG METRICS 2013 VERSUS 2012"
+  },
+  {
+    "heading": "lONG-TERM TRENDS"
+  },
+  {
+    "heading": "2013 The reasons for delayed bags 2013 The reasons for delayed bags"
+  },
+  {
+    "heading": "TRANSFER INSIGHTS FROM WORlD HUBS"
+  },
+  {
+    "heading": "SINGAPORE"
+  },
+  {
+    "heading": "AIRPORT INVESTMENTS"
+  },
+  {
+    "heading": "YEO KIA THYE"
+  },
+  {
+    "heading": "DUBAI INTERNATIONAL"
+  },
+  {
+    "heading": "BERND STRUCK"
+  },
+  {
+    "heading": "KEVIN SMITH"
+  },
+  {
+    "heading": "LONDON"
+  },
+  {
+    "heading": "JOHN BEASlEY"
+  },
+  {
+    "heading": "ISTANBUL"
+  },
+  {
+    "heading": "ATIllA MURAT ÜNMAN LONDON"
+  },
+  {
+    "heading": "SElF-SERVICE ADOPTION"
+  },
+  {
+    "heading": "SElF-SERVICE PROCESS MODElS"
+  },
+  {
+    "heading": "Time saving initiatives"
+  },
+  {
+    "heading": "low-cost self-service strategies"
+  },
+  {
+    "heading": "Actively driving automation"
+  },
+  {
+    "heading": "BORIS BUBRESKO"
+  },
+  {
+    "heading": "Seamless self-service"
+  },
+  {
+    "heading": "Giving guests more control"
+  },
+  {
+    "heading": "BAGGAGE PROCESSING: THE NEXT STEPS"
+  },
+  {
+    "heading": "Electronic bag-tags"
+  },
+  {
+    "heading": "City bag-drop"
+  },
+  {
+    "heading": "WHERE'S MY BAG? THE BAG REPATRIATION PROCESS"
+  },
+  {
+    "heading": "Behind the scenes"
+  },
+  {
+    "heading": "Returning the bag"
+  },
+  {
+    "heading": "Repatriation costs - who pays?"
+  },
+  {
+    "heading": "THE IMPORTANCE OF INFORMATION"
+  },
+  {
+    "heading": "Enhanced customer service through baggage tracking"
+  },
+  {
+    "heading": "Easier access to baggage information"
+  },
+  {
+    "heading": "Baggage information messages are key to information sharing"
+  },
+  {
+    "heading": "Customer focussed baggage recovery"
+  },
+  {
+    "heading": "Process improvement in Kuala lumpur"
+  },
+  {
+    "heading": "NICK GATES"
+  },
+  {
+    "heading": "TACKlING THE COST OF BAGGAGE HANDlING"
+  },
+  {
+    "heading": "MAXIMIZING THE USE OF BAGGAGE DATA"
+  },
+  {
+    "heading": "WHAT IS A MISHANDlED BAG?"
+  },
+  {
+    "heading": "SCOPE OF 2014 BAGGAGE REPORT"
+  },
+  {
+    "heading": "Baggage statistics WorldTracer statistics"
+  },
+  {
+    "heading": "AIR TRANSPORT INDUSTRY INSIGHTS 2015"
+  },
+  {
+    "heading": "FOREWORD"
+  },
+  {
+    "heading": "BAGGAGE FACTS AT-A-GLANCE"
+  },
+  {
+    "heading": "KEY TRENDS"
+  },
+  {
+    "heading": "OVERVIEW"
+  },
+  {
+    "heading": "AIRLINES AND AIRPORTS ARE PLANNING MORE SELF-SERVICE BAGGAGE OPTIONS"
+  },
+  {
+    "heading": "PASSENGERS WANT BAGGAGE SERVICES THAT GIVE THEM MORE CONTROL"
+  },
+  {
+    "heading": "MISHANDLED BAG TRENDS"
+  },
+  {
+    "heading": "Trend of Passengers enplanned and bags mishandled"
+  },
+  {
+    "heading": "Long term trends for mishandled bags Long term trends for mishandled bags"
+  },
+  {
+    "heading": "US$18BN"
+  },
+  {
+    "heading": "2014 The reasons for delayed bags 2014 The reasons for delayed bags"
+  },
+  {
+    "heading": "INNOVATION"
+  },
+  {
+    "heading": "BAG-TAGGING MOVES OFF-AIRPORT"
+  },
+  {
+    "heading": "Giving passengers more control"
+  },
+  {
+    "heading": "SELF-SERVICE BAG-DROP PICK UP THE PACE"
+  },
+  {
+    "heading": "More choice for passengers and more flexibility"
+  },
+  {
+    "heading": "AUTOMATED SYSTEMS IMPROVING BAG DELIVERY AND MISHANDLING"
+  },
+  {
+    "heading": "BAG TRACKING MOVES UP THE AGENDA"
+  },
+  {
+    "heading": "Meeting passengers' desire for more information"
+  },
+  {
+    "heading": "Differentiating through baggage performance"
+  },
+  {
+    "heading": "BAGS IN THE LAB"
+  },
+  {
+    "heading": "GOOD PROGRESS AND NEW BAGGAGE INITIATIVES"
+  },
+  {
+    "heading": "Report from International Air Transport Association IATA"
+  },
+  {
+    "heading": "ANDREW PRICE"
+  },
+  {
+    "heading": "A WEB SERVICE TO BETTER SERVE PASSENGERS"
+  },
+  {
+    "heading": "Report from Airports Council International World"
+  },
+  {
+    "heading": "SERGE YONKE NGUEWO"
+  },
+  {
+    "heading": "SCOPE OF 2015 BAGGAGE REPORT"
+  },
+  {
+    "heading": "SITA AT A GLANCE"
+  },
+  {
+    "heading": "Americas"
+  },
+  {
+    "heading": "KEY BAGGAGE TRENDS"
+  },
+  {
+    "heading": "+1.6BN PASSENGER GROWTH, WITH MISHANDLED BAGS RATE DECREASE"
+  },
+  {
+    "heading": "2003-2015: PERFORMANCE IMPROVEMENTS"
+  },
+  {
+    "heading": "PASSENGERS EXPECT TO MAKE MORE USE OF SELF-SERVICE BAG-DROP"
+  },
+  {
+    "heading": "AIRLINES AND AIRPORTS ACCELERATE SELF-SERVICE BAG-DROP OPTIONS"
+  },
+  {
+    "heading": "MORE OPTIONS FOR SELF-TAGGING"
+  },
+  {
+    "heading": "HOME-PRINTED TAGS GATHER MOMENTUM"
+  },
+  {
+    "heading": "NEXT STEPS FOR HOME-PRINTED TAGS IN EUROPE"
+  },
+  {
+    "heading": "Xavier Wohlschlag, Operations Director, Genève Aéroport ,"
+  },
+  {
+    "heading": "SOLUTIONS FOR BAGS SEPARATED FROM THEIR TAGS"
+  },
+  {
+    "heading": "BAG-DROP INITIATIVES TO MEET THE NEEDS OF ALL USERS"
+  },
+  {
+    "heading": "Air New Zealand Group General Manager Airports John"
+  },
+  {
+    "heading": "TECHNOLOGY THAT SUITS PASSENGERS' PREFERENCES"
+  },
+  {
+    "heading": "TRACKING INITIATIVES SET TO IMPROVE BAG HANDLING PERFORMANCE"
+  },
+  {
+    "heading": "AAI Executive Director (IT, FIU and RCDU), Ravi Prakash , said:"
+  },
+  {
+    "heading": "DELIVERING TRANSPARENT BAGGAGE INFORMATION IN REAL-TIME"
+  },
+  {
+    "heading": "INSIGHTS FROM THE CARGO SECTOR"
+  },
+  {
+    "heading": "INVESTING IN BAGGAGE SYSTEMS"
+  },
+  {
+    "heading": "Shanghai Airport Authority Group vice general manager"
+  },
+  {
+    "heading": "Chief Operations Officer at Abu Dhabi Airports, Ahmad Al"
+  },
+  {
+    "heading": "TACKLING INCREASING DEMANDS ON CAPACITY"
+  },
+  {
+    "heading": "INTEGRATING INFORMATION FOR BETTER BAGGAGE SERVICES"
+  },
+  {
+    "heading": "2015 BAG HANDLING PERFORMANCE IN DEPTH"
+  },
+  {
+    "heading": "THE GLOBAL PERSPECTIVE"
+  },
+  {
+    "heading": "2015 DELAYED, DAMAGED OR LOST BAGS"
+  },
+  {
+    "heading": "US$22BN TOTAL MISHANDLED BAG"
+  },
+  {
+    "heading": "COST SAVINGS SINCE 2007"
+  },
+  {
+    "heading": "REASONS FOR DELAYED BAGS IN 2015"
+  },
+  {
+    "heading": "IMPROVING LONG-TERM REGIONAL TRENDS"
+  },
+  {
+    "heading": "INVESTING IN BAG TECHNOLOGY"
+  },
+  {
+    "heading": "FOCUSING ON BAGGAGE INNOVATION"
+  },
+  {
+    "heading": "ENHANCING PASSENGER AND CABIN BAGGAGE SCREENING"
+  },
+  {
+    "heading": "SCOPE OF THE 2016 BAGGAGE REPORT"
+  },
+  {
+    "heading": "SITA transforms air travel through technology for airlines, at airports and on aircraft."
+  },
+  {
+    "heading": "AIR TRANSPORT INDUSTRY INSIGHTS THE BAGGAGE REPORT"
+  },
+  {
+    "heading": "TRACKING BAGS THROUGHOUT THE JOURNEY Did you know...?"
+  },
+  {
+    "heading": "US$0.1"
+  },
+  {
+    "heading": "Bags return to screening area"
+  },
+  {
+    "heading": "US$3bn"
+  },
+  {
+    "heading": "TRACKING BAGS THOUGHOUT THE JOURNEY"
+  },
+  {
+    "heading": "+1.2BN PASSENGER GROWTH, WITH MISHANDLED BAGS RATE DECREASE"
+  },
+  {
+    "heading": "RFID - THE TECH SOLUTION FOR THE WHOLE BAG JOURNEY?"
+  },
+  {
+    "heading": "TRACKING INNOVATIONS"
+  },
+  {
+    "heading": "GREATER CERTAINTY FOR BAG DELIVERY"
+  },
+  {
+    "heading": "CONSUMER-FACING TRACKING SERVICES"
+  },
+  {
+    "heading": "BAGGAGE TRACKING PERSPECTIVES"
+  },
+  {
+    "heading": "THE AIRPORT: VÁCLAV HAVEL AIRPORT PRAGUE"
+  },
+  {
+    "heading": "THE AIRLINE: AMERICAN AIRLINES"
+  },
+  {
+    "heading": "THE BUSINESS CASE FOR TRACKING"
+  },
+  {
+    "heading": "BUSINESS CASE PERSPECTIVES"
+  },
+  {
+    "heading": "THE AIRPORT: FRANKFURT INTERNATIONAL"
+  },
+  {
+    "heading": "TRACKING DATA IS THE BASIS FOR ANALYZING MISHANDLING REASONS... AND ONLY ONCE YOU KNOW THE PROBLEM AND THE REASON, CAN YOU CHANGE IT."
+  },
+  {
+    "heading": "THE AIRLINE: DELTA AIR LINES"
+  },
+  {
+    "heading": "RFID TECHNOLOGY PROVIDES A RELIABLE BAGGAGE TRACKING EXPERIENCE TO OUR CUSTOMERS"
+  },
+  {
+    "heading": "INDUSTRY COLLABORATION"
+  },
+  {
+    "heading": "AIRPORTS ARE INVESTING TO SUPPORT AIRLINE PARTNERS"
+  },
+  {
+    "heading": "IATA AND END-TO-END BAGGAGE"
+  },
+  {
+    "heading": "· Tracking"
+  },
+  {
+    "heading": "· Message Modernization"
+  },
+  {
+    "heading": "COMPETITION AND BAG DATA COLLABORATION GO HAND-IN-HAND"
+  },
+  {
+    "heading": "2016 BAG HANDLING PERFORMANCE IN DEPTH"
+  },
+  {
+    "heading": "THE GLOBAL PICTURE"
+  },
+  {
+    "heading": "7.2% REDUCTION IN MISHANDLED BAGS"
+  },
+  {
+    "heading": "2007-2016: PERFORMANCE IMPROVEMENTS"
+  },
+  {
+    "heading": "REASONS FOR DELAYED BAGS IN 2016"
+  },
+  {
+    "heading": "2016 DELAYED, DAMAGED OR LOST BAGS"
+  },
+  {
+    "heading": "REGIONAL INSIGHTS"
+  },
+  {
+    "heading": "IMPROVING LONG TERM REGIONAL TRENDS"
+  },
+  {
+    "heading": "METHODOLOGY"
+  },
+  {
+    "heading": "NOTES"
+  },
+  {
+    "heading": "THE BAGGAGE REPORT"
+  },
+  {
+    "heading": "BAGGAGE: REBOOTING THE PASSENGER EXPERIENCE"
+  },
+  {
+    "heading": "DROP-OFF IN THE CITY"
+  },
+  {
+    "heading": "AUTOMATION EVERYWHERE"
+  },
+  {
+    "heading": "REAL-TIME NOTIFICATIONS"
+  },
+  {
+    "heading": "A T A RESOLUTION 753 MANDATORY I TRACKING POINTS"
+  },
+  {
+    "heading": "AIRLINES AND AIRPORTS: A SHARED STRATEGY"
+  },
+  {
+    "heading": "AIRLINES"
+  },
+  {
+    "heading": "AIRPORTS"
+  },
+  {
+    "heading": "INNOVATING BAG TRACKING WITH PROVEN TECHNOLOGY"
+  },
+  {
+    "heading": "TRACKING: ACHIEVEMENTS AT A GLANCE"
+  },
+  {
+    "heading": "THE LEADERBOARD"
+  },
+  {
+    "heading": "TREND OF PASSENGERS ENPLANED AND BAGS MISHANDLED"
+  },
+  {
+    "heading": "AIRLINE SHOWCASE: BAHAMASAIR"
+  },
+  {
+    "heading": "AIRLINE SHOWCASE: ALITALIA"
+  },
+  {
+    "heading": "AIRPORTS INVEST"
+  },
+  {
+    "heading": "AIRPORT SHOWCASE: ISTANBUL NEW AIRPORT"
+  },
+  {
+    "heading": "2017 BAGGAGE MISHANDLING IN DEPTH"
+  },
+  {
+    "heading": "2007 - 2017: LONG TERM TRENDS"
+  },
+  {
+    "heading": "REASONS FOR DELAYED BAGS"
+  },
+  {
+    "heading": "REASONS FOR DELAYED BAGS IN 2018"
+  },
+  {
+    "heading": "2018 DELAYED, DAMAGED OR LOST BAGS"
+  },
+  {
+    "heading": "Mishandled bags per thousand passengers by re MISHANDLED BAGS PER THOUSAND PASSENGERS BY REGION"
+  },
+  {
+    "heading": "FINAL THOUGHTS"
+  },
+  {
+    "heading": "SCOPE OF THE 2018 BAGGAGE REPORT"
+  },
+  {
+    "heading": "Easy air travel every step of the way. Transforming air travel through technology for Airlines, at Airports, on Aircraft and at Borders."
+  },
+  {
+    "heading": "INTERACTIVE INSTRUCTIONS"
+  },
+  {
+    "heading": "EASY NAVIGATION"
+  },
+  {
+    "heading": "CONTENT GUIDE"
+  },
+  {
+    "heading": "EXECUTIVE SUMMARY"
+  },
+  {
+    "heading": "2019 BAGGAGE IT INSIGHTS"
+  },
+  {
+    "heading": "LONG TERM DECREASE IN BAGGAGE MISHANDING nd bags mishandled Trend of passengers enplaned a"
+  },
+  {
+    "heading": "ANALYSIS"
+  },
+  {
+    "heading": "Baggage investment is paying off"
+  },
+  {
+    "heading": "SHORT TERM BAGGAGE MISHANDLING RATE PLATEAUING"
+  },
+  {
+    "heading": "... as the benefits of bag tracking kick in"
+  },
+  {
+    "heading": "BREAKDOWN OF MISHANDLED BAGS"
+  },
+  {
+    "heading": "Reasons for mishandling remain the same"
+  },
+  {
+    "heading": "Transfer remains the pinch point"
+  },
+  {
+    "heading": "TRACKING LEADS TO A DECREASE IN THE MISHANDLING RATE"
+  },
+  {
+    "heading": "Mishandling rate reduction"
+  },
+  {
+    "heading": "Baggage reconciliation at loading is key to delivering tracking benefits"
+  },
+  {
+    "heading": "TODAY'S BAGGAGE EXPERIENCE FOR PASSENGERS"
+  },
+  {
+    "heading": "Technology boosts passenger satisfaction with bag services"
+  },
+  {
+    "heading": "PASSENGER DEMAND FOR BAG NOTIFICATIONS"
+  },
+  {
+    "heading": "Baggage tools will be in the next wave of airline mobile app enhancements"
+  },
+  {
+    "heading": "LONG-TERM IMPROVEMENTS IN REGIONAL PERFORMANCE"
+  },
+  {
+    "heading": "Tech investment underpins improvements in baggage handling"
+  },
+  {
+    "heading": "USE CASE"
+  },
+  {
+    "heading": "33%"
+  },
+  {
+    "heading": "Focus on tracking tools and improve baggage loading"
+  },
+  {
+    "heading": "Baggage handling performance"
+  },
+  {
+    "heading": "2.28%"
+  },
+  {
+    "heading": "96 airports"
+  },
+  {
+    "heading": "Baggage intelligence is improving performance"
+  },
+  {
+    "heading": "1.25/1,000"
+  },
+  {
+    "heading": "1/1,000"
+  },
+  {
+    "heading": "Innovating to strengthen bag handling reliability"
+  },
+  {
+    "heading": "RFID will help us move to a per bag plan for successful delivery"
+  },
+  {
+    "heading": "AIRPORTS UPPING THEIR INVESTMENT IN BAG TRACKING"
+  },
+  {
+    "heading": "Collaboration is vital for future efficiency and better passenger experiences"
+  },
+  {
+    "heading": "48%"
+  },
+  {
+    "heading": "Investing in arrival baggage data and efficiency"
+  },
+  {
+    "heading": "SCOPE OF THE 2019 BAGGAGE REPORT"
+  },
+  {
+    "heading": "Easy air travel every step of the way."
+  },
+  {
+    "heading": "BAGGAGE IT INSIGHTS 2020"
+  },
+  {
+    "heading": "2020 BAGGAGE IT INSIGHTS"
+  },
+  {
+    "heading": "LONG TERM DECREASE IN BAGGAGE MISHANDLING"
+  },
+  {
+    "heading": "Baggage initiatives deliver cost savings"
+  },
+  {
+    "heading": "LONG TERM BAGGAGE MISHANDLING RATE"
+  },
+  {
+    "heading": "Short term mishandling rate plateaus"
+  },
+  {
+    "heading": "Dip in delayed bags as use of BI tools is set to rise"
+  },
+  {
+    "heading": "Reasons for bag delays broadly unchanged"
+  },
+  {
+    "heading": "PASSENGERS ARE CHECKING MORE BAGS"
+  },
+  {
+    "heading": "Passengers are comfortable using tech to process bags"
+  },
+  {
+    "heading": "HIGH PASSENGER DEMAND FOR BAG NOTIFICATIONS PASSENGER SATISFACTION INCREASE WITH TECHNOLOGY USAGE"
+  },
+  {
+    "heading": "Bag tech improves passenger satisfaction"
+  },
+  {
+    "heading": "AUTOMATED BAG SERVICES AND REAL-TIME INFORMATION WILL BE KEY AUTOMATED BAG SERVICES AND REAL-TIME INFORMATION WILL BE KEY"
+  },
+  {
+    "heading": "Boost to unassisted bag drop and mobile tracking"
+  },
+  {
+    "heading": "LONG TERM GAINS IN REGIONAL PERFORMANCE"
+  },
+  {
+    "heading": "Tech investment and collaboration are vital to improve baggage handling"
+  },
+  {
+    "heading": "John Heimlich, Vice President and Chief Economist, Airlines for America"
+  },
+  {
+    "heading": "LOST &amp; FOUND"
+  },
+  {
+    "heading": "HOW IT WORKS"
+  },
+  {
+    "heading": "Automation speeds up the return of delayed bags and lost property"
+  },
+  {
+    "heading": "145 routes &amp; 27 airports"
+  },
+  {
+    "heading": "Tracking data is improving our success rates"
+  },
+  {
+    "heading": "A collaborative, data-driven approach to improving baggage performance"
+  },
+  {
+    "heading": "DELTA NPS RISE AFTER INTRODUCING BAGGAGE TRACKING"
+  },
+  {
+    "heading": "Making baggage more sustainable"
+  },
+  {
+    "heading": "BAGGAGE  INFORMATION EXCHANGE"
+  },
+  {
+    "heading": "Achieving collaboration through standard alignment"
+  },
+  {
+    "heading": "SCOPE OF THE 2020 BAGGAGE IT INSIGHTS REPORT"
+  },
+  {
+    "heading": "NOTE"
+  },
+  {
+    "heading": "YEAR ON YEAR BAGGAGE MISHANDLING RATE"
+  },
+  {
+    "heading": "Technology spend to reduce mishandled bags"
+  },
+  {
+    "heading": "Passenger and mishandled bag numbers recoil"
+  },
+  {
+    "heading": "Reduction in capacity leads to a lower mishandling rate"
+  },
+  {
+    "heading": "Limited transfers reduce delayed bags"
+  },
+  {
+    "heading": "An exceptional year increases the failure to load rate"
+  },
+  {
+    "heading": "AN UPTICK IN THE NUMBER OF CHECKED BAGS TO COME"
+  },
+  {
+    "heading": "Passengers continue to adopt self-service technologies"
+  },
+  {
+    "heading": "GROWING INVESTMENTS IN TOUCHLESS SELF-SERVICE BAGGAGE PROCESSES"
+  },
+  {
+    "heading": "Minimizing contact at all passenger touchpoints"
+  },
+  {
+    "heading": "LONG-TERM IMPROVEMENTS IN REGIONAL PERFORMANCE LONG-TERM IMPROVEMENTS IN REGIONAL PERFORMANCE"
+  },
+  {
+    "heading": "Technology remains key in improving the efficiency of baggage handling operations"
+  },
+  {
+    "heading": "Data Sources:"
+  },
+  {
+    "heading": "CONTACTLESS WAYS TO REPORT AND TRACK DELAYED BAGGAGE"
+  },
+  {
+    "heading": "AI TECHNOLOGY TO ENABLE TAG-FREE FUTURE FOR BAG TRACKING"
+  },
+  {
+    "heading": "DELIVERING GREEN, SUSTAINABLE, AND CONTACTLESS TRAVEL EXPERIENCE A TOP PRIORITY FOR IATA FOR IATA  TRAVEL DELIVERING GREEN, SUSTAINABLE, AND CONTACTLESS TRAVEL EXPERIENCE A TOP PRIORITY DELIVERING GREEN, SUSTAINABLE, AND CONTACTLESS EXPERIENCE A TOP PRIORITY FOR IATA"
+  },
+  {
+    "heading": "THE FUTURE OF AIR TRAVEL MUST BE..."
+  },
+  {
+    "heading": "CONVENIENT AND HASSLE-FREE HANDLING AND TRACKING OF BAGGAGE ACI COMMENTARY"
+  },
+  {
+    "heading": "THROUGHOUT THE JOURNEY"
+  },
+  {
+    "heading": "OFF-AIRPORT"
+  },
+  {
+    "heading": "AT DEPARTURE AIRPORT"
+  },
+  {
+    "heading": "AT DEPARTURE AND CONNECTING AIRPORTS"
+  },
+  {
+    "heading": "IN FLIGHT"
+  },
+  {
+    "heading": "AT DESTINATION"
+  },
+  {
+    "heading": "SCOPE OF THE 2021 BAGGAGE IT INSIGHTS REPORT"
+  },
+  {
+    "heading": "Easy and safe travel every step of the way."
+  },
+  {
+    "heading": "BAGGAGE IT INSIGHTS 2022"
+  },
+  {
+    "heading": "YEAR-ON-YEAR BAGGAGE MISHANDLING RATE"
+  },
+  {
+    "heading": "Greater automation to adjust to returning passenger volumes"
+  },
+  {
+    "heading": "An uptick in passenger numbers and mishandled bags"
+  },
+  {
+    "heading": "Passenger traffic variations impact the baggage process"
+  },
+  {
+    "heading": "The return of long-haul flights increases the transfer mishandling rate"
+  },
+  {
+    "heading": "GLOBAL MISHANDLING RATES FOR DOMESTIC AND INTERNATIONAL FLIGHTS"
+  },
+  {
+    "heading": "Global mishandling rates for domestic and international flights"
+  },
+  {
+    "heading": "Airlines and airports continue to automate baggage processes"
+  },
+  {
+    "heading": "Technology remains key to improving the efficiency of baggage handling operations"
+  },
+  {
+    "heading": "A COLLABORATIVE APPROACH TO IMPROVING BAGGAGE PERFORMANCE A COLLABORATIVE APPROACH TO IMPROVING BAGGAGE PERFORMANCE"
+  },
+  {
+    "heading": "ACCELERATING DIGITALIZATION: DOING MORE WITH LESS ACCELERATING DIGITALIZATION: DOING MORE WITH LESS"
+  },
+  {
+    "heading": "END-TO-END TRACKING AND RECONCILIATION - SITA BAG MANAGER"
+  },
+  {
+    "heading": "DNATA"
+  },
+  {
+    "heading": "SELF-SERVICE INITIATIVES TO AUTOMATE BAGGAGE PROCESSES"
+  },
+  {
+    "heading": "Manual processes"
+  },
+  {
+    "heading": "Digital practices"
+  },
+  {
+    "heading": "SCOPE OF THE 2022 BAGGAGE IT INSIGHTS REPORT"
+  },
+  {
+    "heading": "IT INSIGHTS BAGGAGE 2023"
+  },
+  {
+    "heading": "LONG-TERM DECREASE IN BAGGAGE MISHANDLING"
+  },
+  {
+    "heading": "LONG-TERM BAGGAGE MISHANDLING RATE"
+  },
+  {
+    "heading": "TRANSFER MISHANDLING &amp; LOADING ERRORS ARE THE TOP REASONS FOR DELAYED BAGS"
+  },
+  {
+    "heading": "GLOBAL MISHANDLING RATES FOR DOMESTIC &amp; INTERNATIONAL FLIGHTS"
+  },
+  {
+    "heading": "AIRLINES &amp; AIRPORTS CONTINUE TO AUTOMATE BAGGAGE PROCESSES"
+  },
+  {
+    "heading": "LONG-TERM IMPROVEMENTS IN REGIONAL MISHANDLING"
+  },
+  {
+    "heading": "Director, Industry &amp; Regulatory Affairs, Association of Asia Pacific Airlines"
+  },
+  {
+    "heading": "THE INCREASE IN MISHANDLING ACCELERATES DIGITALIZATION &amp; AUTOMATION OF BAGGAGE MANAGEMENT"
+  },
+  {
+    "heading": "LUFTHANSA USE CASE: AUTOMATION OF BAGGAGE REFLIGHT"
+  },
+  {
+    "heading": "AUTOMATION &amp; DIGITALIZATION ARE KEY TO THE SUCCESS OF BAGGAGE HANDLING"
+  },
+  {
+    "heading": "Getnet Taye"
+  },
+  {
+    "heading": "LEVERAGING TECHNOLOGY TO IMPROVE BAGGAGE HANDLING"
+  },
+  {
+    "heading": "SCOPE OF THE 2023 BAGGAGE IT INSIGHTS REPORT"
+  },
+  {
+    "heading": "SITA BAGGAGE IT INSIGHTS 2024"
+  },
+  {
+    "heading": "Contents"
+  },
+  {
+    "heading": "Executive summary"
+  },
+  {
+    "heading": "Year on year baggage mishandling rate"
+  },
+  {
+    "heading": "Long term decrease in baggage mishandling"
+  },
+  {
+    "heading": "Long term baggage mishandling rate"
+  },
+  {
+    "heading": "Mishandled bags per 1,000 passengers"
+  },
+  {
+    "heading": "Breakdown on mishandled bags"
+  },
+  {
+    "heading": "Reasons for delayed bags"
+  },
+  {
+    "heading": "Growing investments in touchless; self service baggage processes processes"
+  },
+  {
+    "heading": "Long term improvements in regional performance"
+  },
+  {
+    "heading": "Beatrice Lim"
+  },
+  {
+    "heading": "India's air travel growth transformation"
+  },
+  {
+    "heading": "Tech to the rescue"
+  },
+  {
+    "heading": "WorldTracer auto reflight for SWISS International Airlines"
+  },
+  {
+    "heading": "More passengers means more bags. We must use  ey better tech and communication throughout the bag journ"
+  },
+  {
+    "heading": "Empowering passengers with full visibility and automating the entire bag journey"
+  },
+  {
+    "heading": "Nicole Hogg"
+  },
+  {
+    "heading": "Full tracking and real-time status updates are key to better baggage handling and passenger experience crucial for minimizing baggage mishandling"
+  },
+  {
+    "heading": "Getnet Taye, PhD"
+  },
+  {
+    "heading": "Leveraging technology to improve baggage handling"
+  },
+  {
+    "heading": "Methodology"
+  },
+  {
+    "heading": "What is a mishandled bag?"
+  },
+  {
+    "heading": "Scope of the 2023 baggage IT insights report"
+  },
+  {
+    "heading": "Notes"
+  },
+  {
+    "heading": "Geographic Offices"
+  },
+  {
+    "heading": "© SITA 2024"
+  },
+  {
+    "heading": "Middle East &amp; Africa"
+  },
+  {
+    "heading": "2128P RFID SLED"
+  },
+  {
+    "heading": "MAXIMIZE YOUR INVENTORY ACCURACY"
+  },
+  {
+    "heading": "TOP PERFORMANCE RFID TAG CAPTURE"
+  },
+  {
+    "heading": "ULTRA SECURE DATA GATHERING"
+  },
+  {
+    "heading": "EASY TO USE"
+  },
+  {
+    "heading": "EASY TO RECHARGE"
+  },
+  {
+    "heading": "EASY TO ATTACH AND DETACH"
+  },
+  {
+    "heading": "INDUSTRIES /Hyphen APPLICATIONS"
+  },
+  {
+    "heading": "RFID PERFORMANCE"
+  },
+  {
+    "heading": "COMMUNICATION"
+  },
+  {
+    "heading": "2128P UHF RFID Handheld Reader"
+  },
+  {
+    "heading": "Active ePop-Loq case for Memor 11 PDA  (required)"
+  },
+  {
+    "heading": "Charging Cradle (required)"
+  },
+  {
+    "heading": "2 PIN Mobile Computer"
+  },
+  {
+    "heading": "SCANPAL EDA52 2PIN Technical Specifications"
+  },
+  {
+    "heading": "Real-Time Clock (RTC):"
+  },
+  {
+    "heading": "LED"
+  },
+  {
+    "heading": "GPS (WWAN only) Supported Protocols:"
+  },
+  {
+    "heading": "Single Charging Home Base:"
+  },
+  {
+    "heading": "NEXT GENERATION HANDHELD TERMINAL FOR THE STATE-OF-THE-ART SCANNING PERFORMANCE"
+  },
+  {
+    "heading": "Fine-Tuned for Maximum Data Capture Efficiency"
+  },
+  {
+    "heading": "Enhanced Connectivity for Seamless Operations"
+  },
+  {
+    "heading": "Choose Your Ideal Device"
+  },
+  {
+    "heading": "Pragmatic Device for Any Size of Business"
+  },
+  {
+    "heading": "Accessories"
+  },
+  {
+    "heading": "Main processor"
+  },
+  {
+    "heading": "Operating system"
+  },
+  {
+    "heading": "Memory and storage"
+  },
+  {
+    "heading": "Power"
+  },
+  {
+    "heading": "GLOBAL NAVIGATION SATELLITE SYSTEM"
+  },
+  {
+    "heading": "Wireless WAN"
+  },
+  {
+    "heading": "Integrated scan engines"
+  },
+  {
+    "heading": "Camera"
+  },
+  {
+    "heading": "NFC (Near Field Communication)"
+  },
+  {
+    "heading": "REGULATORY APPROVALS AND COMPLIANCE"
+  },
+  {
+    "heading": "PMDM"
+  },
+  {
+    "heading": "EmKit"
+  },
+  {
+    "heading": "PULS - ANDROID UPDATE &amp; SECURITY"
+  },
+  {
+    "heading": "PULS"
+  },
+  {
+    "heading": "The ultra-rugged mobile computer re-imagined for the new age of mobility"
+  },
+  {
+    "heading": "Blazing Speed"
+  },
+  {
+    "heading": "More Rugged, Lighter, Thinner-And More Ergonomic"
+  },
+  {
+    "heading": "Industry-Leading 6-Inch Advanced Display"
+  },
+  {
+    "heading": "All the Right Battery Features and Flexibility to Stay Powered Up"
+  },
+  {
+    "heading": "All the Latest Wireless Connections"
+  },
+  {
+    "heading": "Superior Flexibility With Bluetooth 5.2"
+  },
+  {
+    "heading": "High Performance Scanning for Every Job"
+  },
+  {
+    "heading": "Capture Ultra-High Resolution Photos and Video Intelligence"
+  },
+  {
+    "heading": "Hear Every Word on Every Call"
+  },
+  {
+    "heading": "Add the Functionality of Additional Devices"
+  },
+  {
+    "heading": "Drive Workforce Productivity and Device Value to a New Level With Mobility DNA"
+  },
+  {
+    "heading": "Simplify Device Integration"
+  },
+  {
+    "heading": "Increase Device Security"
+  },
+  {
+    "heading": "Deploy Devices Quickly and Easily"
+  },
+  {
+    "heading": "Make Device Management Simple and Easy"
+  },
+  {
+    "heading": "Increase On-the-Job Productivity"
+  },
+  {
+    "heading": "Field Operations"
+  },
+  {
+    "heading": "Automated Interactive Sensor Technology (IST)"
+  },
+  {
+    "heading": "Wireless WAN Data and Voice Communications (TC78 only)"
+  },
+  {
+    "heading": "TC73/TC78 MOBILE COMPUTERS"
+  },
+  {
+    "heading": "Data Rates"
+  },
+  {
+    "heading": "Fast Roam"
+  },
+  {
+    "heading": "FULL SCANNING CAPABILITY RIGHT ON YOUR FINGER"
+  },
+  {
+    "heading": "Our newest wearable scanner making heavy-duty light"
+  },
+  {
+    "heading": "Easy pair to use the full power of mobile computers"
+  },
+  {
+    "heading": "Don't stop moving just to scan a barcode"
+  },
+  {
+    "heading": "Rugged for any industrial applications"
+  },
+  {
+    "heading": "Industries"
+  },
+  {
+    "heading": "Optional"
+  },
+  {
+    "heading": "Main-Processor"
+  },
+  {
+    "heading": "Firmware"
+  },
+  {
+    "heading": "Memory and Storage"
+  },
+  {
+    "heading": "Weight"
+  },
+  {
+    "heading": "Integrated Barcode Reader"
+  },
+  {
+    "heading": "NA Headquarters"
+  },
+  {
+    "heading": "Loading Bags Workflow"
+  },
+  {
+    "heading": "Who"
+  },
+  {
+    "heading": "Action"
+  },
+  {
+    "heading": "Supported Browsers"
+  },
+  {
+    "heading": "Note:"
+  },
+  {
+    "heading": "Online Help"
+  },
+  {
+    "heading": "Offload?"
+  },
+  {
+    "heading": "Other Differences"
+  },
+  {
+    "heading": "Field Descriptions - page 154"
+  },
+  {
+    "heading": "General Tab"
+  },
+  {
+    "heading": "Laterals Tab"
+  },
+  {
+    "heading": "Policies Tab"
+  },
+  {
+    "heading": "Depart a Flight using HHT"
+  },
+  {
+    "heading": "Set Force All Mode"
+  },
+  {
+    "heading": "Set Force All Mode for a Flight using Bag Manager Workstation"
+  },
+  {
+    "heading": "Force All Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Example container sheet, assigned to a ULD"
+  },
+  {
+    "heading": "Container Sheet Workflow - Using a Template"
+  },
+  {
+    "heading": "Container Sheet Workflow - Without a Template"
+  },
+  {
+    "heading": "Create Container Sheets for a Single Flight using Bag Manager Workstation"
+  },
+  {
+    "heading": "Create Container Sheets From a Template for a Single Flight"
+  },
+  {
+    "heading": "using Bag Manager Workstation"
+  },
+  {
+    "heading": "Assign a ULD to a Container Sheet using Bag Manager Work-"
+  },
+  {
+    "heading": "Unassign Empty ULDs"
+  },
+  {
+    "heading": "Unassign Empty ULDs and Delete Container Sheets using Bag"
+  },
+  {
+    "heading": "Manager Workstation"
+  },
+  {
+    "heading": "Manage Transfer ULDs"
+  },
+  {
+    "heading": "Transfer ULDs"
+  },
+  {
+    "heading": "Arrival Flights &gt; Flight Progress"
+  },
+  {
+    "heading": "Load Bags using into a ULD using Bag Manager HHT"
+  },
+  {
+    "heading": "Load Bags into the Hold using Bag Manager HHT"
+  },
+  {
+    "heading": "Offload All Bags in a ULD or Hold using Bag Manager HHT"
+  },
+  {
+    "heading": "Offload All Bags from a Flight"
+  },
+  {
+    "heading": "Offload a Flight using Bag Manager Workstation"
+  },
+  {
+    "heading": "Menu: Departure Flights &gt; Manage Flights"
+  },
+  {
+    "heading": "Categories for marked bags"
+  },
+  {
+    "heading": "Flag for Customs"
+  },
+  {
+    "heading": "Flag a Bag for Customs using Bag Manager Workstation"
+  },
+  {
+    "heading": "Unflag a Bag using Bag Manager Workstation"
+  },
+  {
+    "heading": "Flag a Bag for Customs using BIM"
+  },
+  {
+    "heading": "Unflag a Bag for Customs using BIM"
+  },
+  {
+    "heading": "Add or Remove Bag Remarks"
+  },
+  {
+    "heading": "Add or Modify a Bag Remark Using Bag Manager Workstation"
+  },
+  {
+    "heading": "Remove a Bag Remark Using Bag Manager Workstation"
+  },
+  {
+    "heading": "Add or Update a Bag Remark Using Bag Manager HHT"
+  },
+  {
+    "heading": "Authorize or Force Bags"
+  },
+  {
+    "heading": "Warning:"
+  },
+  {
+    "heading": "Authorize a Bag using Bag Manager Workstation"
+  },
+  {
+    "heading": "Force a Bag using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: BAG &gt; Load Bag into ULD or Bag &gt; Load Bag into Hold"
+  },
+  {
+    "heading": "Manage Forward On-Hand Bag"
+  },
+  {
+    "heading": "Manage Forward On-Hand or Forward to HQ using Bag Manager"
+  },
+  {
+    "heading": "Workstation"
+  },
+  {
+    "heading": "Menu: Bag &gt; Manage Forward Bags"
+  },
+  {
+    "heading": "Audit Trail options"
+  },
+  {
+    "heading": "Audit Menu options for a Rush Bag Id"
+  },
+  {
+    "heading": "Manage Forward Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Manage Forward Delayed Bag(s)"
+  },
+  {
+    "heading": "Manage Forward Delayed Bag(s) using Bag Manager Workstation"
+  },
+  {
+    "heading": "Overrule a Bag using Bag Manager Workstation"
+  },
+  {
+    "heading": "Overrule a Bag using Bag Manager HHT"
+  },
+  {
+    "heading": "Display or Delete Rush Bags"
+  },
+  {
+    "heading": "Rush bags departing a specific flight:"
+  },
+  {
+    "heading": "Delete a Rush Bag"
+  },
+  {
+    "heading": "Create Bag Tags"
+  },
+  {
+    "heading": "Additional Fields for Fallback Tags"
+  },
+  {
+    "heading": "Create Bag Tags using Bag Manager Workstation"
+  },
+  {
+    "heading": "Create Crew Bag Tag using HHT"
+  },
+  {
+    "heading": "About Reflighting"
+  },
+  {
+    "heading": "Rush Tag ID"
+  },
+  {
+    "heading": "The Reflight Process"
+  },
+  {
+    "heading": "Reflight a Single Bag"
+  },
+  {
+    "heading": "Reflight Multiple Bags on the Same Flight"
+  },
+  {
+    "heading": "Update the Reflight Itinerary"
+  },
+  {
+    "heading": "Reflight a Tagless Bag"
+  },
+  {
+    "heading": "Menu: Bag &gt; Reflight Bags"
+  },
+  {
+    "heading": "Reflight Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: BAG &gt; Reflight Bags"
+  },
+  {
+    "heading": "Quick Reflight Bags using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: BAG &gt; Quick Reflight"
+  },
+  {
+    "heading": "FAQs for Reflighting"
+  },
+  {
+    "heading": "I tried to reflight a bag, but Bag Manager won't allow it. Why?"
+  },
+  {
+    "heading": "What is the Retry Reflight action?"
+  },
+  {
+    "heading": "Why does Bag Manager ask me about the historical range?"
+  },
+  {
+    "heading": "Can I reflight a terminating bag?"
+  },
+  {
+    "heading": "What is the difference between Quick Reflight and Reflight Bags?"
+  },
+  {
+    "heading": "Can I delete a bag that has already been reflighted, and how do I do that?"
+  },
+  {
+    "heading": "Track ULDs"
+  },
+  {
+    "heading": "Manage Tracked ULDs using Bag Manager Workstation"
+  },
+  {
+    "heading": "Track ULDs using Bag Manager HHT"
+  },
+  {
+    "heading": "Display Tracked ULDs for a Flight using Bag Manager HHT"
+  },
+  {
+    "heading": "Manage ULD Inventory"
+  },
+  {
+    "heading": "Display ULD Inventory using Bag Manager Workstation"
+  },
+  {
+    "heading": "Arrival Flight Monitor"
+  },
+  {
+    "heading": "Arrival Flight Monitor with Arrival Scanning Data"
+  },
+  {
+    "heading": "More Information"
+  },
+  {
+    "heading": "E-mail/Print reports"
+  },
+  {
+    "heading": "Arrival Bag Scanning Process"
+  },
+  {
+    "heading": "Flight Monitor with Arrival Scanning Data"
+  },
+  {
+    "heading": "View Bag Count/Baggage Details for an arrival flight"
+  },
+  {
+    "heading": "Arrival Scanning using HHT"
+  },
+  {
+    "heading": "Menu: Arrivals &gt; First and Last Bag"
+  },
+  {
+    "heading": "First Bag"
+  },
+  {
+    "heading": "Last Bag"
+  },
+  {
+    "heading": "Menu: Arrivals &gt; Scan Arrival Bags"
+  },
+  {
+    "heading": "Display Unassigned Unknown Bags"
+  },
+  {
+    "heading": "Arrivals Flight &gt; Unassigned Unknown Bags"
+  },
+  {
+    "heading": "Print Unassigned Unknown Bags"
+  },
+  {
+    "heading": "Use the Hand-Held Terminal (HHT)"
+  },
+  {
+    "heading": "Scenario:"
+  },
+  {
+    "heading": "Confirm Security Clearance Using Bag Manager HHT"
+  },
+  {
+    "heading": "Menu: BAG &gt; Security Clearance"
+  },
+  {
+    "heading": "Tracking Location Types"
+  },
+  {
+    "heading": "Manage Email Groups and Addresses"
+  },
+  {
+    "heading": "Add an Email Address"
+  },
+  {
+    "heading": "Create an Email Group"
+  },
+  {
+    "heading": "Default Roles"
+  },
+  {
+    "heading": "Menu: Settings &gt; Manage Roles &gt; Create Role"
+  },
+  {
+    "heading": "FAQs for Bag Manager Workstation"
+  },
+  {
+    "heading": "How long can I create a Container Sheet (CS) in advance?"
+  },
+  {
+    "heading": "Can I print a bag tag?"
+  },
+  {
+    "heading": "What is a yellow bag?"
+  },
+  {
+    "heading": "How do I assign a belt to an arrival flight?"
+  },
+  {
+    "heading": "Why can't I see the tracking locations in the Manage Tracking Locations screen?"
+  },
+  {
+    "heading": "FAQs for the HHT"
+  },
+  {
+    "heading": "How can I find the version number of the HHT application?"
+  },
+  {
+    "heading": "How do I reprint a bag tag?"
+  },
+  {
+    "heading": "Optional elements include:"
+  },
+  {
+    "heading": "Reason for Loss Codes"
+  },
+  {
+    "heading": "ATA"
+  },
+  {
+    "heading": "ATL"
+  },
+  {
+    "heading": "Bag Connect"
+  },
+  {
+    "heading": "Bag Tag Issuer Code (BTIC)"
+  },
+  {
+    "heading": "BNS"
+  },
+  {
+    "heading": "BPM"
+  },
+  {
+    "heading": "BRS"
+  },
+  {
+    "heading": "Bulk"
+  },
+  {
+    "heading": "Cart"
+  },
+  {
+    "heading": "CBP"
+  },
+  {
+    "heading": "Device Location"
+  },
+  {
+    "heading": "ETA"
+  },
+  {
+    "heading": "ETD"
+  },
+  {
+    "heading": "Fallback Sortation Tag (FST)"
+  },
+  {
+    "heading": "FLZ (Forward to Headquarters)"
+  },
+  {
+    "heading": "FOH (Forward On Hand)"
+  },
+  {
+    "heading": "FWD (Forward)"
+  },
+  {
+    "heading": "No-read Bag"
+  },
+  {
+    "heading": "OOG"
+  },
+  {
+    "heading": "Pax"
+  },
+  {
+    "heading": "PNR"
+  },
+  {
+    "heading": "PSN"
+  },
+  {
+    "heading": "QOH Quick On Hand"
+  },
+  {
+    "heading": "Read Location"
+  },
+  {
+    "heading": "Relabel"
+  },
+  {
+    "heading": "Scanner Id"
+  },
+  {
+    "heading": "Tagless Bag"
+  },
+  {
+    "heading": "Total Due"
+  },
+  {
+    "heading": "Transfer ULD"
+  },
+  {
+    "heading": "UNAR Bag"
+  },
+  {
+    "heading": "Unassigned Unknown Bag"
+  },
+  {
+    "heading": "Yellow Bag"
+  },
+  {
+    "heading": "SITA Bag Manager 6.3 7"
+  },
+  {
+    "heading": "PStatus is displayed as one of the following:"
+  },
+  {
+    "heading": "Note : This function is not available in Bag Manager Lite"
+  },
+  {
+    "heading": "OK Merged"
+  },
+  {
+    "heading": "Operating Requirements"
+  },
+  {
+    "heading": "Table of Contents"
+  },
+  {
+    "heading": "Introduction"
+  },
+  {
+    "heading": "List of Features Delivered in this Version"
+  },
+  {
+    "heading": "Deliverables – Defect Fixes"
+  },
+  {
+    "heading": "Implementation Pre-requisites (Applicable from 6.37.0.0 Release)"
+  },
+  {
+    "heading": "Important Notes"
+  },
+  {
+    "heading": "HHT Devices Software Requirements"
+  },
+  {
+    "heading": "BagManager 3rd Party Software"
+  },
+  {
+    "heading": "Supported browsers"
+  },
+  {
+    "heading": "Installation Procedure"
+  },
+  {
+    "heading": "Changes made to deployment process"
+  },
+  {
+    "heading": "DB Changes for Release v6.38.0.7"
+  },
+  {
+    "heading": "List of deliverables / Documentation included in this release"
+  },
+  {
+    "heading": "SITA Licensing information"
+  },
+  {
+    "heading": "Known and Open Issues"
+  },
+  {
+    "heading": "Changes made to deployment process with ESB and SYSI from 6.39"
+  },
+  {
+    "heading": "DB Changes for Release v6.39.0.14"
+  },
+  {
+    "heading": "DB Changes for Release v6.32.3.0"
+  },
+  {
+    "heading": "Appendix A – Screenshots and Reports"
+  },
+  {
+    "heading": "DB Changes for Release v6.35.5.0"
+  },
+  {
+    "heading": "Release Note 6.36.0.0"
+  },
+  {
+    "heading": "Copyright Information"
+  },
+  {
+    "heading": "1 Introduction"
+  },
+  {
+    "heading": "2 List of Features Delivered in this Version"
+  },
+  {
+    "heading": "2.2 Deliverables -Defect Fixes"
+  },
+  {
+    "heading": "3 Known and Open Issues"
+  },
+  {
+    "heading": "4 Implementation"
+  },
+  {
+    "heading": "4.3 Important Notes"
+  },
+  {
+    "heading": "4.4 HHT Devices Software Requirements"
+  },
+  {
+    "heading": "4.5  BagManager 3  Party Software rd"
+  },
+  {
+    "heading": "Upto 6.35.1.0 Release"
+  },
+  {
+    "heading": "From 6.36.0.0 Release"
+  },
+  {
+    "heading": "4.6 Supported browsers"
+  },
+  {
+    "heading": "5 Installation Procedure"
+  },
+  {
+    "heading": "2. Download the zip files 'PreGDPRscripts\\_RHEL5.cpio.gz',"
+  },
+  {
+    "heading": "3. Copy the upgrade utility file from"
+  },
+  {
+    "heading": "Note :  Please check if ojdbc7.jar"
+  },
+  {
+    "heading": "is present in"
+  },
+  {
+    "heading": "6. ***Only for sites with CBP***"
+  },
+  {
+    "heading": "5.1  Changes made to deployment process"
+  },
+  {
+    "heading": "5.2 DB Changes for Release v6.36.0.0"
+  },
+  {
+    "heading": "6.36.0.0 Upgrade"
+  },
+  {
+    "heading": "6 List of deliverables / Documentation included in this release"
+  },
+  {
+    "heading": "8 SITA Licensing information"
+  },
+  {
+    "heading": "1. GRANT OF LICENSE."
+  },
+  {
+    "heading": "2. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS."
+  },
+  {
+    "heading": "3. TERMINATION"
+  },
+  {
+    "heading": "4. COPYRIGHT"
+  },
+  {
+    "heading": "5. WARRANTIES, EXCLUSIONS AND LIABILITY"
+  },
+  {
+    "heading": "6. LGPL SOFTWARE"
+  },
+  {
+    "heading": "DB Changes for Release v6.37.0.0"
+  },
+  {
+    "heading": "Release Details"
+  },
+  {
+    "heading": "Application Details"
+  },
+  {
+    "heading": "System Requirements"
+  },
+  {
+    "heading": "Delivered Services / Components / Packages / Devices and Applications"
+  },
+  {
+    "heading": "Delivered EPICs / Features / Stories / Enhancements / CRs / Defect Fixes"
+  },
+  {
+    "heading": "Known / Open Issues, Limitations and Workarounds"
+  },
+  {
+    "heading": "Root Cause Analysis SGS Global Operations"
+  },
+  {
+    "heading": "Root Cause Analysis"
+  },
+  {
+    "heading": "Incident Description"
+  },
+  {
+    "heading": "Incident Resolution"
+  },
+  {
+    "heading": "Root Cause"
+  },
+  {
+    "heading": "Follow-Up Actions"
+  },
+  {
+    "heading": "SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "Follow-up actions:"
+  },
+  {
+    "heading": "Root Cause Analysis SGS European Operations"
+  },
+  {
+    "heading": "Follow-up actions"
+  },
+  {
+    "heading": "SGS - Global Operations"
+  },
+  {
+    "heading": "Root Cause Analysis SGS - Global Operations SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "Root Cause Analysis SGS - Global Operations"
+  },
+  {
+    "heading": "Dates &amp; Times"
+  },
+  {
+    "heading": "Root Cause Analysis SGS Global Operations SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "SGS Global Operations"
+  },
+  {
+    "heading": "Follow-up Actions"
+  },
+  {
+    "heading": "Root Cause Description"
+  },
+  {
+    "heading": "Root Cause Analysis Report"
+  },
+  {
+    "heading": "Root Cause Analysis Report SGS Global Operations SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "Root Cause Analysis Report SGS Global Operations"
+  },
+  {
+    "heading": "RCA REPORT SGS GLOBAL OPERATIONS SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "RCA Version &amp; Date"
+  },
+  {
+    "heading": "Incident Summary"
+  },
+  {
+    "heading": "Restoring Actions"
+  },
+  {
+    "heading": "Sequence of Events"
+  },
+  {
+    "heading": "RCA &amp; Action Plan"
+  },
+  {
+    "heading": "Executive Summary Report SGS Global Operations"
+  },
+  {
+    "heading": "Executive Summary Report"
+  },
+  {
+    "heading": "PRELIMINARY RCA REPORT"
+  },
+  {
+    "heading": "Preliminary RCA"
+  },
+  {
+    "heading": "Additional Information:"
+  },
+  {
+    "heading": "PRELIMINARY RCA REPORT SGS GLOBAL OPERATIONS SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "Restoring Action"
+  },
+  {
+    "heading": "RCA"
+  },
+  {
+    "heading": "Incident Details"
+  },
+  {
+    "heading": "Degraded performance between 6 th -10 th  May"
+  },
+  {
+    "heading": "Resolution"
+  },
+  {
+    "heading": "ncident Resolution"
+  },
+  {
+    "heading": "Preliminary RCA REPORT SGS GLOBAL OPERATIONS SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "Next Step:"
+  },
+  {
+    "heading": "INC3314459 &amp; INC3339390"
+  },
+  {
+    "heading": "INC3314459"
+  },
+  {
+    "heading": "First Occurrence"
+  },
+  {
+    "heading": "Improvement Plans"
+  },
+  {
+    "heading": "Synopsis"
+  },
+  {
+    "heading": "Incident # INC3589954"
+  },
+  {
+    "heading": "FOLLOW-UP ACTIONS"
+  },
+  {
+    "heading": "Monitoring"
+  },
+  {
+    "heading": "Log Analysis"
+  },
+  {
+    "heading": "ULD Issue Replication Tests"
+  },
+  {
+    "heading": "Monitoring Enhancement"
+  },
+  {
+    "heading": "Procedure Reiteration"
+  },
+  {
+    "heading": "Log Collection"
+  },
+  {
+    "heading": "Incident # INC3865178"
+  },
+  {
+    "heading": "Incident # INC3879311"
+  },
+  {
+    "heading": "Incident # INC4173479"
+  },
+  {
+    "heading": "Reason For Outage"
+  },
+  {
+    "heading": "Incident # INC3568036"
+  },
+  {
+    "heading": "Incident # INC3603807"
+  },
+  {
+    "heading": "Preliminary Root Cause Analysis"
+  },
+  {
+    "heading": "INC4037565"
+  },
+  {
+    "heading": "INC4038715"
+  },
+  {
+    "heading": "Monitoring Check"
+  },
+  {
+    "heading": "Incident Date &amp; Time (GMT)"
+  },
+  {
+    "heading": "Incident Details (GMT)"
+  },
+  {
+    "heading": "2 nd instance"
+  },
+  {
+    "heading": "1 st instance"
+  },
+  {
+    "heading": "1 st Instance"
+  },
+  {
+    "heading": "2 nd  Instance:"
+  },
+  {
+    "heading": "Second Outage:"
+  },
+  {
+    "heading": "Restoring Action (s)"
+  },
+  {
+    "heading": "RCA REPORT"
+  },
+  {
+    "heading": "SGS GLOBAL OPERATIONS SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "On the change implementation:"
+  },
+  {
+    "heading": "On the change rollback procedure:"
+  },
+  {
+    "heading": "First outage"
+  },
+  {
+    "heading": "Second outage"
+  },
+  {
+    "heading": "First Outage:"
+  },
+  {
+    "heading": "What happened?"
+  },
+  {
+    "heading": "Root Cause:"
+  },
+  {
+    "heading": "Preliminary Root Cause Analysis Report"
+  },
+  {
+    "heading": "Impact Summary"
+  },
+  {
+    "heading": "Service Down (INC6191180)"
+  },
+  {
+    "heading": "Secondary Time issue (INC6191945)"
+  },
+  {
+    "heading": "INC6191180"
+  },
+  {
+    "heading": "INC6191945"
+  },
+  {
+    "heading": "RCA REPORT SITA CONFIDENTIAL"
+  },
+  {
+    "heading": "*** Note:"
+  },
+  {
+    "heading": "RCA REPORT SGS GLOBAL OPERATIONS"
+  },
+  {
+    "heading": "1 Revision History"
+  },
+  {
+    "heading": "2 References"
+  },
+  {
+    "heading": "3 Purpose of this document"
+  },
+  {
+    "heading": "4 Definitions, Abbreviations and Acronyms"
+  },
+  {
+    "heading": "5 Introduction"
+  },
+  {
+    "heading": "6 List of Features Delivered in this Version"
+  },
+  {
+    "heading": "6.2 Deliverables – Defect Fixes"
+  },
+  {
+    "heading": "7 Known and Open Issues"
+  },
+  {
+    "heading": "8 Implementation"
+  },
+  {
+    "heading": "8.2 Important Notes"
+  },
+  {
+    "heading": "8.3 HHT Devices Software Requirements"
+  },
+  {
+    "heading": "8.4 BagManager 3rd Party Software"
+  },
+  {
+    "heading": "8.5 Supported browsers"
+  },
+  {
+    "heading": "9 Installation Procedure"
+  },
+  {
+    "heading": "9.1 Changes made to deployment process"
+  },
+  {
+    "heading": "9.2 DB Changes for Release v6.34.0.0"
+  },
+  {
+    "heading": "10 List of deliverables / Documentation included in this release"
+  },
+  {
+    "heading": "11 Appendix A – Screenshots and Reports"
+  },
+  {
+    "heading": "12 SITA Licensing information"
+  }
+]

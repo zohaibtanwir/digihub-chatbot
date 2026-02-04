@@ -1,0 +1,668 @@
+[
+  {
+    "heading": "SITA DATA CONNECT 4.2"
+  },
+  {
+    "heading": "1 INTRODUCTION"
+  },
+  {
+    "heading": "1.1 About These Release Notes"
+  },
+  {
+    "heading": "1.2 Typographical Conventions"
+  },
+  {
+    "heading": "2.1 Supported Operating Systems and Browsers"
+  },
+  {
+    "heading": "2.2 System Requirements"
+  },
+  {
+    "heading": "3.1 New Features"
+  },
+  {
+    "heading": "3.1.1 Automatic Failover Available via a Redundancy Set"
+  },
+  {
+    "heading": "3.1.2 SITA Data Connect Can Be Installed Into a Docker Container"
+  },
+  {
+    "heading": "3.1.4 Improved Organization of Diagnostic Information"
+  },
+  {
+    "heading": "3.1.5 Additional Details within System Health Information"
+  },
+  {
+    "heading": "3.2 Enhancements"
+  },
+  {
+    "heading": "3.2.2 Improved Message Exchange with SITATEX Online"
+  },
+  {
+    "heading": "3.2.3 Improved SITATEX Online Error Handling"
+  },
+  {
+    "heading": "4.2 Maintenance Fixes"
+  },
+  {
+    "heading": "5.1 Known Issues"
+  },
+  {
+    "heading": "SITA DATA CONNECT 4.3"
+  },
+  {
+    "heading": "3  NEW FEATURES AND ENHANCEMENTS"
+  },
+  {
+    "heading": "Channel [Destination] is nearing its watermark limit, [Value] out of [Value]."
+  },
+  {
+    "heading": "3.2.1 Multiple Channels Can Now be Read From the Same Directory"
+  },
+  {
+    "heading": "3.2.2 Improved Performance When Transferring Messages"
+  },
+  {
+    "heading": "4.1 Customer Reported Fixes"
+  },
+  {
+    "heading": "SITA DATA CONNECT 4.4"
+  },
+  {
+    "heading": "2 SYSTEM REQUIREMENTS"
+  },
+  {
+    "heading": "2.1.1 Operating Systems"
+  },
+  {
+    "heading": "2.1.2 Browsers"
+  },
+  {
+    "heading": "Connector properties"
+  },
+  {
+    "heading": "3.2.1 Channel Statistics Update Faster"
+  },
+  {
+    "heading": "3.2.2 Newly Created Directory Channels Now Default to a Window Size of 10"
+  },
+  {
+    "heading": "ACCESS TO PATH (PATH NAME) IS NOT ALLOWED"
+  },
+  {
+    "heading": "ERROR MESSAGE"
+  },
+  {
+    "heading": "CAUSE"
+  },
+  {
+    "heading": "NEW STATION DETECTED. DO YOU WANT TO GET ALL EXISTING BACKLOG?"
+  },
+  {
+    "heading": "Untitled"
+  },
+  {
+    "heading": "CAN I RUN TWO MAIL MANAGER WINDOWS WITH DIFFERENT USER AND SESSION INFORMATION?"
+  },
+  {
+    "heading": "QUESTION"
+  },
+  {
+    "heading": "DO I HAVE TO ENTER THE PASSWORD EVERY TIME I LOGIN TO THE MAIL MANAGER?"
+  },
+  {
+    "heading": "ANSWER"
+  },
+  {
+    "heading": "SITATEX LOG VIEWER 1.0"
+  },
+  {
+    "heading": "2.1 Supported Operating Systems"
+  },
+  {
+    "heading": "4.1 Known Issues"
+  },
+  {
+    "heading": "MULTI-GATEWAY MESSAGE DAEMON 9.2"
+  },
+  {
+    "heading": "3.1 Appplication Features"
+  },
+  {
+    "heading": "SITATEX 9 ENTERPRISE SERVICES"
+  },
+  {
+    "heading": "2.1 SITATEX 9.1/9.2 System Requirements"
+  },
+  {
+    "heading": "2.2 SITATEX 9 System Requirements"
+  },
+  {
+    "heading": "2.2.1 Gateway PC Server Requirements:"
+  },
+  {
+    "heading": "2.3 User Workstation Requirements"
+  },
+  {
+    "heading": "2.4 Software"
+  },
+  {
+    "heading": "2.5 Configuration of Network Parameters"
+  },
+  {
+    "heading": "3.1 SITATEX 9.2 New Features"
+  },
+  {
+    "heading": "3.1.1 Multi-Gateway Message Daemon Replaces SITATEX SDK and Earlier Versions of Message Daemon"
+  },
+  {
+    "heading": "3.1.2 Log Viewer"
+  },
+  {
+    "heading": "3.2.1 New User Interface for Mail Manager"
+  },
+  {
+    "heading": "3.3 SITATEX 9 New Features"
+  },
+  {
+    "heading": "3.3.1 New User Interface for Utilities"
+  },
+  {
+    "heading": "3.3.2 New User Interface for Configuration Tool"
+  },
+  {
+    "heading": "3.3.3 New Gateway Console"
+  },
+  {
+    "heading": "3.3.4 New Flat Installation Option"
+  },
+  {
+    "heading": "3.4 Enhancements in SITATEX 9"
+  },
+  {
+    "heading": "3.4.1 Application runs as a service"
+  },
+  {
+    "heading": "4 CUSTOMER REPORTED FIXES"
+  },
+  {
+    "heading": "4.1 Maintenance Fixes"
+  },
+  {
+    "heading": "SITATEX 9.3 Enterprise Services Release Notes"
+  },
+  {
+    "heading": "Copyright and Trademarks"
+  },
+  {
+    "heading": "Liability Disclaimer"
+  },
+  {
+    "heading": "Privacy Policy"
+  },
+  {
+    "heading": "Preface"
+  },
+  {
+    "heading": "Typographical Conventions"
+  },
+  {
+    "heading": "Online Help"
+  },
+  {
+    "heading": "Documentation"
+  },
+  {
+    "heading": "General Contact Information"
+  },
+  {
+    "heading": "Type B Messaging"
+  },
+  {
+    "heading": "SITATEX 9.1/9.2/9.3 System Requirements"
+  },
+  {
+    "heading": "Gateway PC Server Requirements"
+  },
+  {
+    "heading": "Windows 10 or Windows Server 2019 and earlier versions"
+  },
+  {
+    "heading": "Windows 11"
+  },
+  {
+    "heading": "Windows 10 and earlier versions"
+  },
+  {
+    "heading": "Software"
+  },
+  {
+    "heading": "SITATEX 9.0 System Requirements"
+  },
+  {
+    "heading": "Gateway PC Server Requirements:"
+  },
+  {
+    "heading": "User Workstation Requirements"
+  },
+  {
+    "heading": "Configuration of Network Parameters"
+  },
+  {
+    "heading": "· Internet Connection"
+  },
+  {
+    "heading": "· IP Connection"
+  },
+  {
+    "heading": "SITATEX 9.3 New Features"
+  },
+  {
+    "heading": "Additional Login Security"
+  },
+  {
+    "heading": "Mail Manager Now Runs With a Background Service"
+  },
+  {
+    "heading": "Improved Performance"
+  },
+  {
+    "heading": "New Service Status Bar"
+  },
+  {
+    "heading": "Message Exchange Despite Mail Manager Application Being Closed"
+  },
+  {
+    "heading": "Text Length Limited to 47K Characters"
+  },
+  {
+    "heading": "Attachment File Types Limited to Only Supported Types"
+  },
+  {
+    "heading": "New Log Files Available"
+  },
+  {
+    "heading": "Log Viewer Application Used by Default to Open Log Files"
+  },
+  {
+    "heading": "Maximum Received Queue Value Now Supports Up to 2GB"
+  },
+  {
+    "heading": "Utilities Console"
+  },
+  {
+    "heading": "Allowing Read SMR Messages"
+  },
+  {
+    "heading": "SITATEX 9.2 New Features"
+  },
+  {
+    "heading": "Multi-Gateway Message Daemon Replaces SITATEX SDK and Earlier Versions of Message Daemon"
+  },
+  {
+    "heading": "Log Viewer"
+  },
+  {
+    "heading": "SITATEX 9.1 New Features"
+  },
+  {
+    "heading": "New User Interface for Mail Manager"
+  },
+  {
+    "heading": "The Summary pane"
+  },
+  {
+    "heading": "SITATEX 9.0 New Features"
+  },
+  {
+    "heading": "New User Interface for Utilities"
+  },
+  {
+    "heading": "New User Interface for Configuration Tool"
+  },
+  {
+    "heading": "New Gateway Console"
+  },
+  {
+    "heading": "New Flat Installation Option"
+  },
+  {
+    "heading": "Enhancements in SITATEX"
+  },
+  {
+    "heading": "Application Runs As a Service"
+  },
+  {
+    "heading": "SITATEX 9.4 Enterprise Services Release Notes"
+  },
+  {
+    "heading": "Audience"
+  },
+  {
+    "heading": "Prerequisite Knowledge"
+  },
+  {
+    "heading": "Obtaining SITA Support"
+  },
+  {
+    "heading": "SITATEX 9.4 System Requirements"
+  },
+  {
+    "heading": "Supported Operating Systems"
+  },
+  {
+    "heading": "Gateway Installer for SU and MU"
+  },
+  {
+    "heading": "New Multi User Installation Folders"
+  },
+  {
+    "heading": "New SITATEX IP Administrative Service"
+  },
+  {
+    "heading": "New Message Queue Server (Single Node)"
+  },
+  {
+    "heading": "Gateway Console Service Status"
+  },
+  {
+    "heading": "New Communication Protocol"
+  },
+  {
+    "heading": "Removal of User Working Path Location in Session Manager"
+  },
+  {
+    "heading": "New User Registration Interface"
+  },
+  {
+    "heading": "Trust Certificate Message in Mail Manager and MultiGateway Message Daemon"
+  },
+  {
+    "heading": "New Gateway Requirements for Mail Manager"
+  },
+  {
+    "heading": "New Session Maximum Receive Queue Size Increase"
+  },
+  {
+    "heading": "SITATEX IP RESILIENCY 2.0 Release Notes"
+  },
+  {
+    "heading": "System Requirements"
+  },
+  {
+    "heading": "Operating Systems"
+  },
+  {
+    "heading": "Internet Browsers"
+  },
+  {
+    "heading": "SITATEX 2.1 and 2.0 Requirements"
+  },
+  {
+    "heading": "Minimal Gateway Hardware Requirements"
+  },
+  {
+    "heading": "Optimal Gateway Hardware Requirements"
+  },
+  {
+    "heading": "Minimal File Server System Hardware"
+  },
+  {
+    "heading": "Solution Overview"
+  },
+  {
+    "heading": "Resiliency 2.1 New Features"
+  },
+  {
+    "heading": "Idle Mode"
+  },
+  {
+    "heading": "Auto Refresh Gateway Sessions"
+  },
+  {
+    "heading": "Swap Server Locations"
+  },
+  {
+    "heading": "Resiliency 2.0 New Features"
+  },
+  {
+    "heading": "Status Monitoring"
+  },
+  {
+    "heading": "Managing Gateways"
+  },
+  {
+    "heading": "Configure Solution Gateway Resiliency Service"
+  },
+  {
+    "heading": "Primary Gateway"
+  },
+  {
+    "heading": "Secondary Gateway"
+  },
+  {
+    "heading": "Connect to the desired SITATEX server - Atlanta or Singapore (available in the dual server connection configuration)."
+  },
+  {
+    "heading": "Administer"
+  },
+  {
+    "heading": "New Account"
+  },
+  {
+    "heading": "Known Issues"
+  },
+  {
+    "heading": "Firefox browser Security Warning"
+  },
+  {
+    "heading": "Adding Exception Rule on Firefox"
+  },
+  {
+    "heading": "Enabling Firefox to use Windows Certificate Store"
+  },
+  {
+    "heading": "SITATEX IP RESILIENCY 2.1 Release Notes"
+  },
+  {
+    "heading": "Control Panel"
+  },
+  {
+    "heading": "Resetting the Solution"
+  },
+  {
+    "heading": "Changing the Location"
+  },
+  {
+    "heading": "Changing the Active/Standby Gateways"
+  },
+  {
+    "heading": "Start/Stop a Gateway"
+  },
+  {
+    "heading": "Refreshing the Gateway Session"
+  },
+  {
+    "heading": "Stability Report"
+  },
+  {
+    "heading": "Customize Alert Messages"
+  },
+  {
+    "heading": "Creating a User Account"
+  },
+  {
+    "heading": "Firefox Browser Security Warning"
+  },
+  {
+    "heading": "Installing the Certificate for the Windows Certificate Store"
+  },
+  {
+    "heading": "Welcome to the Certificate Import Wizard"
+  },
+  {
+    "heading": "6. Click the Next button."
+  },
+  {
+    "heading": "7. Type the password."
+  },
+  {
+    "heading": "8. Click the Next button."
+  },
+  {
+    "heading": "Completing the Certificate Import Wizard"
+  },
+  {
+    "heading": "Installing the Security Certificate for Firefox"
+  },
+  {
+    "heading": "Microsoft Edge Browser Security Warning"
+  },
+  {
+    "heading": "Adding Exception Rule on Edge"
+  },
+  {
+    "heading": "Installing the Security Certificate on Microsoft Edge"
+  },
+  {
+    "heading": "14. Select the certificate file. Click the Open button."
+  },
+  {
+    "heading": "15. Click the Next button."
+  },
+  {
+    "heading": "16. Type the password."
+  },
+  {
+    "heading": "17. Click the Next button."
+  },
+  {
+    "heading": "Google Chrome Browser Security Warning"
+  },
+  {
+    "heading": "Adding Exception Rule on Chrome"
+  },
+  {
+    "heading": "Installing the Security Certificate on Google Chrome"
+  },
+  {
+    "heading": "6. Select the Settings option."
+  },
+  {
+    "heading": "10. Click Manage Certificates."
+  },
+  {
+    "heading": "13. Click the Next button."
+  },
+  {
+    "heading": "14. Click the Browse button to select a certificate. The Open File dialog will appear."
+  },
+  {
+    "heading": "15. Select the certificate file. Click the Open button."
+  },
+  {
+    "heading": "16. Click the Next button."
+  },
+  {
+    "heading": "17. Type the password."
+  },
+  {
+    "heading": "18. Click the Next button."
+  },
+  {
+    "heading": "Certificate Import Wizard"
+  },
+  {
+    "heading": "SITATEX IP Resiliency 2.2 Release Notes"
+  },
+  {
+    "heading": "Copyright &amp; Trademarks"
+  },
+  {
+    "heading": "Accessing the Online WebHelp"
+  },
+  {
+    "heading": "Supported Internet Browsers"
+  },
+  {
+    "heading": "Gateway System Requirements"
+  },
+  {
+    "heading": "SITATEX IP Multi-User License"
+  },
+  {
+    "heading": "Minimal Message Queue System Hardware"
+  },
+  {
+    "heading": "Resiliency 2.2 New Features"
+  },
+  {
+    "heading": "New Message Queue Server"
+  },
+  {
+    "heading": "Break Change"
+  },
+  {
+    "heading": "New Solution Monitor"
+  },
+  {
+    "heading": "New Cluster Management Server"
+  },
+  {
+    "heading": "THE FOLLOWING GATEWAY CERTIFICATE IS NOT ISSUED BY A TRUSTED CERT AUTHORITY"
+  },
+  {
+    "heading": "WARNING MESSAGE"
+  },
+  {
+    "heading": "SITATEX ONLINE 3.5"
+  },
+  {
+    "heading": "1. INTRODUCTION"
+  },
+  {
+    "heading": "Supported Browsers"
+  },
+  {
+    "heading": "Autoprint Supported Operating System"
+  },
+  {
+    "heading": "3. NEW FEATURES AND ENHANCEMENTS"
+  },
+  {
+    "heading": "3.2.1 Non-Delivery Reports Not Forwarded with Forwarding Rules"
+  },
+  {
+    "heading": "3.2.2 SITA Security Hardening"
+  },
+  {
+    "heading": "SITATEX ONLINE 3.6"
+  },
+  {
+    "heading": "3.1.1 SkyForm Data Fields Increased from 15 to 32 Characters"
+  },
+  {
+    "heading": "3.1.2 Minor Security Fixes"
+  },
+  {
+    "heading": "3.2.1 Streamlined SkyForm Field Drop-Down Options"
+  },
+  {
+    "heading": "SITATEX ONLINE 3.8"
+  },
+  {
+    "heading": "3.1.1 SITA Message Archiving Tool (SMArT)"
+  },
+  {
+    "heading": "3.1.2 Archive Queue Folder Added to Default Folder List"
+  },
+  {
+    "heading": "3.1.3 Archive Button Added to Message Tab Toolbar"
+  },
+  {
+    "heading": "3.1.4 Message Flag Icons Display When Using the SITA Message Archiving Tool (SMArT)"
+  },
+  {
+    "heading": "3.4 Maintenance Fixes"
+  }
+]

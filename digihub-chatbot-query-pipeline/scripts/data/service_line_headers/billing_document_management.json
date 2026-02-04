@@ -1,0 +1,1112 @@
+[
+  {
+    "heading": "Digihub Billing Service - A user guide"
+  },
+  {
+    "heading": "Billing Service"
+  },
+  {
+    "heading": "What is Billing Service?"
+  },
+  {
+    "heading": "Subscribe to Billing"
+  },
+  {
+    "heading": "Navigate to Billing Service"
+  },
+  {
+    "heading": "View and Use Billing Homepage"
+  },
+  {
+    "heading": "Invoices"
+  },
+  {
+    "heading": "Search for Invoices"
+  },
+  {
+    "heading": "Our Hint"
+  },
+  {
+    "heading": "Download Invoices"
+  },
+  {
+    "heading": "To download one or more invoices:"
+  },
+  {
+    "heading": "Create New E-Invoicing Rule"
+  },
+  {
+    "heading": "Edit or Remove Existing E-Invoicing Rule"
+  },
+  {
+    "heading": "View E-Invoicing Logs"
+  },
+  {
+    "heading": "Billing Support"
+  },
+  {
+    "heading": "View Support Cases"
+  },
+  {
+    "heading": "Create New Support Case"
+  },
+  {
+    "heading": "To create new support case:"
+  },
+  {
+    "heading": "View Case Details"
+  },
+  {
+    "heading": "Add a Comment and Attach a File to Existing Case"
+  },
+  {
+    "heading": "Review Resolved Case"
+  },
+  {
+    "heading": "SmartView Content"
+  },
+  {
+    "heading": "REVISION HISTORY"
+  },
+  {
+    "heading": "DOCUMENT DISTRIBUTION &amp; APPROVALS"
+  },
+  {
+    "heading": "1  AIRPORT SERVICES"
+  },
+  {
+    "heading": "AIRPORT I VALIDATE"
+  },
+  {
+    "heading": "DAY OF OPERATION"
+  },
+  {
+    "heading": "QUEUEANALYZE"
+  },
+  {
+    "heading": "SITA PAX QUEUE"
+  },
+  {
+    "heading": "AIRPORT ITRACK"
+  },
+  {
+    "heading": "SITA PAX LOCATE"
+  },
+  {
+    "heading": "SITA PAX CHECK"
+  },
+  {
+    "heading": "SITA OPERATIONS MANAGER"
+  },
+  {
+    "heading": "SITA FIXED RESOURCE MANAGER"
+  },
+  {
+    "heading": "SITA MOBILE RESOURCE MANAGER"
+  },
+  {
+    "heading": "SITA AIRPORT MSI"
+  },
+  {
+    "heading": "SITA AIRPORT OUTSOURCING"
+  },
+  {
+    "heading": "IBORDERS BORDERAUTOMATION"
+  },
+  {
+    "heading": "SITA BAG FAST CORE"
+  },
+  {
+    "heading": "SITA BAG JOURNEY CORE"
+  },
+  {
+    "heading": "SITA BAG MANAGER CORE"
+  },
+  {
+    "heading": "SITA BAG MANAGER LITE"
+  },
+  {
+    "heading": "SITA BAG CONNECT"
+  },
+  {
+    "heading": "SITA BAG MESSAGE AIRLINE"
+  },
+  {
+    "heading": "SITA BAG MESSAGE AIRPORT"
+  },
+  {
+    "heading": "SITA AIRPORT DEVICE MANAGEMENT"
+  },
+  {
+    "heading": "COMMON USE DEVELOPMENT"
+  },
+  {
+    "heading": "SITA FLEX ON PREMISE"
+  },
+  {
+    "heading": "AIRPORTCONNECT OPEN APPLICATION CERTIFICATION"
+  },
+  {
+    "heading": "SITA FLEX HYBRID"
+  },
+  {
+    "heading": "SITA FLEX ESSENTIALS"
+  },
+  {
+    "heading": "SITA FLEX AS A SERVICE"
+  },
+  {
+    "heading": "SITA DCS TRANSLATE"
+  },
+  {
+    "heading": "SITA LOCAL DCS"
+  },
+  {
+    "heading": "SITA INFORMATION DISPLAY SYSTEM"
+  },
+  {
+    "heading": "SITA TRANSIT"
+  },
+  {
+    "heading": "SITA PUBLIC ADDRESS SYSTEM"
+  },
+  {
+    "heading": "SITA SMART PATH DROP AND FLY"
+  },
+  {
+    "heading": "SITA SMART PATH SCAN AND FLY"
+  },
+  {
+    "heading": "SELF BAGDROP"
+  },
+  {
+    "heading": "SITA SMART PATH SECURITY GATE"
+  },
+  {
+    "heading": "SITA SMART PATH BOARDING GATE"
+  },
+  {
+    "heading": "SITA SMART PATH HUB"
+  },
+  {
+    "heading": "SITA SMART PATH CHECK IN KIOSK"
+  },
+  {
+    "heading": "SITA SMART PATH SELF TAGGING KIOSK"
+  },
+  {
+    "heading": "SITA WORLDTRACER CORE"
+  },
+  {
+    "heading": "SITA WORLDTRACER LOST AND FOUND PROPERTY"
+  },
+  {
+    "heading": "SITA WORLDTRACER AUTO REFLIGHT"
+  },
+  {
+    "heading": "SITA WORLDTRACER BAG DELIVERY SERVICE"
+  },
+  {
+    "heading": "WORLDTRACER BAGGAGE MANAGEMENT FOR AIRLINES"
+  },
+  {
+    "heading": "2  AIRCRAFT COMMUNICATION"
+  },
+  {
+    "heading": "AIRCOM DATALINK"
+  },
+  {
+    "heading": "AIRCOM SATELLITE BROADBAND"
+  },
+  {
+    "heading": "AIRCOM VOICE"
+  },
+  {
+    "heading": "AIRCOM ACARS OVER IP GATEWAY ACCESS"
+  },
+  {
+    "heading": "AIRCOM ACARS MATIP/MQ ACCESS"
+  },
+  {
+    "heading": "AIRCOM ACARS PROCESSING SERVICE"
+  },
+  {
+    "heading": "AIRCOM SATELLITE"
+  },
+  {
+    "heading": "AIRCOM VHF"
+  },
+  {
+    "heading": "AIRCOM INFORMATION SERVICES"
+  },
+  {
+    "heading": "AIRCOM FMS WIND UPLINK"
+  },
+  {
+    "heading": "AIRCOM SURFACE WEATHER"
+  },
+  {
+    "heading": "D-ATIS GATEWAY"
+  },
+  {
+    "heading": "AIRCOM FLIGHTMESSENGER"
+  },
+  {
+    "heading": "AIRCOM SERVERPLATFORM"
+  },
+  {
+    "heading": "AIRCOM SERVERPLATFORM ONLINE"
+  },
+  {
+    "heading": "AIRCOM IRIDIUM VOICE"
+  },
+  {
+    "heading": "AIRCOM INMARSAT CLASSIC AERO VOICE"
+  },
+  {
+    "heading": "ATC SYSTEMS - EN ROUTE"
+  },
+  {
+    "heading": "ATC NETWORKS - VHF/VDL"
+  },
+  {
+    "heading": "ATC SERVICES - ATN"
+  },
+  {
+    "heading": "ATC SERVICES - SATCOM VOICE"
+  },
+  {
+    "heading": "ATS CONSULTANCY"
+  },
+  {
+    "heading": "ATC SYSTEMS - AIRPORT TOWER"
+  },
+  {
+    "heading": "CREWTAB"
+  },
+  {
+    "heading": "AIRCOM FLIGHTTRACKER"
+  },
+  {
+    "heading": "E-AIRCRAFT DATAHUB"
+  },
+  {
+    "heading": "EWAS - BUNDLE"
+  },
+  {
+    "heading": "SITA EWAS"
+  },
+  {
+    "heading": "SITA FLIGHT FOLDER"
+  },
+  {
+    "heading": "SITA MISSION CONTROL"
+  },
+  {
+    "heading": "SITA MISSION WATCH"
+  },
+  {
+    "heading": "SITA OPTICLIMB"
+  },
+  {
+    "heading": "SITA OPTIDIRECT"
+  },
+  {
+    "heading": "SITA SAFETY CUBE"
+  },
+  {
+    "heading": "TRACK AND TRACE"
+  },
+  {
+    "heading": "3  BORDER MANAGEMENT"
+  },
+  {
+    "heading": "GOVERNMENTAL BORDER MANAGEMENT"
+  },
+  {
+    "heading": "SITA APP SERVICE"
+  },
+  {
+    "heading": "SITA APP GATEWAY"
+  },
+  {
+    "heading": "SITA API SERVICE"
+  },
+  {
+    "heading": "SITA PNR SERVICE"
+  },
+  {
+    "heading": "SITA Border Crossing"
+  },
+  {
+    "heading": "SITA Entry Exit"
+  },
+  {
+    "heading": "SITA Border Solution Services"
+  },
+  {
+    "heading": "SITA Intelligence and Targeting Fast Start"
+  },
+  {
+    "heading": "SITA Risk Tracker"
+  },
+  {
+    "heading": "SITA Electronic Travel Authorization"
+  },
+  {
+    "heading": "SITA Health ETA"
+  },
+  {
+    "heading": "TIMATIC IATA"
+  },
+  {
+    "heading": "4  CABIN SOLUTION LINE"
+  },
+  {
+    "heading": "AIRCOM Information and Support Services"
+  },
+  {
+    "heading": "AIRCOM Short Messaging Service"
+  },
+  {
+    "heading": "5  COMMUNICATION AND DATA EXCHANGE"
+  },
+  {
+    "heading": "ATC Services - FANS"
+  },
+  {
+    "heading": "ATC Services - Pre-FANS"
+  },
+  {
+    "heading": "Day of Travel"
+  },
+  {
+    "heading": "SITA Flight Data Global"
+  },
+  {
+    "heading": "SITA Aviation Reference Data"
+  },
+  {
+    "heading": "SITA Boarding Pass API"
+  },
+  {
+    "heading": "SITA Flight Data Community"
+  },
+  {
+    "heading": "SITA Flight Schedule Data"
+  },
+  {
+    "heading": "SITA Consultancy"
+  },
+  {
+    "heading": "SITA Project Management"
+  },
+  {
+    "heading": "SITA Integrated Traffic Management"
+  },
+  {
+    "heading": "SITA Content Delivery Network"
+  },
+  {
+    "heading": "Common Use IP"
+  },
+  {
+    "heading": "MDNS at Airports"
+  },
+  {
+    "heading": "Airport Connect Net CUTE MDNS"
+  },
+  {
+    "heading": "Express IP"
+  },
+  {
+    "heading": "CommunityConnect MDNS"
+  },
+  {
+    "heading": "SITA Connect Community DCS"
+  },
+  {
+    "heading": "SITA Connect Community Internet"
+  },
+  {
+    "heading": "Circuits"
+  },
+  {
+    "heading": "IP VPN"
+  },
+  {
+    "heading": "Link Services"
+  },
+  {
+    "heading": "ServiceNet"
+  },
+  {
+    "heading": "SITA Connect Core"
+  },
+  {
+    "heading": "SITA Connect Go"
+  },
+  {
+    "heading": "SITA Connect Light"
+  },
+  {
+    "heading": "SITA Connect Reach"
+  },
+  {
+    "heading": "SITA Connect SDN"
+  },
+  {
+    "heading": "IP VPN at Airports"
+  },
+  {
+    "heading": "SITA Connect Core at Airports"
+  },
+  {
+    "heading": "SITA Connect Go at Airports"
+  },
+  {
+    "heading": "SITA Connect Light at Airports"
+  },
+  {
+    "heading": "SITA Connect SDN at Airports"
+  },
+  {
+    "heading": "SITA Connect Domestic Core"
+  },
+  {
+    "heading": "Integrated Edge Service"
+  },
+  {
+    "heading": "IPSec"
+  },
+  {
+    "heading": "Premier DSL Access to IP VPN"
+  },
+  {
+    "heading": "Select DSL Access to IP VPN"
+  },
+  {
+    "heading": "SITA Connect Internet Premium"
+  },
+  {
+    "heading": "SITA Connect Internet Secure Gateway"
+  },
+  {
+    "heading": "SITA Connect Internet Core"
+  },
+  {
+    "heading": "Infrastructure-as-a-Service"
+  },
+  {
+    "heading": "SITA Infrastructure Security"
+  },
+  {
+    "heading": "SITA Managed Security Appliance"
+  },
+  {
+    "heading": "SITA LAN Management Core"
+  },
+  {
+    "heading": "Message Connect Mailbox"
+  },
+  {
+    "heading": "SMTP (Simple Mail Transfer Protocol)"
+  },
+  {
+    "heading": "EDI Services"
+  },
+  {
+    "heading": "SITA ATC Messaging Distribution"
+  },
+  {
+    "heading": "SITA Data Connect"
+  },
+  {
+    "heading": "SITA GMS FAX"
+  },
+  {
+    "heading": "SITA Message Relay"
+  },
+  {
+    "heading": "SITA Type B Distribution Service"
+  },
+  {
+    "heading": "SITA Type X Distribution Service"
+  },
+  {
+    "heading": "SITA X.400 Messaging"
+  },
+  {
+    "heading": "SITA Data Connect API"
+  },
+  {
+    "heading": "SITA Conferencing Services"
+  },
+  {
+    "heading": "SITA Contact Center Advanced Services"
+  },
+  {
+    "heading": "SITA IP Telephony"
+  },
+  {
+    "heading": "SITA Voice Services"
+  },
+  {
+    "heading": "SITA Contact Center Communication Services"
+  },
+  {
+    "heading": "SITA Managed SBC"
+  },
+  {
+    "heading": "SITA Omnichannel Contact Services"
+  },
+  {
+    "heading": "SITA Service Management Assurance"
+  },
+  {
+    "heading": "SITA Mobile Data Access"
+  },
+  {
+    "heading": "SITA Wireless Gatelink"
+  },
+  {
+    "heading": "SITATEX IP"
+  },
+  {
+    "heading": "SITATEX Online"
+  },
+  {
+    "heading": "6  DEVICE MANAGEMENT"
+  },
+  {
+    "heading": "SITA End User Professional Services"
+  },
+  {
+    "heading": "SITA Managed Mobile Devices"
+  },
+  {
+    "heading": "SITA End User Field Services"
+  },
+  {
+    "heading": "SITA End User Managed Workplace"
+  },
+  {
+    "heading": "7  E-AIRCRAFT SOLUTIONS"
+  },
+  {
+    "heading": "SITA Aircraft DataSuite"
+  },
+  {
+    "heading": "8  INTEGRATION SERVICES"
+  },
+  {
+    "heading": "Delivery"
+  },
+  {
+    "heading": "9  PASSENGER SERVICE SYSTEM"
+  },
+  {
+    "heading": "SITA Integration Platform"
+  },
+  {
+    "heading": "10  SECURITY SERVICE"
+  },
+  {
+    "heading": "SITA Managed SSE"
+  },
+  {
+    "heading": "11  SITA AIRPORT PROFESSIONAL SERVICES"
+  },
+  {
+    "heading": "SITA Business Consulting"
+  },
+  {
+    "heading": "NEWSLETTER"
+  },
+  {
+    "heading": "Product Name change for Messaging Intelligence module"
+  },
+  {
+    "heading": "Audit 2020 - Confirmation of balances"
+  },
+  {
+    "heading": "E-invoicing - 60% of SITA customer are paperless"
+  },
+  {
+    "heading": "Change of VAT Tax Rate in Germany"
+  },
+  {
+    "heading": "Change of VAT Tax Rate in Kenya"
+  },
+  {
+    "heading": "Statement of Account - Available in SITA Portal from March"
+  },
+  {
+    "heading": "Support:"
+  },
+  {
+    "heading": "Customer Feedback - Billing Services"
+  },
+  {
+    "heading": "Cameroon Tax Adjustments"
+  },
+  {
+    "heading": "SITA SC Tax invoices - Austria, France, and Taiwan"
+  },
+  {
+    "heading": "Change of Service Management module name as from September 2021"
+  },
+  {
+    "heading": "E-invoicing - together we are becoming paperless"
+  },
+  {
+    "heading": "SITA Ypenburg B.V. - Airport Services"
+  },
+  {
+    "heading": "SITA Information Networking Computing B.V. - change of name"
+  },
+  {
+    "heading": "Change of VAT Tax Rate in Ghana"
+  },
+  {
+    "heading": "New Bank Account - SITA Switzerland"
+  },
+  {
+    "heading": "Simplification of Customer account structure"
+  },
+  {
+    "heading": "SITA SC Tax invoices - Netherland"
+  },
+  {
+    "heading": "E-invoicing and SITA Billing services on Customer Portal"
+  },
+  {
+    "heading": "New Bank Account - SITA Switzerland Sarl"
+  },
+  {
+    "heading": "SITA Invoice display changes"
+  },
+  {
+    "heading": "Simplification of Customer account structure (re-communication)"
+  },
+  {
+    "heading": "New Bank Account - SITA Switzerland Sarl (GBP currency)"
+  },
+  {
+    "heading": "Change of Day of Travel module name as from January 2022"
+  },
+  {
+    "heading": "SITA Switzerland Sarl - Notice of Novation of Contracts"
+  },
+  {
+    "heading": "Search for invoices"
+  },
+  {
+    "heading": "Argentina IIBB - Ingresos Brutos turnover tax"
+  },
+  {
+    "heading": "Simplification of Customer account structure - Electronic files Update"
+  },
+  {
+    "heading": "(Recommunication)"
+  },
+  {
+    "heading": "Search invoices for"
+  },
+  {
+    "heading": "SITA Invoicing changes summary - January 2022 activity invoice"
+  },
+  {
+    "heading": "1. SITA SC network and messaging contract novation"
+  },
+  {
+    "heading": "2. Customer account structure changes"
+  },
+  {
+    "heading": "3. SITA Smartview (e-file)"
+  },
+  {
+    "heading": "4. Customer Portal - Billing services changes"
+  },
+  {
+    "heading": "Customer Portal - Billing Services Outage"
+  },
+  {
+    "heading": "Change of VAT % in Bahrain"
+  },
+  {
+    "heading": "Customer Reference - Invoice and e-file enhancement"
+  },
+  {
+    "heading": "Recapitulation  of  changes  implemented  from  January  2022  activity invoice (Recommunication)"
+  },
+  {
+    "heading": "Customer Reference - Invoice and e-file enhancement Update"
+  },
+  {
+    "heading": "SITA Local Tax invoices available on Customer Portal"
+  },
+  {
+    "heading": "INDIA GST invoices available through E-invoicing"
+  },
+  {
+    "heading": "SITA Switzerland - VAT registration in Bahamas, Nigeria, and Saudi Arabia"
+  },
+  {
+    "heading": "Change of SITA Open API product name as from July 2022"
+  },
+  {
+    "heading": "Change of SITA Product Group as from July 2022"
+  },
+  {
+    "heading": "PRODUCT GROUP NAME"
+  },
+  {
+    "heading": "New Bank Account - SITA B.V. Nederland &amp; SITA Information Networking Computing USA"
+  },
+  {
+    "heading": "SITA Switzerland - VAT registration in Ghana and Oman"
+  },
+  {
+    "heading": "PRODUCT\\_ GROUP NAME"
+  },
+  {
+    "heading": "ANNUAL WORLDTRACER® PRICE INCREASE FOR 2022"
+  },
+  {
+    "heading": "SITA N.V. and SITA B.V. Nederlands - Registered address change"
+  },
+  {
+    "heading": "SITA Switzerland - VAT registration in Ghana and Oman (June activity)"
+  },
+  {
+    "heading": "SITA Switzerland - VAT registration in South Africa (July activity)"
+  },
+  {
+    "heading": "New SITA subsidiary in South Africa in September 2022"
+  },
+  {
+    "heading": "Customer Reference - pdf summary page"
+  },
+  {
+    "heading": "Change of SITA Open API product name as from July activity"
+  },
+  {
+    "heading": "Change of SITA Product Group as from July activity"
+  },
+  {
+    "heading": "Customer Reference - pdf summary page available upon request"
+  },
+  {
+    "heading": "Customer Refernce per Product"
+  },
+  {
+    "heading": "SITA Switzerland - VAT registration in Zimbabwe (August activity)"
+  },
+  {
+    "heading": "PRODUCT\\_GROUP NAME"
+  },
+  {
+    "heading": "New SITA subsidiary in South Africa in October 2022 (Date change)"
+  },
+  {
+    "heading": "New Bank Account - SITA Advanced Travel Solutions Limited"
+  },
+  {
+    "heading": "Change of SITA Product &amp; Module names as from January 2023 activity"
+  },
+  {
+    "heading": "Customer Reference - pdf summary page available upon request (recommunication)"
+  },
+  {
+    "heading": "Customer Reference Summary"
+  },
+  {
+    "heading": "SITA Switzerland - HST/GST/PST registration in Canada"
+  },
+  {
+    "heading": "SITA Switzerland - Tax registrations in Barbados, Canada &amp; UAE"
+  },
+  {
+    "heading": "Canada (applicable from October 2022 activity invoice)"
+  },
+  {
+    "heading": "Barbados (applicable from November 2022 activity invoice)"
+  },
+  {
+    "heading": "United Arab Emirates (applicable from November 2022 activity invoice)"
+  },
+  {
+    "heading": "New SITA subsidiary in South Africa in October 2022"
+  },
+  {
+    "heading": "LGW - PAX charges back-billing for period May2022 - August2022"
+  },
+  {
+    "heading": "SITA Switzerland - VAT application in Barbados &amp; UAE"
+  },
+  {
+    "heading": "Barbados VAT applicable from November 2022 activity invoice"
+  },
+  {
+    "heading": "United Arab Emirates VAT applicable from November 2022 activity invoice"
+  },
+  {
+    "heading": "MEX - SITA Flex CLUB charges corrections for period Sep - Oct 20022"
+  },
+  {
+    "heading": "MUC - SITA Flex CLUB charges November &amp; December activity usage"
+  },
+  {
+    "heading": "Type B traffic detailed information in SmartView - November activity"
+  },
+  {
+    "heading": "SITA Flex Services - Time Signed In Billing (TSIB) - December 2022 activity invoice"
+  },
+  {
+    "heading": "Qatar  Advance  Passenger  Processing  and  Passenger  Name  Record Systems (APP/PNR)"
+  },
+  {
+    "heading": "Canada Tax - Update of Canadian Tax Invoices layout"
+  },
+  {
+    "heading": "VAT rate changes applicable starting 1st January 2023"
+  },
+  {
+    "heading": "Ghana:"
+  },
+  {
+    "heading": "Singapore:"
+  },
+  {
+    "heading": "SITA Switzerland SARL - Canadian Tax Adjustments"
+  },
+  {
+    "heading": "Change of SITA Module names as from April 2023 activity"
+  },
+  {
+    "heading": "SITA Omnichannel Services - change of invoice layout and e-file data"
+  },
+  {
+    "heading": "SITA Contact Center Advanced Services and SITA Voice services modules change of invoice layout and e-file data - May 2023 activity period"
+  },
+  {
+    "heading": "billing currency in USD"
+  },
+  {
+    "heading": "Usage charges:"
+  },
+  {
+    "heading": "Total SITA Contact Center Advanced Services Charge"
+  },
+  {
+    "heading": "SITA Switzerland SARL - Canadian Tax Adjustments - Update"
+  },
+  {
+    "heading": "Transfer of the India airport services to SITA Switzerland Sarl"
+  },
+  {
+    "heading": "SITA Flex charges - LIM CLUB - corrective adjustments"
+  },
+  {
+    "heading": "SITA Contact Center Advanced Services and SITA Voice services modules - No invoicing in May 2023 activity"
+  },
+  {
+    "heading": "SITA Flex - Paraguay - ASU CLUB - invoicing under SITA B.V. from June 2023 activity"
+  },
+  {
+    "heading": "Annual WorldTracer Price increase 2023"
+  },
+  {
+    "heading": "SITA Contact Center Advanced Services and SITA Voice services modules - Charges for May/June 2023 activity period &amp; new invoice/e-file layout"
+  },
+  {
+    "heading": "SmartView:"
+  },
+  {
+    "heading": "CDR files (Voice / CCAS)"
+  },
+  {
+    "heading": "Registered Address Change - SITA France"
+  },
+  {
+    "heading": "31/35 Rue De La Federation 75015 Paris France"
+  },
+  {
+    "heading": "SITA For Aircraft - Product &amp; Module Name changes"
+  },
+  {
+    "heading": "SITA Information Networking Computing USA Inc - registered address change"
+  },
+  {
+    "heading": "Price Adjustment - CPI for CLUB / BLUB services effective January 2024"
+  },
+  {
+    "heading": "SITA Flex charges - EZE CLUB - corrective adjustments"
+  },
+  {
+    "heading": "Billing Survey 2023"
+  },
+  {
+    "heading": "Type B Service E-file October 2023 activity"
+  },
+  {
+    "heading": "Details are:"
+  },
+  {
+    "heading": "SITA Flex charges - BSB CLUB - no billing in November 2023 activity"
+  },
+  {
+    "heading": "Switzerland:"
+  },
+  {
+    "heading": "Transfer of the SITA B.V - Singapore Branch services to SITA Switzerland Sarl"
+  },
+  {
+    "heading": "SITA Flex charges - BSB CLUB - November charges including in December 2023 activity"
+  },
+  {
+    "heading": "VAT rate changes applicable starting 1st January 2024"
+  },
+  {
+    "heading": "Prosperous and Successful Year 2024 - Thank You"
+  },
+  {
+    "heading": "SITA Customer Portal"
+  },
+  {
+    "heading": "Module Name changes - planned released in April 2024"
+  },
+  {
+    "heading": "India APIS - November 2023 adjustment correction"
+  },
+  {
+    "heading": "Malaysia Service Tax change"
+  },
+  {
+    "heading": "SITA FLEX Services (CUTE) - Changi International Airport (SIN)"
+  },
+  {
+    "heading": "Select DSL &amp; Premier DSL Access to IP VPN - Transfer to new modules"
+  },
+  {
+    "heading": "SITA FLEX services - PEK - January 2024 adjustment correction"
+  },
+  {
+    "heading": "VAT rate change - Ecuador"
+  },
+  {
+    "heading": "BILLING UPDATE"
+  },
+  {
+    "heading": "SITA Brand - Invoice layout updates"
+  },
+  {
+    "heading": "Select  DSL  &amp;  Premier  DSL  Access  to  IP  VPN  -  Transfer  to  new modules"
+  },
+  {
+    "heading": "SITA Customer Portal - Brand New Look"
+  },
+  {
+    "heading": "Select &amp; Premier DSL Access to IP VPN - Transfer to new modules"
+  },
+  {
+    "heading": "SITA Switzerland Sarl - address change"
+  },
+  {
+    "heading": "New address:"
+  },
+  {
+    "heading": "Late Payment Invoice - Update"
+  },
+  {
+    "heading": "Former address:"
+  },
+  {
+    "heading": "SITA Advanced Travel Solutions Limited - new bank account"
+  },
+  {
+    "heading": "SITA Customer Portal - DigiHub"
+  },
+  {
+    "heading": "SITA Billing Survey"
+  },
+  {
+    "heading": "SITA  Product  &amp;  Module  name  changes  -  planned  release  in January 2025 activity"
+  },
+  {
+    "heading": "SITA Customer Portal - DigiHub Update"
+  },
+  {
+    "heading": "Annual WorldTracer Price Increase 2025"
+  },
+  {
+    "heading": "SITA Omnichannel Services - November 2024 usage data"
+  },
+  {
+    "heading": "SITA Advance Travel Solutions Limited (UK) - address change"
+  },
+  {
+    "heading": "SITA IPS - Invoicing - January 2025"
+  },
+  {
+    "heading": "Wishing SITA customers Prosperous Year 2025"
+  },
+  {
+    "heading": "VAT rate change - Israel"
+  },
+  {
+    "heading": "SITA Certification Portal - Announcement"
+  },
+  {
+    "heading": "SITA Brand - New Invoice layout - February 2025"
+  },
+  {
+    "heading": "SITA IPS - Invoicing - January 2025 - recommunication"
+  },
+  {
+    "heading": "SITA Brand - New Invoice layout"
+  },
+  {
+    "heading": "Price Adjustments (CPI) - January 2025"
+  },
+  {
+    "heading": "Spanish CLUB - rate updates January 2025 activity period"
+  },
+  {
+    "heading": "Ghana E-invoicing - Local Tax/VAT invoices"
+  },
+  {
+    "heading": "GIG &amp; GRU - Baggage BLUB for period 10/2024 - 03/2025"
+  },
+  {
+    "heading": "SITA Module name change - release in June 2025 activity"
+  },
+  {
+    "heading": "SIN CLUB - usage for February and March triggered this month"
+  },
+  {
+    "heading": "Company Name Change - Materna IPS India Pvt. Ltd."
+  },
+  {
+    "heading": "SITA Module name change - changes"
+  },
+  {
+    "heading": "BOM - SITA Flex &amp; Bag Message"
+  },
+  {
+    "heading": "SITA Switzerland Sarl has registered for VAT in Kenya"
+  },
+  {
+    "heading": "WorldTracer usage - charge description changes"
+  },
+  {
+    "heading": "Romania - VAT % change from 1 st  August 2025"
+  },
+  {
+    "heading": "BOM - SITA Flex &amp; Bag Message - May &amp; June 2025"
+  },
+  {
+    "heading": "SITA INC UK Ltd. - registered address change"
+  }
+]

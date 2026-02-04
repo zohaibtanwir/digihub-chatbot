@@ -1,0 +1,59 @@
+[
+  {
+    "heading": "Untitled"
+  },
+  {
+    "heading": "SITA WORLDTRACER"
+  },
+  {
+    "heading": "Web Services Access Requirements"
+  },
+  {
+    "heading": "Revision History"
+  },
+  {
+    "heading": "1 ACCESS REQUIREMENTS"
+  },
+  {
+    "heading": "2 CERTIFICATE CREATION USING OPENSSL"
+  },
+  {
+    "heading": "2.1 Create a private key (key.pem)"
+  },
+  {
+    "heading": "2.2 Create the certificate"
+  },
+  {
+    "heading": "2.2.1 Production certificate - validated by a Certificate Authority (CA):"
+  },
+  {
+    "heading": "2.2.2 UAT certificate:"
+  },
+  {
+    "heading": "2.3 Send the signed certificate cert.pem to SITA"
+  },
+  {
+    "heading": "2.4 To convert the generated private key and certificate into java key store"
+  },
+  {
+    "heading": "3 USING SOAPUI CLIENT TO TEST THE CONNECTIVITY"
+  },
+  {
+    "heading": "3.1 Security Configuration"
+  },
+  {
+    "heading": "3.2 Testing Connectivity"
+  },
+  {
+    "heading": "NOTE:"
+  },
+  {
+    "heading": "3.3 Testing a valid request"
+  },
+  {
+    "heading": "Appendix A"
+  },
+  {
+    "heading": "Appendix B"
+  }
+]

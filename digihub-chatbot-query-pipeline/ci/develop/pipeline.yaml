@@ -1,0 +1,26 @@
+trigger:
+  - develop
+
+pr:
+  branches:
+    include:
+      - develop
+
+resources:
+  repositories:
+    - repository: digihub-pipeline-templates
+      type: git
+      name: digihub-pipeline-templates
+      ref: develop
+
+extends:
+  template: python-pipeline/build-deploy-template-query.yml@digihub-pipeline-templates
+  parameters:
+    # This is the application or the service name that you want to run in the k8s cluster.
+    appName: digihub-chatbot-query-pipeline
+    numberOfReplicas: 2
+    serviceApiPath: chatbotquery
+    sonarProjectKey: aero.sita.digihub.chatbot.query.pipeline
+    deployEnvVariableSecretName: SPRING_CLOUD_AZURE_KEYVAULT_SECRET
+    deployEnvVariableSecretValue: digihub-keyvault-client-secret
+    keyName: client-secret

@@ -1,0 +1,57 @@
+---
+# pipeline to add semantic versioning
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: $(var_global_ms_agent_vm_image)
+
+# Define the repositories as resources.
+resources:
+  repositories:
+    # Reference the current repository (the one containing this pipeline file).
+    - repository: self
+
+    # Reference an external Git repository (azdo-templates).
+    - repository: azdo-templates
+      type: git
+      name: SharedInfra/azdo-templates
+      ref: refs/tags/v1.55.1
+
+    # Reference an external Git repository (digihub-deployments-common).
+    - repository: digihub-deployments-common
+      type: git
+      name: Communication and Network/digihub-deployments-common
+      ref: refs/tags/v0.1.0
+
+variables:
+  - template: vars/global.yaml@digihub-deployments-common
+
+# Define the stages for the pipeline.
+stages:
+  # Stage: semantic_versioning
+  # Condition: This stage runs only for the 'main' branch and not for pull requests.
+  - stage: semantic_versioning
+    condition: |
+      and(
+        eq(variables.isMain, 'True'),
+        eq(variables.isPR, 'False')
+      )
+    displayName: semantic versioning
+    jobs:
+      # Job: semantic_release
+      # Display name: check/apply semantic release
+      # Steps: Use the template from the 'azdo-templates' repository to handle semantic versioning.
+      - job: semantic_release
+        displayName: check/apply semantic release
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+
+          - template: step/sv4git-tag-release/template.yml@azdo-templates
+            # Use the template from the 'azdo-templates' repository to handle semantic versioning.
+            # The template is defined in 'step/sv4git-tag-release/template.yml'.

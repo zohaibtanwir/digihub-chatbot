@@ -1,0 +1,8 @@
+extends:
+ - '@commitlint/config-conventional'
+rules:
+  # Update the header maximum length for Renovate PRs
+  header-max-length:
+    - 2         # level 1=warning, 2=error
+    - always    # rule
+    - 400       # value

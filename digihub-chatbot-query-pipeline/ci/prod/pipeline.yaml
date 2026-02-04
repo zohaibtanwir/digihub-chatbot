@@ -1,0 +1,26 @@
+trigger:
+  - none
+
+parameters:
+  - name: prodImageTag
+    displayName: 'Provide the Image Tag to deploy in prod'
+    type: string
+
+resources:
+  repositories:
+    - repository: digihub-pipeline-templates
+      type: git
+      name: digihub-pipeline-templates
+      ref: develop
+
+extends:
+  template: python-pipeline/deploy-to-prod-query.yml@digihub-pipeline-templates
+  parameters:
+    # This is the application or the service name that you want to run in the k8s cluster.
+    appName: digihub-chatbot-query-pipeline
+    prodImageTag: ${{ parameters.prodImageTag }}
+    numberOfReplicas: 2
+    serviceApiPath: chatbotquery
+    deployEnvVariableSecretName: SPRING_CLOUD_AZURE_KEYVAULT_SECRET
+    deployEnvVariableSecretValue: digihub-keyvault-client-secret
+    keyName: client-secret

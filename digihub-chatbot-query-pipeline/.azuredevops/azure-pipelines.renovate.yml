@@ -1,0 +1,107 @@
+---
+schedules:
+  # Schedule the pipeline to run daily at 3 AM on the "main" branch.
+  - cron: "0 3 * * *"
+    displayName: "Every day at 3am"
+    branches:
+      include:
+        - dev
+    batch: true
+    always: true
+
+# The pipeline will not be triggered manually or automatically by changes in repositories.
+trigger: none
+
+pool:
+  vmImage: $(var_global_ms_agent_vm_image)
+
+# Define the repositories as resources.
+resources:
+  repositories:
+    # Reference the current repository (the one containing this pipeline file).
+    - repository: self
+
+    # Reference an external Git repository (azdo-templates).
+    - repository: azdo-templates
+      type: git
+      name: SharedInfra/azdo-templates
+      ref: refs/tags/v1.55.1
+      trigger:
+        tags:
+          include:
+          - 'v*'
+
+    - repository: renovate-config
+      type: git
+      name: SharedInfra/renovate-config
+      ref: refs/tags/v0.3.3
+      trigger:
+        tags:
+          include:
+          - 'v*'
+
+    # Reference additional external Git repositories (digihub-deployments-common).
+
+    - repository: digihub-deployments-common
+      type: git
+      name: Communication and Network/digihub-deployments-common
+      ref: dev
+      trigger:
+        tags:
+          include:
+          - 'v*'
+
+# Define variables to be used in the pipeline.
+variables:
+  - template: vars/global.yaml@digihub-deployments-common
+  # Reference the variable group "lib-digihub_k8s_renovatebot".
+  - group: lib-digihub_k8s_renovatebot
+
+
+# Define the stages for the pipeline.
+stages:
+  # Define a stage named "Renovate" with a single job.
+  - stage: Renovate
+    displayName: Renovate Bot
+    jobs:
+      # Define a job named "Renovate" for renovating dependencies using Renovate Bot.
+      - job: Renovate_repo_run
+        displayName: Renovate Bot - digihub-deployments-environments
+
+        container:
+          image: ${{ variables.var_global_renovate_image }}
+          endpoint: ${{ variables.var_global_renovate_endpoint }}
+        
+        steps:
+          # Checkout the current repository (self) with persisted credentials.
+          - checkout: self
+            persistCredentials: true
+          
+          # Checkout the azdo-templates repository with persisted credentials.
+          - checkout: azdo-templates
+            persistCredentials: true
+          
+          # Checkout the renovate-config repository with persisted credentials.
+          - checkout: renovate-config
+            persistCredentials: true
+          
+          # Checkout the digihub-deployments-common repository with persisted credentials.
+          - checkout: digihub-deployments-common
+            persistCredentials: true
+
+          # Run Renovate Bot
+          - bash: |
+              renovate
+            displayName: Execute Renovate
+            workingDirectory: "$(System.DefaultWorkingDirectory)/$(Pipeline.Repository.Name)"
+            env:
+              RENOVATE_PLATFORM: 'azure'
+              RENOVATE_ENDPOINT: 'https://dev.azure.com/sita-pse/'
+              RENOVATE_AUTODISCOVER: 'false'
+              RENOVATE_HOST_RULES: '[{"hostType": "github", "domainName": "github.com", "token": "$(lib-renovate-githubtoken)"}]'
+              RENOVATE_TOKEN: '$(System.AccessToken)'
+              RENOVATE_REPOSITORIES: '["$(System.TeamProject)/$(Pipeline.Repository.Name)"]'
+              RENOVATE_CONFIG_FILE: 'renovate.json'
+              RENOVATE_GIT_AUTHOR: 'Renovate Bot <bot@renovateapp.com>'
+              RENOVATE_AZURE_WORK_ITEM_ID: $(var_global_renovate_bot_work_item_id)
+              LOG_LEVEL: 'debug'

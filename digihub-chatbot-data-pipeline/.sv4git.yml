@@ -1,0 +1,37 @@
+version: "1.3" #config version
+
+versioning: # versioning bump
+    update-major: [] # Commit types used to bump major.
+    update-minor: [feat] # Commit types used to bump minor.
+    update-patch: [fix, chore] # Commit types used to bump patch.
+    # When type is not present on update rules and is unknown (not mapped on commit message types);
+    # if ignore-unknown=false bump patch, if ignore-unknown=true do not bump version
+    ignore-unknown: true
+
+tag:
+  pattern: 'v%d.%d.%d' # Pattern used to create git tag.
+  filter: 'v[0-9]*'
+
+release-notes:
+    sections:
+        - name: Features
+          section-type: commits
+          commit-types: [feat]
+        - name: Bug Fixes
+          section-type: commits
+          commit-types: [fix]
+        - name: Dependency Updates
+          section-type: commits
+          commit-types: [chore]
+        - name: Breaking Changes
+          section-type: breaking-changes
+
+commit-message:
+    types: [build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test] # Supported commit types.
+    header-selector: '' # You can put in a regex here to select only a certain part of the commit message. Please define a regex group 'header'.
+    scope:
+        # Define supported scopes, if blank, scope will not be validated, if not, only scope listed will be valid.
+        # Don't forget to add "" on your list if you need to define scopes and keep it optional.
+        values: []
+    footer:
+        issue: {}
