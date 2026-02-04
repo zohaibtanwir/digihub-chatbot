@@ -29,6 +29,11 @@ COSMOSDB_SERVICE_NAME_MAPPING_CONTAINER_NAME="ServiceNameMapping"
 SESSION_CONTEXT_WINDOW_SIZE = None  # Number of Q&A pairs to use for context
 ENABLE_RELEVANCE_FILTERING = None   # Enable LLM-based relevance filtering
 MIN_RELEVANCE_CHUNKS = None         # Minimum chunks to keep even if not relevant
+MIN_SIMILARITY_THRESHOLD = None     # Minimum similarity score for retrieval (0.0-1.0)
+ENABLE_METADATA_FILTERING = None    # Enable metadata-based filtering in retrieval
+
+# Out-of-scope detection settings
+OUT_OF_SCOPE_CONFIDENCE_THRESHOLD = None  # Confidence threshold below which queries are considered out of scope (0.0-1.0)
 
 try:
     ENVIRONMENT = os.getenv("CONFIG_URL")
@@ -74,6 +79,15 @@ try:
             SESSION_CONTEXT_WINDOW_SIZE = int(source.get("SESSION_CONTEXT_WINDOW_SIZE", 5))
             ENABLE_RELEVANCE_FILTERING = source.get("ENABLE_RELEVANCE_FILTERING", "true").lower() == "true"
             MIN_RELEVANCE_CHUNKS = int(source.get("MIN_RELEVANCE_CHUNKS", 2))
+            # Minimum similarity threshold for retrieval (default: 0.35)
+            # Chunks below this threshold are deprioritized in results
+            MIN_SIMILARITY_THRESHOLD = float(source.get("MIN_SIMILARITY_THRESHOLD", 0.35))
+            # Enable metadata-based filtering (content type, year, etc.)
+            ENABLE_METADATA_FILTERING = source.get("ENABLE_METADATA_FILTERING", "true").lower() == "true"
+
+            # Out-of-scope detection threshold (default: 0.4)
+            # Queries with LLM confidence below this threshold are considered out of scope
+            OUT_OF_SCOPE_CONFIDENCE_THRESHOLD = float(source.get("OUT_OF_SCOPE_CONFIDENCE_THRESHOLD", 0.4))
 
             logger.info("Configuration details fetched successfully.")
         else:

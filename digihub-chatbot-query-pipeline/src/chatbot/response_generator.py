@@ -22,10 +22,12 @@ from src.utils.config import (
     OPENAI_DEPLOYMENT_NAME,
     SESSION_CONTEXT_WINDOW_SIZE,
     ENABLE_RELEVANCE_FILTERING,
-    MIN_RELEVANCE_CHUNKS
+    MIN_RELEVANCE_CHUNKS,
+    OUT_OF_SCOPE_CONFIDENCE_THRESHOLD
 )
 from src.utils.logger import logger, log_context
 from src.utils.response_utils import replace_spaces_in_image_urls, get_keyword_aware_message
+from src.utils.metrics import RetrievalMetrics, LatencyTracker, PipelineMetrics
 import time
 import random
 
@@ -199,7 +201,6 @@ class ResponseGeneratorAgent:
         citation = response_object.get("Source", None)
 
         try:
-            is_out_of_scope = False
             OUT_OF_SCOPE_MESSAGES = {
                 "english": [
                     "I'm here to support you with SITA documentation and services. For anything outside DigiHub, a quick web search might be your best bet. Let me know how I can assist further!",
@@ -227,7 +228,10 @@ class ResponseGeneratorAgent:
                 ]
             }
 
-            if "This question is outside the scope" in response_object.get("Answer"):
+            # Structured out-of-scope detection using multiple signals
+            is_out_of_scope = self._detect_out_of_scope(response_object, prompt, detected_language)
+
+            if is_out_of_scope:
                 keyword_message = get_keyword_aware_message(prompt, detected_language)
                 if keyword_message:
                     final_response = keyword_message
@@ -653,11 +657,11 @@ class ResponseGeneratorAgent:
                 if chunk.get("serviceNameid") in relevant_service_lines
             ]
 
-            # Log filtering results
-            filtered_count = len(chunks) - len(relevant_chunks)
-            logger.info(
-                f"Relevance filtering: {len(chunks)} total -> {len(relevant_chunks)} relevant "
-                f"({filtered_count} filtered out)"
+            # Log filtering results using metrics utility
+            RetrievalMetrics.log_filtering_results(
+                original_count=len(chunks),
+                filtered_count=len(relevant_chunks),
+                filter_type="llm_relevance"
             )
 
             # Ensure minimum chunks are retained
@@ -680,15 +684,103 @@ class ResponseGeneratorAgent:
             logger.error(f"Relevance filtering failed, returning all chunks: {e}")
             return chunks
 
-    def _process_citations(self, citation_data: list):
+    def _detect_out_of_scope(self, response_object: dict, prompt: str, detected_language: str) -> bool:
         """
-        Processes citations by deduplicating and enriching with IDs.
+        Detects if a query is out of scope using multiple signals.
+
+        This method uses a structured approach combining:
+        1. Explicit is_out_of_scope boolean from LLM response (primary signal)
+        2. Confidence score threshold (secondary signal)
+        3. Text-based matching (fallback for backwards compatibility)
 
         Args:
-            citation_data (list): Raw citation data
+            response_object (dict): The parsed LLM response containing Answer, Confidence, is_out_of_scope
+            prompt (str): The original user query
+            detected_language (str): The detected language of the query
 
         Returns:
-            list: Processed citation data with IDs and drive names
+            bool: True if the query is determined to be out of scope
+        """
+        # Signal 1: Explicit is_out_of_scope boolean from LLM (primary)
+        explicit_out_of_scope = response_object.get("is_out_of_scope")
+        if explicit_out_of_scope is not None:
+            # Handle both boolean and string values
+            if isinstance(explicit_out_of_scope, bool):
+                if explicit_out_of_scope:
+                    logger.info("Out-of-scope detected via explicit is_out_of_scope=true")
+                    return True
+            elif isinstance(explicit_out_of_scope, str):
+                if explicit_out_of_scope.lower() == "true":
+                    logger.info("Out-of-scope detected via explicit is_out_of_scope='true'")
+                    return True
+
+        # Signal 2: Confidence threshold (secondary signal)
+        confidence_threshold = OUT_OF_SCOPE_CONFIDENCE_THRESHOLD if OUT_OF_SCOPE_CONFIDENCE_THRESHOLD else 0.4
+        try:
+            confidence = float(response_object.get("Confidence", 1.0))
+            if confidence < confidence_threshold:
+                logger.info(
+                    f"Out-of-scope detected via low confidence: {confidence:.2f} < {confidence_threshold}"
+                )
+                return True
+        except (ValueError, TypeError) as e:
+            logger.warning(f"Could not parse confidence score: {e}")
+
+        # Signal 3: Text-based matching (fallback for backwards compatibility)
+        answer = response_object.get("Answer", "")
+        out_of_scope_phrases = [
+            "This question is outside the scope",
+            "outside the scope of the documents",
+            "cannot be answered from the context",
+            "I don't have information about",
+            "not covered in the available documents",
+            # German
+            "Diese Frage liegt außerhalb des Umfangs",
+            "außerhalb des Umfangs der bereitgestellten Dokumente",
+            # French
+            "Cette question est en dehors du champ d'application",
+            "en dehors du champ d'application des documents",
+            # Spanish
+            "Esta pregunta está fuera del alcance",
+            "fuera del alcance de los documentos"
+        ]
+
+        for phrase in out_of_scope_phrases:
+            if phrase.lower() in answer.lower():
+                logger.info(f"Out-of-scope detected via text matching: '{phrase}'")
+                return True
+
+        # Signal 4: Response type check
+        response_type = response_object.get("Type", "").lower()
+        if response_type == "generic":
+            # Generic type combined with low-ish confidence might indicate out of scope
+            try:
+                confidence = float(response_object.get("Confidence", 1.0))
+                if confidence < 0.6:
+                    logger.info(
+                        f"Out-of-scope detected via generic type with moderate confidence: {confidence:.2f}"
+                    )
+                    return True
+            except (ValueError, TypeError):
+                pass
+
+        logger.info("Query determined to be in scope")
+        return False
+
+    def _process_citations(self, citation_data: list) -> list:
+        """
+        Processes citations by enriching with document IDs and drive names.
+
+        Enriches each citation with:
+        - id: Document ID from CosmosDB lookup
+        - drivename: First part of the file path (drive/folder name)
+
+        Args:
+            citation_data (list): Raw citation data with 'File' keys
+
+        Returns:
+            list: Processed citation data with IDs and drive names added.
+                  Caller should capture and use this return value.
         """
         # Extract list of files
         file_list = [item["File"] for item in citation_data if "File" in item]
@@ -893,9 +985,10 @@ class ResponseGeneratorAgent:
             end = time.time()
             logger.info(f"[Latency] get_response_from_agent: {end - start:.2f}s")
 
-            # Step 11: Process citations
+            # Step 11: Process citations - explicitly capture and reassign result
             citation_data = structured_response.get("citation", [])
-            self._process_citations(citation_data)
+            processed_citations = self._process_citations(citation_data)
+            structured_response["citation"] = processed_citations
 
             # Step 12: Handle disclaimer
             structured_response = self._append_disclaimer(structured_response, suppress_disclaimer)

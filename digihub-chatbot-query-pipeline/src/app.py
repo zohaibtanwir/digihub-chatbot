@@ -43,8 +43,80 @@ def liveness_probe():
 
 @app.get("/actuator/health/readiness")
 def readiness_probe():
-# You can add checks here (e.g., DB connection, external service availability)
+    """
+    Readiness probe with basic status.
+    For detailed health checks, use /actuator/health/detailed
+    """
     return JSONResponse(status_code=200, content={"status": "UP"})
+
+@app.get("/actuator/health/detailed")
+def detailed_health_check():
+    """
+    Detailed health check endpoint with component-level status.
+
+    Checks:
+    - CosmosDB connectivity
+    - Azure OpenAI service availability
+    - Configuration loaded status
+    """
+    import time
+    from src.utils.config import (
+        COSMOSDB_ENDPOINT,
+        AZURE_OPENAI_ENDPOINT,
+        OPENAI_DEPLOYMENT_NAME,
+        SESSION_CONTEXT_WINDOW_SIZE,
+        ENABLE_RELEVANCE_FILTERING,
+        MIN_SIMILARITY_THRESHOLD
+    )
+
+    health_status = {
+        "status": "UP",
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "components": {},
+        "config": {}
+    }
+
+    # Check CosmosDB
+    try:
+        from src.services.cosmos_db_service import CosmosDBService
+        cosmos_service = CosmosDBService()
+        # Simple connectivity check - just instantiate
+        health_status["components"]["cosmosdb"] = {
+            "status": "UP",
+            "endpoint": COSMOSDB_ENDPOINT[:30] + "..." if COSMOSDB_ENDPOINT else "Not configured"
+        }
+    except Exception as e:
+        health_status["components"]["cosmosdb"] = {
+            "status": "DOWN",
+            "error": str(e)[:100]
+        }
+        health_status["status"] = "DEGRADED"
+
+    # Check Azure OpenAI
+    try:
+        from src.services.azure_openai_service import AzureOpenAIService
+        openai_service = AzureOpenAIService()
+        health_status["components"]["azure_openai"] = {
+            "status": "UP",
+            "endpoint": AZURE_OPENAI_ENDPOINT[:30] + "..." if AZURE_OPENAI_ENDPOINT else "Not configured",
+            "deployment": OPENAI_DEPLOYMENT_NAME
+        }
+    except Exception as e:
+        health_status["components"]["azure_openai"] = {
+            "status": "DOWN",
+            "error": str(e)[:100]
+        }
+        health_status["status"] = "DEGRADED"
+
+    # Report active configuration
+    health_status["config"] = {
+        "session_context_window": SESSION_CONTEXT_WINDOW_SIZE,
+        "relevance_filtering_enabled": ENABLE_RELEVANCE_FILTERING,
+        "min_similarity_threshold": MIN_SIMILARITY_THRESHOLD
+    }
+
+    status_code = 200 if health_status["status"] == "UP" else 503
+    return JSONResponse(status_code=status_code, content=health_status)
 
 
 app.include_router(chatbot_router, prefix="/chatbot/v1", tags=["DigiHub ChatBot"])

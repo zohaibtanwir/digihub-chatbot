@@ -3,10 +3,17 @@ Question Generator Service for the Data Pipeline.
 
 Generates synthetic questions for document chunks to enable
 question-first retrieval in the RAG system.
+
+Also handles chunk quality validation including:
+- Minimum token count validation
+- Meaningful content detection (not just headers)
+- Duplicate/near-duplicate chunk detection
 """
 
 import json
-from typing import List, Dict, Tuple
+import hashlib
+from typing import List, Dict, Tuple, Set
+import tiktoken
 from src.services.azure_openai_service import AzureOpenAIService
 from src.services.embedding_service import AzureEmbeddingService
 from src.utils.config import OPENAI_DEPLOYMENT_NAME
@@ -20,13 +27,21 @@ class QuestionGeneratorService:
     This service uses Azure OpenAI to generate questions that a chunk
     could answer, which are then embedded to create questionsEmbedding
     for improved question-first retrieval.
+
+    Also validates chunk quality to filter out:
+    - Chunks with too few tokens (<50 tokens)
+    - Chunks with only headers (no meaningful content)
+    - Duplicate or near-duplicate chunks
     """
 
-    # Minimum content length for valid chunks (in characters)
-    MIN_CONTENT_LENGTH = 100
+    # Minimum token count for valid chunks
+    MIN_TOKEN_COUNT = 50
 
     # Minimum non-heading lines for valid chunks
     MIN_NON_HEADING_LINES = 2
+
+    # Similarity threshold for near-duplicate detection (Jaccard index)
+    NEAR_DUPLICATE_THRESHOLD = 0.85
 
     def __init__(self):
         """Initialize the question generator service."""
@@ -36,13 +51,99 @@ class QuestionGeneratorService:
         # Use gpt-4o-mini for cost-effective question generation
         self.model = OPENAI_DEPLOYMENT_NAME if OPENAI_DEPLOYMENT_NAME else "gpt-4o-mini"
 
-    def validate_chunk_quality(self, content: str, heading: str = "") -> Tuple[bool, str]:
+        # Initialize tokenizer for accurate token counting
+        try:
+            self.encoding = tiktoken.encoding_for_model("gpt-4o-mini")
+        except KeyError:
+            self.encoding = tiktoken.get_encoding("cl100k_base")
+
+        # Track processed content hashes for duplicate detection within a document
+        self._content_hashes: Set[str] = set()
+        self._content_tokens: Dict[str, Set[str]] = {}  # For near-duplicate detection
+
+    def count_tokens(self, text: str) -> int:
+        """Count the number of tokens in the given text."""
+        if not text:
+            return 0
+        return len(self.encoding.encode(text))
+
+    def _compute_content_hash(self, content: str) -> str:
+        """Compute a hash of the content for exact duplicate detection."""
+        normalized = ' '.join(content.lower().split())
+        return hashlib.md5(normalized.encode()).hexdigest()
+
+    def _tokenize_for_similarity(self, content: str) -> Set[str]:
+        """Tokenize content into a set of words for Jaccard similarity."""
+        words = content.lower().split()
+        # Use word n-grams (3-grams) for better similarity detection
+        ngrams = set()
+        for i in range(len(words) - 2):
+            ngrams.add(' '.join(words[i:i+3]))
+        return ngrams if ngrams else set(words)
+
+    def _jaccard_similarity(self, set1: Set[str], set2: Set[str]) -> float:
+        """Calculate Jaccard similarity between two sets."""
+        if not set1 or not set2:
+            return 0.0
+        intersection = len(set1 & set2)
+        union = len(set1 | set2)
+        return intersection / union if union > 0 else 0.0
+
+    def is_near_duplicate(self, content: str) -> Tuple[bool, float]:
+        """
+        Check if content is a near-duplicate of previously processed content.
+
+        Args:
+            content: The content to check.
+
+        Returns:
+            Tuple of (is_duplicate, similarity_score).
+        """
+        content_tokens = self._tokenize_for_similarity(content)
+
+        for existing_hash, existing_tokens in self._content_tokens.items():
+            similarity = self._jaccard_similarity(content_tokens, existing_tokens)
+            if similarity >= self.NEAR_DUPLICATE_THRESHOLD:
+                return True, similarity
+
+        return False, 0.0
+
+    def reset_duplicate_tracking(self):
+        """Reset duplicate tracking for a new document."""
+        self._content_hashes.clear()
+        self._content_tokens.clear()
+
+    def register_content(self, content: str) -> str:
+        """
+        Register content for duplicate tracking.
+
+        Args:
+            content: The content to register.
+
+        Returns:
+            The content hash.
+        """
+        content_hash = self._compute_content_hash(content)
+        self._content_hashes.add(content_hash)
+        self._content_tokens[content_hash] = self._tokenize_for_similarity(content)
+        return content_hash
+
+    def validate_chunk_quality(self, content: str, heading: str = "", check_duplicates: bool = True) -> Tuple[bool, str]:
         """
         Validate chunk quality to determine if it should be indexed.
+
+        Performs multiple validation checks:
+        1. Empty content check
+        2. Minimum token count (>50 tokens)
+        3. Meaningful content beyond just headers
+        4. Placeholder/meaningless content detection
+        5. Exact duplicate detection
+        6. Near-duplicate detection (Jaccard similarity > 0.85)
 
         Args:
             content: The chunk content to validate.
             heading: The chunk heading (optional).
+            check_duplicates: Whether to check for duplicates (default: True).
 
         Returns:
             Tuple of (is_valid, reason).
@@ -50,9 +151,10 @@ class QuestionGeneratorService:
         if not content or not content.strip():
             return False, "Empty content"
 
-        # Check minimum content length
-        if len(content.strip()) < self.MIN_CONTENT_LENGTH:
-            return False, f"Content too short ({len(content.strip())} chars < {self.MIN_CONTENT_LENGTH})"
+        # Check minimum token count (more accurate than character count)
+        token_count = self.count_tokens(content.strip())
+        if token_count < self.MIN_TOKEN_COUNT:
+            return False, f"Content too short ({token_count} tokens < {self.MIN_TOKEN_COUNT} tokens)"
 
         # Check if content is more than just headings
         lines = content.strip().split('\n')
@@ -75,8 +177,23 @@ class QuestionGeneratorService:
         ]
         content_lower = content.lower()
         for indicator in placeholder_indicators:
-            if indicator in content_lower and len(content) < 500:
-                return False, f"Content appears to be placeholder text"
+            if indicator in content_lower and token_count < 100:
+                return False, "Content appears to be placeholder text"
+
+        # Check for duplicate content
+        if check_duplicates:
+            # Exact duplicate check
+            content_hash = self._compute_content_hash(content)
+            if content_hash in self._content_hashes:
+                return False, "Exact duplicate of previously processed chunk"
+
+            # Near-duplicate check
+            is_near_dup, similarity = self.is_near_duplicate(content)
+            if is_near_dup:
+                return False, f"Near-duplicate content (similarity: {similarity:.2%})"
+
+            # Register this content for future duplicate checks
+            self.register_content(content)
 
         return True, "valid"
 

@@ -155,8 +155,11 @@ try:
 
             # Chunking settings
             ENABLE_TOKEN_AWARE_CHUNKING=source.get("ENABLE_TOKEN_AWARE_CHUNKING", True)
-            CHUNK_SIZE_TOKENS=source.get("CHUNK_SIZE_TOKENS", 1000)
-            CHUNK_OVERLAP_TOKENS=source.get("CHUNK_OVERLAP_TOKENS", 100)
+            # Chunking settings - increased defaults for better context preservation
+            # 1500 tokens provides more complete context per chunk
+            # 150 token overlap ensures continuity across chunk boundaries
+            CHUNK_SIZE_TOKENS=int(source.get("CHUNK_SIZE_TOKENS", 1500))
+            CHUNK_OVERLAP_TOKENS=int(source.get("CHUNK_OVERLAP_TOKENS", 150))
             ENABLE_TABLE_CONVERSION=source.get("ENABLE_TABLE_CONVERSION", False)
 
             # Processing improvements (error handling & resilience)

@@ -3,9 +3,17 @@ import time
 from typing import Optional, Any, List, Dict, Tuple
 from src.services.cosmos_db_service import CosmosDBClientSingleton
 from src.services.embedding_service import AzureEmbeddingService
-from src.utils.config import COSMOSDB_SERVICE_NAME_MAPPING_CONTAINER_NAME,SESSION_CONTAINER_NAME, KNOWLEDGE_BASE_CONTAINER, COSMOSDB_SHAREPOINT_DATA_CONTAINER_NAME
+from src.utils.config import (
+    COSMOSDB_SERVICE_NAME_MAPPING_CONTAINER_NAME,
+    SESSION_CONTAINER_NAME,
+    KNOWLEDGE_BASE_CONTAINER,
+    COSMOSDB_SHAREPOINT_DATA_CONTAINER_NAME,
+    MIN_SIMILARITY_THRESHOLD,
+    ENABLE_METADATA_FILTERING
+)
 from src.utils.logger import logger
 from src.utils.request_utils import timing_decorator
+from src.utils.metrics import RetrievalMetrics, LatencyTracker
 
 
 class RetreivalService:
@@ -259,7 +267,9 @@ class RetreivalService:
         service_line: Optional[list[int]],
         top_k: int = 7,
         question_boost_weight: float = 0.7,
-        min_question_similarity: float = 0.0
+        min_question_similarity: float = None,
+        content_type_filter: str = None,
+        year_filter: str = None
     ) -> Tuple[list, list, list]:
         """
         Retrieve chunks using question-first hybrid approach with native CosmosDB vector search.
@@ -268,7 +278,8 @@ class RetreivalService:
         1. Queries CosmosDB ordering by questionsEmbedding similarity (question-first)
         2. Fetches both question and content scores from the database
         3. Re-ranks using weighted hybrid score (default: 70% questions, 30% content)
-        4. Optionally filters by minimum question similarity threshold
+        4. Filters by minimum similarity threshold (configurable via MIN_SIMILARITY_THRESHOLD)
+        5. Optionally filters by metadata (content type, year)
 
         Args:
             query: The user's query
@@ -280,21 +291,40 @@ class RetreivalService:
                                   1.0 = only question matching
             min_question_similarity: Minimum question similarity score to include a chunk (0.0 to 1.0)
                                     Chunks below this threshold are deprioritized
+                                    Default: MIN_SIMILARITY_THRESHOLD from config (0.35)
+            content_type_filter: Optional content type to filter by (e.g., 'UserGuide', 'APIDocs')
+            year_filter: Optional year to filter by (e.g., '2024')
 
         Returns:
             Tuple of (ordered_docs, query_embedding, citations)
         """
         start_time = time.time()
         logger.info(f"#Query before processing :{query}")
+
+        # Use config default if min_question_similarity not provided
+        effective_threshold = min_question_similarity if min_question_similarity is not None else (MIN_SIMILARITY_THRESHOLD or 0.35)
+        logger.info(f"Using similarity threshold: {effective_threshold}")
+
         # Generate query embedding
         query_embedding = self.embeddings.embed_query(query)
-        
+
         container = self.database.get_container_client(container_name)
 
         # Build query filter for service line with conditional validChunk check
         # Filter by validChunk='yes' when available, but include legacy chunks without this field
         base_filter = f"ARRAY_CONTAINS({service_line},c.serviceNameid)"
-        query_filter = f"WHERE {base_filter} AND (NOT IS_DEFINED(c.validChunk) OR c.validChunk = 'yes')"
+        filters = [base_filter, "(NOT IS_DEFINED(c.validChunk) OR c.validChunk = 'yes')"]
+
+        # Add metadata filters if enabled and provided
+        if ENABLE_METADATA_FILTERING:
+            if content_type_filter:
+                filters.append(f"c.metadata.contentType = '{content_type_filter}'")
+                logger.info(f"Applying content type filter: {content_type_filter}")
+            if year_filter:
+                filters.append(f"c.metadata.year = '{year_filter}'")
+                logger.info(f"Applying year filter: {year_filter}")
+
+        query_filter = f"WHERE {' AND '.join(filters)}"
 
         # Query CosmosDB with QUESTION-FIRST ordering using questionsEmbedding
         # For chunks with questionsEmbedding, order by question similarity
@@ -308,6 +338,8 @@ class RetreivalService:
                 c.content,
                 c.validChunk,
                 c.metadata.filepath as citation,
+                c.metadata.contentType as contentType,
+                c.metadata.year as year,
                 c.questions,
                 VectorDistance(c.questionsEmbedding, {query_embedding}) as question_score,
                 VectorDistance(c.embedding, {query_embedding}) as content_score
@@ -377,13 +409,22 @@ class RetreivalService:
                 f"legacy={top_doc.get('is_legacy_chunk', False)}"
             )
 
-        # Optionally filter by minimum question similarity threshold
-        if min_question_similarity > 0:
-            above_threshold = [d for d in ordered_list if d.get('question_similarity', 0) >= min_question_similarity]
-            below_threshold = [d for d in ordered_list if d.get('question_similarity', 0) < min_question_similarity]
-            if above_threshold:
-                logger.info(f"Question similarity threshold {min_question_similarity}: {len(above_threshold)} above, {len(below_threshold)} below")
+        # Log comprehensive retrieval quality metrics for all chunks
+        RetrievalMetrics.log_chunk_scores(ordered_list, query=query, stage="question_matching")
+
+        # Filter by minimum similarity threshold (configurable)
+        original_count = len(ordered_list)
+        if effective_threshold > 0:
+            above_threshold = [d for d in ordered_list if d.get('hybrid_score', 0) >= effective_threshold]
+            below_threshold = [d for d in ordered_list if d.get('hybrid_score', 0) < effective_threshold]
+            # Prioritize chunks above threshold, but include below if needed to meet top_k
             ordered_list = (above_threshold + below_threshold)[:top_k]
+            RetrievalMetrics.log_filtering_results(
+                original_count=original_count,
+                filtered_count=len(above_threshold),
+                filter_type="similarity_threshold",
+                threshold=effective_threshold
+            )
         else:
             ordered_list = ordered_list[:top_k]
 

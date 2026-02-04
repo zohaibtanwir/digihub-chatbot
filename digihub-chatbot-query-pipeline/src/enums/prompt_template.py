@@ -218,8 +218,7 @@ class PromptTemplate(Enum):
     Respond only in this JSON format dont include ```json''' in the Response:
     {{
       "language": "detected_language",
-      "translation": "input_translated_to_english_or_original_if_already_english",
-      "translation": "For this translation, if it is in another language, translate it; if it is in English, keep the original. Additionally, fix any spelling mistakes or similar errors, correct them, and provide the output."
+      "translation": "If input is in another language, translate to English. If already in English, keep original. Also fix any spelling mistakes or similar errors and provide the corrected output."
       "is_session_dependent": true_or_false,
       "prompt_vulnerability_level": from 0.0 to 1.0,
       "is_prompt_vulnerable": true_or_false,
@@ -309,9 +308,19 @@ RULES FOR GENERATING THE "Source" FIELD:
 2.  **Exact Quotes:** Provide 'File' (full path), 'Section', and an **EXACT, unaltered quote**. This is the only place where original text is used without rephrasing.
 
 ---
-RULES FOR EDGE CASES:
-1.  **Out of Scope:** If the query cannot be answered from the context, respond ONLY with: "This question is outside the scope of the documents provided."
+RULES FOR EDGE CASES AND OUT-OF-SCOPE DETECTION:
+1.  **Out of Scope Detection (CRITICAL):** You MUST set `is_out_of_scope` to `true` if ANY of the following conditions apply:
+    - The query cannot be answered from the provided context
+    - The context does not contain relevant information for the query
+    - The query is about a topic completely unrelated to SITA services and products
+    - The retrieved chunks do not address the user's actual question
 
+2.  **Confidence-Based Scope Assessment:**
+    - If your Confidence score is below 0.4, strongly consider setting `is_out_of_scope` to `true`
+    - If your Confidence score is between 0.4-0.6 AND the context seems tangentially related, set `is_out_of_scope` to `true`
+    - High confidence (>0.7) generally indicates the query is in scope
+
+3.  **Out of Scope Response:** When `is_out_of_scope` is `true`, provide a brief explanation in the Answer field about why the query couldn't be answered from the available documents.
 
 ---
 ACRONYM HANDLING RULES (CRITICAL):
@@ -350,7 +359,7 @@ Retrieved Data From Source 1: {retrieved_data_source_1}
 Retrieved Data From Source 2: {retrieved_data_source_2}
 language: {language}
 
-Response Format: In JSON with the following four keys only. Do not add any backticks or quotes before or after the JSON object.
+Response Format: In JSON with the following five keys only. Do not add any backticks or quotes before or after the JSON object.
 {{
     "Answer": "Your response based on the rules above. Include images if present in the chunk.",
     "Source": [
@@ -360,8 +369,9 @@ Response Format: In JSON with the following four keys only. Do not add any backt
             "Quote": "Exact text."
         }}
     ],
-    "Confidence": "Score from 0-1.",
-    "Type": "relative/generic"
+    "Confidence": "Score from 0-1 indicating how confident you are in the answer based on context relevance.",
+    "Type": "relative/generic",
+    "is_out_of_scope": "true if the query cannot be answered from the context, false otherwise. MUST be a boolean."
 }}
 """
 

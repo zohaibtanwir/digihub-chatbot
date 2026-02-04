@@ -450,7 +450,7 @@ class DocumentProcessor:
         # Update image paths in markdown
         relative_path_parts = os.path.relpath(os.path.dirname(md_path), OUTPUT_FOLDER).split(os.sep)
         new_base_path = os.path.join(*relative_path_parts)
-        markdown_document = markdown_document.replace(r'![Image](', f'![Image]({new_base_path}\\')
+        markdown_document = markdown_document.replace(r'![Image](', f'![Image]({new_base_path}/')
 
         # Use token-aware chunking if enabled
         if self.embed_document_service:
@@ -500,7 +500,7 @@ class DocumentProcessor:
     def update_image_paths(self, content, relative_path_parts):
         """Updates image paths in the markdown content."""
         new_base_path = os.path.join(*relative_path_parts)
-        return content.replace(r'![Image](', f'![Image]({new_base_path}\\')
+        return content.replace(r'![Image](', f'![Image]({new_base_path}/')
  
     def get_service_id(self, listid):
         """Retrieves the service ID for a given list ID from Cosmos DB.""" 
@@ -525,8 +525,16 @@ class DocumentProcessor:
         - validChunk: "yes" or "no" based on quality validation
         - questions: List of synthetic questions the chunk can answer
         - questionsEmbedding: Embedding vector for question-first retrieval
+
+        Duplicate detection is reset at the start of each file to detect
+        duplicates within the same document.
         """
         from src.utils.partition_key_utils import generate_partition_key, generate_chunk_id
+
+        # Reset duplicate tracking for this new file
+        if self.question_generator_service:
+            self.question_generator_service.reset_duplicate_tracking()
+            logger.info("Reset duplicate tracking for new file processing")
 
         try:
             container = self.get_cosmos_container()

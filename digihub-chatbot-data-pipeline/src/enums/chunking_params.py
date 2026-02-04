@@ -15,10 +15,12 @@ class ChunkingParams(Enum):
     - Configurable overlap for better context preservation
     """
 
-    # Maximum tokens per chunk (default: 1000)
+    # Maximum tokens per chunk (default: 1500)
+    # Increased from 1000 to provide more complete context per chunk
     # Chunks exceeding this will be recursively split while preserving headers
-    chunk_size = 1000
+    chunk_size = 1500
 
-    # Token overlap between consecutive chunks (default: 100)
-    # Helps maintain context across chunk boundaries
-    chunk_overlap = 100
+    # Token overlap between consecutive chunks (default: 150)
+    # Increased from 100 to ensure better continuity across chunk boundaries
+    # Helps maintain context for questions that span chunk boundaries
+    chunk_overlap = 150
