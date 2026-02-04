@@ -25,6 +25,11 @@ AZURE_STORAGE_CONTAINER_SAS_URL_VALIDITY = None
 DIGIHUB_USER_MANAGEMENT_URL = None
 COSMOSDB_SERVICE_NAME_MAPPING_CONTAINER_NAME="ServiceNameMapping"
 
+# Session and retrieval settings
+SESSION_CONTEXT_WINDOW_SIZE = None  # Number of Q&A pairs to use for context
+ENABLE_RELEVANCE_FILTERING = None   # Enable LLM-based relevance filtering
+MIN_RELEVANCE_CHUNKS = None         # Minimum chunks to keep even if not relevant
+
 try:
     ENVIRONMENT = os.getenv("CONFIG_URL")
     # Fetch configuration details from the API
@@ -64,6 +69,12 @@ try:
             blacklisted_string = property_sources[1].get("source", {}).get("app.security.xss.blacklist", "")
             if(blacklisted_string):
                 BLACKLISTED_WORDS = blacklisted_string.split(",")
+
+            # Session and retrieval settings with defaults
+            SESSION_CONTEXT_WINDOW_SIZE = int(source.get("SESSION_CONTEXT_WINDOW_SIZE", 5))
+            ENABLE_RELEVANCE_FILTERING = source.get("ENABLE_RELEVANCE_FILTERING", "true").lower() == "true"
+            MIN_RELEVANCE_CHUNKS = int(source.get("MIN_RELEVANCE_CHUNKS", 2))
+
             logger.info("Configuration details fetched successfully.")
         else:
             logger.error("No property sources found in the configuration response.")

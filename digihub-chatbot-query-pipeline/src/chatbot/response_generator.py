@@ -18,7 +18,12 @@ from src.exceptions.service_line_exception import (
 from src.services.azure_openai_service import AzureOpenAIService
 from src.services.retrieval_service import RetreivalService
 from src.services.session_service import SessionDBService
-from src.utils.config import OPENAI_DEPLOYMENT_NAME
+from src.utils.config import (
+    OPENAI_DEPLOYMENT_NAME,
+    SESSION_CONTEXT_WINDOW_SIZE,
+    ENABLE_RELEVANCE_FILTERING,
+    MIN_RELEVANCE_CHUNKS
+)
 from src.utils.logger import logger, log_context
 from src.utils.response_utils import replace_spaces_in_image_urls, get_keyword_aware_message
 import time
@@ -137,15 +142,20 @@ class ResponseGeneratorAgent:
             tuple: (structured_response dict, exception_type or None)
         """
         log_context.set(trace_id)
-        access_context = context
-        access_context_session = context_session
         start = time.time()
         current_date_str = time.strftime("%A, %B %d, %Y", time.localtime())
+
+        # Format context as structured markdown for better LLM comprehension
+        formatted_context = self._format_context_for_llm(context)
+
+        # Format session context with clear structure
+        formatted_session_context = json.dumps(context_session, indent=2, default=str)
+
         enriched_prompt = PromptTemplate.RESPONSE_TEMPLATE.value.format(
             Date=current_date_str,
             prompt=str(prompt),
-            retrieved_data_source_1=str(access_context),
-            retrieved_data_source_2=str(access_context_session),
+            retrieved_data_source_1=formatted_context,
+            retrieved_data_source_2=formatted_session_context,
             language=detected_language,
         )
         logger.info(f"enriched_prompt : {enriched_prompt}")
@@ -293,24 +303,34 @@ class ResponseGeneratorAgent:
         """
         Retrieves session history and chat context.
 
+        Uses configurable SESSION_CONTEXT_WINDOW_SIZE (default: 5) for the number
+        of Q&A pairs to include in context.
+
         Returns:
             tuple: (user_chat_history, session_context_window)
         """
         start = time.time()
+
+        # Use configurable context window size (default: 5 Q&A pairs = 10 messages)
+        context_window_size = SESSION_CONTEXT_WINDOW_SIZE if SESSION_CONTEXT_WINDOW_SIZE else 5
+        messages_to_fetch = context_window_size * 2  # Each Q&A pair is 2 messages
+
         user_chat_history = SessionDBService().retrieve_session_details(
             user_id=self.user_id,
-            session_id=self.session_id
+            session_id=self.session_id,
+            limit=messages_to_fetch
         )
         end = time.time()
         logger.info(f"[Latency] SessionDBService.retrieve_session_details: {end - start:.2f}s")
+        logger.info(f"Retrieved {len(user_chat_history)} messages (context window: {context_window_size} Q&A pairs)")
 
-        # Use last 1 qna pair messages for better context window
-        session_context_window = str(" ".join([e.get('content') for e in user_chat_history[-1:]]))
+        # Use configured number of Q&A pairs for context window
+        session_context_window = str(" ".join([e.get('content') for e in user_chat_history[-messages_to_fetch:]]))
 
         # Remove image markdown references to prevent them from polluting the context
         session_context_window = re.sub(r'!\[Image\]\([^)]+\)!?', '', session_context_window)
 
-        return user_chat_history[-1:], session_context_window
+        return user_chat_history[-messages_to_fetch:], session_context_window
 
     def _analyze_query(self, prompt: str, session_context_window: str):
         """
@@ -549,6 +569,117 @@ class ResponseGeneratorAgent:
 
         return final_context
 
+    def _format_context_for_llm(self, retrieved_context: list) -> str:
+        """
+        Formats retrieved context chunks as structured markdown for better LLM comprehension.
+
+        Each chunk is formatted with clear labels including:
+        - Source file path
+        - Section heading
+        - Service name
+        - Chunk content
+
+        Args:
+            retrieved_context (list): List of retrieved chunk dictionaries
+
+        Returns:
+            str: Formatted markdown string with numbered sections
+        """
+        if not retrieved_context:
+            return "No relevant context found."
+
+        formatted_sections = []
+
+        for idx, chunk in enumerate(retrieved_context, 1):
+            # Extract metadata
+            file_path = chunk.get("citation", chunk.get("metadata", {}).get("filepath", "Unknown source"))
+            heading = chunk.get("heading", "Untitled Section")
+            service_name = chunk.get("serviceName", "General")
+            content = chunk.get("content", "")
+
+            # Calculate relevance indicators if available
+            hybrid_score = chunk.get("hybrid_score", 0)
+            question_sim = chunk.get("question_similarity", 0)
+
+            # Build formatted section
+            section = f"""### Context {idx}
+**Source:** {file_path}
+**Section:** {heading}
+**Service:** {service_name}
+**Relevance Score:** {hybrid_score:.2f}
+
+{content}
+
+---"""
+            formatted_sections.append(section)
+
+        formatted_context = "\n\n".join(formatted_sections)
+
+        logger.info(f"Formatted {len(retrieved_context)} chunks into structured context")
+        return formatted_context
+
+    def _filter_relevant_chunks(self, query: str, chunks: list) -> list:
+        """
+        Filters chunks using LLM-based relevance judgment.
+
+        Uses RelevanceJudge to evaluate each chunk's relevance to the query
+        and filters out non-relevant chunks while ensuring a minimum number
+        of chunks are retained.
+
+        Args:
+            query (str): The user's query
+            chunks (list): List of retrieved chunks to filter
+
+        Returns:
+            list: Filtered list of relevant chunks
+        """
+        if not ENABLE_RELEVANCE_FILTERING:
+            logger.info("Relevance filtering disabled, returning all chunks")
+            return chunks
+
+        if not chunks:
+            return chunks
+
+        min_chunks = MIN_RELEVANCE_CHUNKS if MIN_RELEVANCE_CHUNKS else 2
+
+        start = time.time()
+        try:
+            # Get relevant service line IDs from the judge
+            relevant_service_lines = self.relevance_judge.judge_chunks_relevance(query, chunks)
+
+            # Filter chunks to only include relevant ones
+            relevant_chunks = [
+                chunk for chunk in chunks
+                if chunk.get("serviceNameid") in relevant_service_lines
+            ]
+
+            # Log filtering results
+            filtered_count = len(chunks) - len(relevant_chunks)
+            logger.info(
+                f"Relevance filtering: {len(chunks)} total -> {len(relevant_chunks)} relevant "
+                f"({filtered_count} filtered out)"
+            )
+
+            # Ensure minimum chunks are retained
+            if len(relevant_chunks) < min_chunks and len(chunks) >= min_chunks:
+                # Keep top chunks by hybrid_score if not enough relevant
+                sorted_chunks = sorted(
+                    chunks,
+                    key=lambda x: x.get("hybrid_score", 0),
+                    reverse=True
+                )
+                relevant_chunks = sorted_chunks[:min_chunks]
+                logger.info(f"Retained top {min_chunks} chunks by hybrid score to meet minimum")
+
+            end = time.time()
+            logger.info(f"[Latency] relevance_filtering: {end - start:.2f}s")
+
+            return relevant_chunks
+
+        except Exception as e:
+            logger.error(f"Relevance filtering failed, returning all chunks: {e}")
+            return chunks
+
     def _process_citations(self, citation_data: list):
         """
         Processes citations by deduplicating and enriching with IDs.
@@ -709,6 +840,13 @@ class ResponseGeneratorAgent:
             retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
                 RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines)
             )
+
+            # Step 7.5: Filter chunks by relevance using LLM judge
+            retrieved_context = self._filter_relevant_chunks(resolved_query, retrieved_context)
+
+            # Update top_doc after filtering
+            if retrieved_context:
+                top_doc = retrieved_context[0]
 
             # Step 8: Deduplicate citations
             citation_keys = []
