@@ -209,3 +209,122 @@ Email IDs are hashed using `HashUtils.hash_user_id()` before use in session IDs.
 The service can generate time-limited Azure Blob Storage SAS URLs. Requires Service Principal with:
 - Storage Blob Data Contributor role
 - Storage Blob Delegator role
+
+---
+
+## Session Context (February 4, 2026)
+
+### Work Completed This Session
+
+#### Critical Response Quality Fixes (8 issues - ALL COMPLETED)
+
+| Issue ID | Fix | File |
+|----------|-----|------|
+| `digihub-chatbot-gre` | ORDER BY uses questionsEmbedding | retrieval_service.py |
+| `digihub-chatbot-eip` | Legacy chunks get 15% penalty | retrieval_service.py |
+| `digihub-chatbot-syj` | Reference resolution works regardless of is_session_dependent | response_generator.py |
+| `digihub-chatbot-dzp` | Removed MIN_RELEVANCE_CHUNKS forcing | response_generator.py |
+| `digihub-chatbot-cq5` | Consolidated out-of-scope detection signals | response_generator.py |
+| `digihub-chatbot-apv` | Service line filtering uses ALL authorized lines | response_generator.py |
+| `digihub-chatbot-0yz` | Contextual service lines don't override authorization | response_generator.py |
+| `digihub-chatbot-ehd` | Simplified conflicting prompt instructions | prompt_template.py |
+
+#### VectorDistance Bug Fix (CRITICAL - Commit 7959fd2)
+
+**Problem:** CosmosDB VectorDistance with cosine returns [0, 2] range, but code assumed [0, 1].
+- Distance 1.2 → Similarity -0.2 (NEGATIVE!) - chunks filtered out incorrectly
+
+**Fix:** Added `distance_to_similarity()` helper in `retrieval_service.py`:
+```python
+def distance_to_similarity(distance: float) -> float:
+    if distance is None:
+        return 0.0
+    similarity = 1 - (distance / 2)  # Normalize [0,2] to [0,1]
+    return max(0.0, min(1.0, similarity))  # Clamp
+```
+
+### Beads Issue Tracker Status
+
+**Total: 35 issues**
+- Closed: 25
+- In Progress: 1 (digihub-chatbot-srv - Split monolithic query analyzer prompt)
+- Open: 9 (Unit testing tasks)
+
+#### Open Testing Tasks (Priority Order)
+
+| Priority | Issue ID | Task |
+|----------|----------|------|
+| P1 | `digihub-chatbot-5qq` | Create unit tests for response_generator.py |
+| P1 | `digihub-chatbot-5by` | Create unit tests for query_analyzer.py |
+| P1 | `digihub-chatbot-2u1` | Create unit tests for dataprocessor.py |
+| P2 | `digihub-chatbot-6hh` | Create test infrastructure (conftest.py, pytest.ini) |
+| P2 | `digihub-chatbot-bv4` | Create unit tests for relevance_judge.py |
+| P2 | `digihub-chatbot-jis` | Create unit tests for authorization_checker.py |
+| P2 | `digihub-chatbot-zom` | Improve existing test coverage to 80% |
+| P2 | `digihub-chatbot-dti` | Add CI/CD test integration in Azure Pipelines |
+| P3 | `digihub-chatbot-vyh` | Create integration tests for end-to-end flows |
+
+### Documentation Created
+
+- `DigiHub_Chatbot_Changes_Report.docx` - Comprehensive changes report with 9 tables
+- `.env.example` - Environment configuration template
+
+### Local Development Setup
+
+#### Environment File Location
+The `.env` file with credentials is in the root folder:
+```
+/Users/zohaibtanwir/projects/digihub-chatbot/.env
+```
+
+It has been copied to:
+```
+/Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline/.env
+```
+
+#### Required Environment Variables
+```
+CONFIG_URL=https://digihubdev.sita.aero/api/configserver/digihub-chatbot-query-pipeline/dev
+KEY_VAULT_URL=https://kv-dev-westeurope-02.vault.azure.net/
+AZURE_CLIENT_ID=<service-principal-id>
+AZURE_TENANT_ID=<tenant-id>
+AZURE_CLIENT_SECRET=<client-secret>
+```
+
+#### Running Locally
+
+**IMPORTANT:** Config server requires SITA VPN connection.
+
+```bash
+# Connect to VPN first, then:
+cd /Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline
+python -m uvicorn src.app:app --host 0.0.0.0 --port 8080 --reload
+```
+
+### Python Version
+
+Upgraded to **Python 3.13.11** (from 3.12.7)
+- Path: `/opt/homebrew/opt/python@3.13/libexec/bin/python3`
+- Updated `~/.zprofile` to use Python 3.13 as default
+
+### Git Commits This Session
+
+| Commit | Description |
+|--------|-------------|
+| `5f59a37` | chore: Sync Beads export state |
+| `a9e3de7` | chore: Update Beads with VectorDistance bug fix tracking |
+| `7959fd2` | **fix(retrieval): Fix VectorDistance to similarity conversion** |
+| `7d23732` | chore: Add unit test implementation tasks to Beads |
+| `711f23b` | fix(query-pipeline): Fix 8 critical issues impacting response quality |
+| `62dfb14` | docs: Add comprehensive changes report |
+
+### Next Steps When Resuming
+
+1. **Connect to SITA VPN** to access config server
+2. **Run the application** to test the VectorDistance fix:
+   ```bash
+   cd /Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline
+   python -m uvicorn src.app:app --host 0.0.0.0 --port 8080 --reload
+   ```
+3. **Test with a sample query** to verify chunks are not filtered incorrectly
+4. **Implement unit tests** starting with `digihub-chatbot-6hh` (test infrastructure)
