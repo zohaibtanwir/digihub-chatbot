@@ -46,7 +46,9 @@ from src.utils.config import (
     MAX_CONCURRENT_VISION_CALLS,
     ENABLE_TOKEN_AWARE_CHUNKING,
     CHUNK_SIZE_TOKENS,
-    ENABLE_TABLE_CONVERSION
+    ENABLE_TABLE_CONVERSION,
+    ENABLE_QUESTION_GENERATION,
+    QUESTIONS_PER_CHUNK
 )
 from src.utils.action_log import cosmos_index_logger
 from src.utils.cosmos_initialize import CosmosDBInitializers
@@ -216,6 +218,15 @@ class DocumentProcessor:
         else:
             self.embed_document_service = None
             logger.info("Token-aware chunking disabled (using legacy chunking)")
+
+        # Initialize question generator service for question-first retrieval
+        if ENABLE_QUESTION_GENERATION:
+            from src.services.question_generator_service import QuestionGeneratorService
+            self.question_generator_service = QuestionGeneratorService()
+            logger.info("Question generation service enabled")
+        else:
+            self.question_generator_service = None
+            logger.info("Question generation service disabled")
 
         # Backward compatibility: Keep doc_converter for legacy code paths
         # This will be removed once all code is migrated to use doc_converter_service
@@ -507,7 +518,14 @@ class DocumentProcessor:
             raise ValueError(f"Service ID not found for folder name: {listid}")
  
     def upload_chunks_to_cosmos(self, chunks, folder_name, listid, file_path):
-        """Uploads document chunks to Cosmos DB with idempotency and transaction support."""
+        """
+        Uploads document chunks to Cosmos DB with idempotency and transaction support.
+
+        Each chunk is processed to include:
+        - validChunk: "yes" or "no" based on quality validation
+        - questions: List of synthetic questions the chunk can answer
+        - questionsEmbedding: Embedding vector for question-first retrieval
+        """
         from src.utils.partition_key_utils import generate_partition_key, generate_chunk_id
 
         try:
@@ -545,8 +563,34 @@ class DocumentProcessor:
                         # Chunk doesn't exist, proceed with upload
                         pass
 
-                    # Generate embedding
+                    # Generate content embedding
                     embedding = self.get_embedding(content)
+
+                    # Initialize question-related fields with defaults
+                    valid_chunk = "yes"
+                    questions = []
+                    questions_embedding = []
+
+                    # Generate questions and validate chunk if service is enabled
+                    if self.question_generator_service:
+                        try:
+                            chunk_result = self.question_generator_service.process_chunk(
+                                content=content,
+                                heading=heading
+                            )
+                            valid_chunk = chunk_result.get("validChunk", "yes")
+                            questions = chunk_result.get("questions", [])
+                            questions_embedding = chunk_result.get("questionsEmbedding", [])
+
+                            logger.info(
+                                f"Chunk {index}: validChunk={valid_chunk}, "
+                                f"questions={len(questions)}, "
+                                f"questionsEmbedding={'generated' if questions_embedding else 'empty'}"
+                            )
+                        except Exception as qg_error:
+                            logger.error(f"Question generation failed for chunk {index}: {qg_error}")
+                            # Continue with defaults - chunk is still valid for basic retrieval
+                            valid_chunk = "yes"
 
                     # Create document with deterministic ID and consistent partition key
                     doc = {
@@ -557,8 +601,11 @@ class DocumentProcessor:
                         "heading": heading,
                         "content": content,
                         "embedding": embedding,
+                        "validChunk": valid_chunk,
+                        "questions": questions,
+                        "questionsEmbedding": questions_embedding,
                         "processedAt": time.time(),
-                        "processingVersion": "v2.0",  # Track version for migration
+                        "processingVersion": "v3.0",  # Updated version for question-first retrieval
                         "metadata": {
                             "filepath": str(file_path),
                             "heading": heading,
@@ -568,7 +615,7 @@ class DocumentProcessor:
 
                     container.upsert_item(doc)
                     uploaded_ids.append(chunk_id)
-                    logger.info(f"Uploaded chunk {chunk_id} | Heading: {heading}")
+                    logger.info(f"Uploaded chunk {chunk_id} | Heading: {heading} | Valid: {valid_chunk}")
 
                 except Exception as e:
                     logger.error(f"Error uploading chunk {index}: {e}")

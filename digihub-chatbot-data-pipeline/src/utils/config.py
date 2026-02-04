@@ -80,6 +80,10 @@ ENABLE_TABLE_CONVERSION = None
 ENABLE_IDEMPOTENCY_CHECK = None
 ENABLE_TRANSACTION_ROLLBACK = None
 RETRY_ATTEMPTS = None
+
+# Question generation settings for question-first retrieval
+ENABLE_QUESTION_GENERATION = None
+QUESTIONS_PER_CHUNK = None
 try:
     ENVIRONMENT = os.getenv("CONFIG_URL")
     # Fetch configuration details from the API
@@ -159,6 +163,10 @@ try:
             ENABLE_IDEMPOTENCY_CHECK=source.get("ENABLE_IDEMPOTENCY_CHECK", True)
             ENABLE_TRANSACTION_ROLLBACK=source.get("ENABLE_TRANSACTION_ROLLBACK", True)
             RETRY_ATTEMPTS=source.get("RETRY_ATTEMPTS", 3)
+
+            # Question generation settings for question-first retrieval
+            ENABLE_QUESTION_GENERATION=source.get("ENABLE_QUESTION_GENERATION", True)
+            QUESTIONS_PER_CHUNK=source.get("QUESTIONS_PER_CHUNK", 5)
 
             logger.info(f"Configuration details fetched successfully from ENV URL")
              
