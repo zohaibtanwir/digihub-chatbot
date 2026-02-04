@@ -372,7 +372,309 @@ def test_get_ids_from_file_paths_exception_handling(patch_dependencies, monkeypa
     
     # Simulate DB Error
     mock_container.query_items.side_effect = Exception("Cosmos DB Connection Failed")
-    
+
     result = service.get_ids_from_file_paths(["file1.pdf"])
-    
+
     assert result == []
+
+
+# ============================================================================
+# Tests for Hybrid Re-ranking and ValidChunk Filter
+# ============================================================================
+
+def test_retrieve_with_question_matching_hybrid_scoring(patch_dependencies):
+    """
+    Tests that hybrid scores are correctly calculated with question-first weighting.
+    Default weighting is 70% question similarity, 30% content similarity.
+    """
+    from src.services.retrieval_service import RetreivalService
+    service = RetreivalService()
+
+    mock_container = service.database.get_container_client.return_value
+
+    # Reset any side_effect from previous tests
+    mock_container.query_items.side_effect = None
+
+    # Mock data with both question_score and content_score
+    # Lower VectorDistance = higher similarity (1 - distance = similarity)
+    mock_container.query_items.return_value = [
+        {
+            "id": "doc-1",
+            "content": "This is valid content for document 1.",
+            "validChunk": "yes",
+            "question_score": 0.2,  # High question similarity (1 - 0.2 = 0.8)
+            "content_score": 0.4,   # Medium content similarity (1 - 0.4 = 0.6)
+            "heading": "Doc 1",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/doc1.pdf"
+        },
+        {
+            "id": "doc-2",
+            "content": "This is valid content for document 2.",
+            "validChunk": "yes",
+            "question_score": 0.5,  # Lower question similarity (1 - 0.5 = 0.5)
+            "content_score": 0.1,   # High content similarity (1 - 0.1 = 0.9)
+            "heading": "Doc 2",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/doc2.pdf"
+        }
+    ]
+
+    # Mock last_response_headers
+    mock_container.client_connection = MagicMock()
+    mock_container.client_connection.last_response_headers = {"x-ms-documentdb-query-metrics": "test"}
+
+    docs, _, _ = service.retrieve_with_question_matching(
+        "test query",
+        "container",
+        [1],
+        top_k=2,
+        question_boost_weight=0.7
+    )
+
+    # doc-1 hybrid score = 0.7 * 0.8 + 0.3 * 0.6 = 0.56 + 0.18 = 0.74
+    # doc-2 hybrid score = 0.7 * 0.5 + 0.3 * 0.9 = 0.35 + 0.27 = 0.62
+    # doc-1 should rank higher because of higher question similarity (70% weight)
+    assert len(docs) == 2
+    assert docs[0]["id"] == "doc-1"  # Higher hybrid score
+    assert docs[1]["id"] == "doc-2"
+    assert docs[0].get("hybrid_score", 0) > docs[1].get("hybrid_score", 0)
+
+
+def test_retrieve_with_question_matching_legacy_chunks(patch_dependencies):
+    """
+    Tests handling of legacy chunks that don't have questionsEmbedding.
+    Legacy chunks should use content_score for both question and content similarity.
+    """
+    from src.services.retrieval_service import RetreivalService
+    service = RetreivalService()
+
+    mock_container = service.database.get_container_client.return_value
+    mock_container.query_items.side_effect = None  # Reset any side_effect
+
+    # Mix of new chunks (with question_score) and legacy chunks (without)
+    mock_container.query_items.return_value = [
+        {
+            "id": "legacy-doc",
+            "content": "This is legacy content without questions.",
+            # No validChunk field (legacy)
+            "question_score": None,  # No questionsEmbedding
+            "content_score": 0.3,
+            "heading": "Legacy",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/legacy.pdf"
+        },
+        {
+            "id": "new-doc",
+            "content": "This is new content with questions.",
+            "validChunk": "yes",
+            "question_score": 0.2,
+            "content_score": 0.5,
+            "heading": "New",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/new.pdf"
+        }
+    ]
+
+    mock_container.client_connection = MagicMock()
+    mock_container.client_connection.last_response_headers = {"x-ms-documentdb-query-metrics": "test"}
+
+    docs, _, _ = service.retrieve_with_question_matching(
+        "test query",
+        "container",
+        [1],
+        top_k=2
+    )
+
+    assert len(docs) == 2
+
+    # Find legacy doc and verify it's marked as legacy
+    legacy_doc = next((d for d in docs if d["id"] == "legacy-doc"), None)
+    assert legacy_doc is not None
+    assert legacy_doc.get("is_legacy_chunk") is True
+
+
+def test_retrieve_with_question_matching_min_threshold(patch_dependencies):
+    """
+    Tests the minimum question similarity threshold filtering.
+    Chunks above threshold should come first, then chunks below.
+    """
+    from src.services.retrieval_service import RetreivalService
+    service = RetreivalService()
+
+    mock_container = service.database.get_container_client.return_value
+    mock_container.query_items.side_effect = None  # Reset any side_effect
+
+    mock_container.query_items.return_value = [
+        {
+            "id": "low-sim",
+            "content": "Content with low question similarity.",
+            "validChunk": "yes",
+            "question_score": 0.8,  # Low similarity (1 - 0.8 = 0.2)
+            "content_score": 0.2,   # High content similarity
+            "heading": "Low Sim",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/low.pdf"
+        },
+        {
+            "id": "high-sim",
+            "content": "Content with high question similarity.",
+            "validChunk": "yes",
+            "question_score": 0.3,  # High similarity (1 - 0.3 = 0.7)
+            "content_score": 0.7,   # Low content similarity
+            "heading": "High Sim",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/high.pdf"
+        }
+    ]
+
+    mock_container.client_connection = MagicMock()
+    mock_container.client_connection.last_response_headers = {"x-ms-documentdb-query-metrics": "test"}
+
+    # Set threshold to 0.5 - only high-sim doc should be above
+    docs, _, _ = service.retrieve_with_question_matching(
+        "test query",
+        "container",
+        [1],
+        top_k=2,
+        min_question_similarity=0.5
+    )
+
+    # high-sim (0.7 similarity) should come first (above threshold)
+    # low-sim (0.2 similarity) should come second (below threshold)
+    assert len(docs) == 2
+    assert docs[0]["id"] == "high-sim"
+
+
+def test_retrieve_with_question_matching_filters_heading_only(patch_dependencies):
+    """
+    Tests that chunks containing only a heading are filtered out.
+    """
+    from src.services.retrieval_service import RetreivalService
+    service = RetreivalService()
+
+    mock_container = service.database.get_container_client.return_value
+    mock_container.query_items.side_effect = None  # Reset any side_effect
+
+    mock_container.query_items.return_value = [
+        {
+            "id": "valid-doc",
+            "content": "This is actual content\nwith multiple lines.",
+            "validChunk": "yes",
+            "question_score": 0.3,
+            "content_score": 0.3,
+            "heading": "Valid",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/valid.pdf"
+        },
+        {
+            "id": "heading-only",
+            "content": "## Just a heading",  # Single line starting with ##
+            "validChunk": "yes",
+            "question_score": 0.2,  # Better score but should be filtered
+            "content_score": 0.2,
+            "heading": "Heading Only",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/heading.pdf"
+        }
+    ]
+
+    mock_container.client_connection = MagicMock()
+    mock_container.client_connection.last_response_headers = {"x-ms-documentdb-query-metrics": "test"}
+
+    docs, _, _ = service.retrieve_with_question_matching(
+        "test query",
+        "container",
+        [1],
+        top_k=5
+    )
+
+    # Only the valid doc should be returned
+    assert len(docs) == 1
+    assert docs[0]["id"] == "valid-doc"
+
+
+def test_retrieve_with_question_matching_valid_chunk_filter_conditional(patch_dependencies):
+    """
+    Tests that the validChunk filter is conditional - includes chunks without
+    the validChunk field (legacy) AND chunks with validChunk='yes'.
+    """
+    from src.services.retrieval_service import RetreivalService
+    service = RetreivalService()
+
+    mock_container = service.database.get_container_client.return_value
+    mock_container.query_items.side_effect = None  # Reset any side_effect
+
+    # This test verifies the query construction - the filter should allow
+    # both legacy chunks (no validChunk) and validated chunks (validChunk='yes')
+    mock_container.query_items.return_value = [
+        {
+            "id": "legacy-chunk",
+            "content": "Legacy content without validChunk field.",
+            # No validChunk field
+            "question_score": 0.3,
+            "content_score": 0.3,
+            "heading": "Legacy",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/legacy.pdf"
+        },
+        {
+            "id": "valid-chunk",
+            "content": "New content with validChunk field.",
+            "validChunk": "yes",
+            "question_score": 0.3,
+            "content_score": 0.3,
+            "heading": "Valid",
+            "serviceName": "Test",
+            "serviceNameid": 1,
+            "citation": "/test/valid.pdf"
+        }
+    ]
+
+    mock_container.client_connection = MagicMock()
+    mock_container.client_connection.last_response_headers = {"x-ms-documentdb-query-metrics": "test"}
+
+    docs, _, _ = service.retrieve_with_question_matching(
+        "test query",
+        "container",
+        [1],
+        top_k=5
+    )
+
+    # Both chunks should be returned (filter is conditional)
+    assert len(docs) == 2
+
+    # Verify the query was constructed with the conditional filter
+    call_args = mock_container.query_items.call_args
+    query_str = call_args[1].get('query', '') if call_args[1] else call_args[0][0]
+    assert "NOT IS_DEFINED(c.validChunk) OR c.validChunk = 'yes'" in query_str
+
+
+def test_cosine_similarity_calculation(patch_dependencies):
+    """
+    Tests the _cosine_similarity helper method.
+    """
+    from src.services.retrieval_service import RetreivalService
+    service = RetreivalService()
+
+    # Perfect similarity (same vector)
+    vec = [1.0, 0.0, 0.0]
+    assert abs(service._cosine_similarity(vec, vec) - 1.0) < 0.001
+
+    # Orthogonal vectors (no similarity)
+    vec1 = [1.0, 0.0, 0.0]
+    vec2 = [0.0, 1.0, 0.0]
+    assert abs(service._cosine_similarity(vec1, vec2) - 0.0) < 0.001
+
+    # Empty vectors
+    assert service._cosine_similarity([], []) == 0.0
+    assert service._cosine_similarity([1.0], []) == 0.0

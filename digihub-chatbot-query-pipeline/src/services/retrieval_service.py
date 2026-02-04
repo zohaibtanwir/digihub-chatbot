@@ -291,26 +291,29 @@ class RetreivalService:
         
         container = self.database.get_container_client(container_name)
 
-        # Build query filter for service line
-        # query_filter = f"WHERE ARRAY_CONTAINS({service_line},c.serviceNameid)"
-        query_filter = f"WHERE ARRAY_CONTAINS({service_line},c.serviceNameid) AND c.validChunk = 'yes'"
- 
+        # Build query filter for service line with conditional validChunk check
+        # Filter by validChunk='yes' when available, but include legacy chunks without this field
+        base_filter = f"ARRAY_CONTAINS({service_line},c.serviceNameid)"
+        query_filter = f"WHERE {base_filter} AND (NOT IS_DEFINED(c.validChunk) OR c.validChunk = 'yes')"
+
         # Query CosmosDB with QUESTION-FIRST ordering using questionsEmbedding
-        # This performs native vector search on the combined questions embedding
+        # For chunks with questionsEmbedding, order by question similarity
+        # For legacy chunks without questionsEmbedding, fall back to content embedding
         query_stmt = f"""
-            SELECT TOP 10
+            SELECT TOP 20
                 c.id,
                 c.serviceNameid,
                 c.heading,
                 c.serviceName,
                 c.content,
+                c.validChunk,
                 c.metadata.filepath as citation,
                 c.questions,
                 VectorDistance(c.questionsEmbedding, {query_embedding}) as question_score,
                 VectorDistance(c.embedding, {query_embedding}) as content_score
             FROM c
             {query_filter}
-            ORDER BY VectorDistance(c.questionsEmbedding, {query_embedding})
+            ORDER BY VectorDistance(c.embedding, {query_embedding})
         """
 
         docs = list(container.query_items(
@@ -318,46 +321,71 @@ class RetreivalService:
             enable_cross_partition_query=True,
             populate_query_metrics=True
         ))
-   
-   
-        # # Calculate hybrid scores using both question and content similarity
-        # for doc in docs:
-        #     # Convert VectorDistance to similarity: smaller distance = higher similarity
-        #     question_similarity = 1 - doc.get('question_score', 1.0)
-        #     content_similarity = 1 - doc.get('content_score', 1.0)
 
-        #     # Store for later use
-        #     doc['question_similarity'] = question_similarity
-        #     doc['content_similarity'] = content_similarity
+        # Log retrieval statistics
+        valid_chunk_count = sum(1 for d in docs if d.get('validChunk') == 'yes')
+        legacy_chunk_count = sum(1 for d in docs if not d.get('validChunk'))
+        logger.info(f"Retrieved {len(docs)} chunks: {valid_chunk_count} validated, {legacy_chunk_count} legacy (no validChunk field)")
 
-        #     # Calculate hybrid score with question-first weighting
-        #     doc['hybrid_score'] = (
-        #         question_boost_weight * question_similarity +
-        #         (1 - question_boost_weight) * content_similarity
-        #     )
+        # Calculate hybrid scores using both question and content similarity
+        for doc in docs:
+            # Convert VectorDistance to similarity: smaller distance = higher similarity
+            # Handle legacy chunks that may not have questionsEmbedding
+            raw_question_score = doc.get('question_score')
+            raw_content_score = doc.get('content_score', 1.0)
 
-        # # Filter out chunks with only headings
-        # filtered_docs = [
-        #     doc for doc in docs
-        #     if not (len(doc.get('content', '').strip().splitlines()) == 1
-        #            and doc['content'].strip().startswith("## "))
-        # ]
+            # If no question score (legacy chunk), use content score for both
+            if raw_question_score is None:
+                question_similarity = 1 - raw_content_score
+                content_similarity = 1 - raw_content_score
+                doc['is_legacy_chunk'] = True
+            else:
+                question_similarity = 1 - raw_question_score
+                content_similarity = 1 - raw_content_score
+                doc['is_legacy_chunk'] = False
 
-        # # Sort by hybrid score (descending) - question similarity is the dominant factor
-        # ordered_list = sorted(
-        #     filtered_docs,
-        #     key=lambda x: (-x['hybrid_score'], -x.get('question_similarity', 0))
-        # )
+            # Store for later use and logging
+            doc['question_similarity'] = question_similarity
+            doc['content_similarity'] = content_similarity
 
-        # # Optionally filter by minimum question similarity threshold
-        # if min_question_similarity > 0:
-        #     above_threshold = [d for d in ordered_list if d.get('question_similarity', 0) >= min_question_similarity]
-        #     below_threshold = [d for d in ordered_list if d.get('question_similarity', 0) < min_question_similarity]
-        #     ordered_list = (above_threshold + below_threshold)[:top_k]
-        # else:
-        #     ordered_list = ordered_list[:top_k]
-        
-        ordered_list = docs
+            # Calculate hybrid score with question-first weighting
+            doc['hybrid_score'] = (
+                question_boost_weight * question_similarity +
+                (1 - question_boost_weight) * content_similarity
+            )
+
+        # Filter out chunks with only headings
+        filtered_docs = [
+            doc for doc in docs
+            if not (len(doc.get('content', '').strip().splitlines()) == 1
+                   and doc['content'].strip().startswith("## "))
+        ]
+
+        # Sort by hybrid score (descending) - question similarity is the dominant factor
+        ordered_list = sorted(
+            filtered_docs,
+            key=lambda x: (-x['hybrid_score'], -x.get('question_similarity', 0))
+        )
+
+        # Log top results for debugging retrieval quality
+        if ordered_list:
+            top_doc = ordered_list[0]
+            logger.info(
+                f"Top chunk: hybrid_score={top_doc.get('hybrid_score', 0):.4f}, "
+                f"question_sim={top_doc.get('question_similarity', 0):.4f}, "
+                f"content_sim={top_doc.get('content_similarity', 0):.4f}, "
+                f"legacy={top_doc.get('is_legacy_chunk', False)}"
+            )
+
+        # Optionally filter by minimum question similarity threshold
+        if min_question_similarity > 0:
+            above_threshold = [d for d in ordered_list if d.get('question_similarity', 0) >= min_question_similarity]
+            below_threshold = [d for d in ordered_list if d.get('question_similarity', 0) < min_question_similarity]
+            if above_threshold:
+                logger.info(f"Question similarity threshold {min_question_similarity}: {len(above_threshold)} above, {len(below_threshold)} below")
+            ordered_list = (above_threshold + below_threshold)[:top_k]
+        else:
+            ordered_list = ordered_list[:top_k]
 
         # Build citations
         citations = [
