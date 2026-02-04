@@ -22,7 +22,6 @@ from src.utils.config import (
     OPENAI_DEPLOYMENT_NAME,
     SESSION_CONTEXT_WINDOW_SIZE,
     ENABLE_RELEVANCE_FILTERING,
-    MIN_RELEVANCE_CHUNKS,
     OUT_OF_SCOPE_CONFIDENCE_THRESHOLD
 )
 from src.utils.logger import logger, log_context
@@ -356,23 +355,26 @@ class ResponseGeneratorAgent:
 
     def _determine_service_lines(self, result: dict, service_line: list[dict] | None, prompt: str):
         """
-            Determines which service lines to use for retrieval based on user authorization.
+        Determines which service lines to use for retrieval based on user authorization.
 
-            Args:
-                result (dict): Query analysis result
-                service_line (list[dict] | None): User's authorized service lines
-                prompt (str): User query
+        Note: We always retrieve from ALL authorized service lines, not just the ones
+        detected from keywords. Keyword-based detection is unreliable (e.g., "billing
+        problem with my bag" might only detect "Billing", missing Bag Manager docs).
+        The LLM relevance judge handles filtering after retrieval.
 
-            Returns:
-                tuple: (final_id_list, suppress_disclaimer)
-         """
+        Args:
+            result (dict): Query analysis result
+            service_line (list[dict] | None): User's authorized service lines
+            prompt (str): User query
+
+        Returns:
+            tuple: (final_id_list, suppress_disclaimer)
+        """
         all_mappings = RetreivalService().get_all_service_line()
         service_lines_requested = result.get("service_lines") or []
         suppress_disclaimer = False
 
-        # if prompt in ['What is Airport solution about?', 'What is Idea Hub?', 'What does Operational Support cover?']:
-        #     allowed_ids = [0]
-        #     suppress_disclaimer = True
+        # Determine allowed service line IDs based on user authorization
         if isinstance(service_line, list):
             allowed_ids = [0] + [
                 s['id'] for s in service_line
@@ -380,24 +382,23 @@ class ResponseGeneratorAgent:
             ]
             suppress_disclaimer = False
         else:
+            # No authorization info - allow all service lines (impersonation mode)
             allowed_ids = [item['id'] for item in all_mappings]
             suppress_disclaimer = False
 
-        final_id_list = []
-        if not service_lines_requested:
-            final_id_list = [item['id'] for item in all_mappings if item.get('id') in allowed_ids]
-        else:
-            for item in all_mappings:
-                name_matches = item.get('name') in service_lines_requested
-                id_is_allowed = item.get('id') in allowed_ids
-                if name_matches and id_is_allowed:
-                    final_id_list.append(item['id'])
+        # Always use ALL authorized service lines for retrieval
+        # This ensures we don't miss relevant documents due to imprecise keyword detection
+        # The relevance judge (LLM) will filter chunks after retrieval
+        final_id_list = [item['id'] for item in all_mappings if item.get('id') in allowed_ids]
 
         if not final_id_list and 0 in allowed_ids:
             final_id_list = [0]
 
-        logger.info(f"Requested Names: {service_lines_requested}")
-        logger.info(f"Final ID List: {final_id_list}")
+        # Log detected service lines for debugging (but don't filter by them)
+        if service_lines_requested:
+            logger.info(f"Detected service lines from query: {service_lines_requested} (used for logging only)")
+
+        logger.info(f"Final ID List (all authorized): {final_id_list}")
         final_id_list = list(set([int(i) for i in final_id_list] + [0]))
 
         return final_id_list, suppress_disclaimer
@@ -427,58 +428,49 @@ class ResponseGeneratorAgent:
 
     def _get_contextual_service_lines(self, is_session_dependent: bool, final_id_list: list) -> list:
         """
-        Get filtered service lines for retrieval based on session context.
+        Get service lines for retrieval.
 
-        When the query is session-dependent, this method retrieves the previous
-        session's chunk_service_line and uses it to filter the retrieval to
-        maintain context continuity.
+        Note: We no longer restrict retrieval based on previous session's service lines.
+        This was causing issues where follow-up questions about different topics would
+        miss relevant documents. The relevance judge (LLM) handles filtering after
+        retrieval, which is more reliable than pre-filtering.
 
         Args:
             is_session_dependent (bool): Whether the query depends on session context
             final_id_list (list): User's authorized service line IDs
 
         Returns:
-            list: Filtered service line IDs for retrieval
+            list: Service line IDs for retrieval (always returns full authorized list)
         """
-        if not is_session_dependent:
-            return final_id_list
+        # Log previous service lines for debugging, but don't filter by them
+        if is_session_dependent:
+            try:
+                previous_service_lines = SessionDBService().retrieve_session_service_lines(
+                    user_id=self.user_id,
+                    session_id=self.session_id,
+                    limit=1
+                )
+                if previous_service_lines:
+                    logger.info(f"Previous session service lines: {previous_service_lines} (for context, not filtering)")
+            except Exception as e:
+                logger.debug(f"Could not retrieve previous service lines: {e}")
 
-        try:
-            previous_service_lines = SessionDBService().retrieve_session_service_lines(
-                user_id=self.user_id,
-                session_id=self.session_id,
-                limit=1
-            )
-            logger.info(f"Retrieved previous service lines: {previous_service_lines}")
-
-            if not previous_service_lines:
-                return final_id_list
-
-            # Intersect with user's allowed service lines, always include 0 (General Info)
-            filtered = [sl for sl in previous_service_lines if sl in final_id_list]
-
-            if filtered:
-                # Ensure General Info (0) is always included
-                result = list(set(filtered + [0]))
-                logger.info(f"Using contextual service lines: {result}")
-                return result
-            else:
-                # If no intersection, fall back to full list
-                logger.info("No intersection with previous service lines, using full list")
-                return final_id_list
-
-        except Exception as e:
-            logger.error(f"Failed to get contextual service lines: {e}")
-            return final_id_list
+        # Always return full authorized list - let relevance judge handle filtering
+        return final_id_list
 
     def _resolve_query_references(self, translated_text: str, is_session_dependent: bool,
                                    session_entities: dict, user_chat_history: list):
         """
         Resolves references (pronouns, etc.) in the query.
 
+        Reference resolution runs whenever the query contains pronouns or references
+        (e.g., "it", "that", "this"), regardless of is_session_dependent status.
+        This ensures queries like "Tell me more about it" get resolved even when
+        service lines change (which sets is_session_dependent=False).
+
         Args:
             translated_text (str): Translated query text
-            is_session_dependent (bool): Whether query depends on session
+            is_session_dependent (bool): Whether query depends on session (not used for resolution trigger)
             session_entities (dict): Session entities for resolution
             user_chat_history (list): Previous conversation messages
 
@@ -486,17 +478,25 @@ class ResponseGeneratorAgent:
             str: Resolved query
         """
         resolved_query = translated_text
-        if is_session_dependent and self.context_manager.has_references(translated_text):
+        has_references = self.context_manager.has_references(translated_text)
+
+        if has_references:
+            # Always attempt reference resolution when references are detected,
+            # regardless of is_session_dependent flag
             try:
                 resolved_query = self.context_manager.resolve_references(
                     query=translated_text,
                     entities=session_entities,
                     history=user_chat_history[-3:]
                 )
-                logger.info(f"Reference resolution: '{translated_text}' -> '{resolved_query}'")
+                logger.info(f"Reference resolution: '{translated_text}' -> '{resolved_query}' "
+                           f"(session_dependent={is_session_dependent})")
             except Exception as e:
                 logger.error(f"Reference resolution failed, using original query: {e}")
                 resolved_query = translated_text
+        else:
+            logger.debug(f"No references detected in query: '{translated_text}'")
+
         return resolved_query
 
     def _build_retrieval_query(self, resolved_query: str, is_session_dependent: bool,
@@ -644,8 +644,6 @@ class ResponseGeneratorAgent:
         if not chunks:
             return chunks
 
-        min_chunks = MIN_RELEVANCE_CHUNKS if MIN_RELEVANCE_CHUNKS else 2
-
         start = time.time()
         try:
             # Get relevant service line IDs from the judge
@@ -664,16 +662,11 @@ class ResponseGeneratorAgent:
                 filter_type="llm_relevance"
             )
 
-            # Ensure minimum chunks are retained
-            if len(relevant_chunks) < min_chunks and len(chunks) >= min_chunks:
-                # Keep top chunks by hybrid_score if not enough relevant
-                sorted_chunks = sorted(
-                    chunks,
-                    key=lambda x: x.get("hybrid_score", 0),
-                    reverse=True
-                )
-                relevant_chunks = sorted_chunks[:min_chunks]
-                logger.info(f"Retained top {min_chunks} chunks by hybrid score to meet minimum")
+            # Note: We intentionally do NOT force minimum chunks here.
+            # If no chunks are relevant, the out-of-scope detection will handle it.
+            # Forcing irrelevant chunks into context degrades response quality.
+            if len(relevant_chunks) == 0:
+                logger.info("No relevant chunks found after LLM filtering - query may be out of scope")
 
             end = time.time()
             logger.info(f"[Latency] relevance_filtering: {end - start:.2f}s")
@@ -686,12 +679,15 @@ class ResponseGeneratorAgent:
 
     def _detect_out_of_scope(self, response_object: dict, prompt: str, detected_language: str) -> bool:
         """
-        Detects if a query is out of scope using multiple signals.
+        Detects if a query is out of scope using a clear hierarchy of signals.
 
-        This method uses a structured approach combining:
-        1. Explicit is_out_of_scope boolean from LLM response (primary signal)
-        2. Confidence score threshold (secondary signal)
-        3. Text-based matching (fallback for backwards compatibility)
+        Signal priority (first match wins):
+        1. Explicit is_out_of_scope boolean from LLM (authoritative when present)
+        2. Confidence score below threshold (reliable secondary signal)
+        3. Text-based matching (legacy fallback only)
+
+        Note: We deliberately avoid using multiple thresholds or combining signals
+        in ways that could produce contradictory results.
 
         Args:
             response_object (dict): The parsed LLM response containing Answer, Confidence, is_out_of_scope
@@ -701,20 +697,27 @@ class ResponseGeneratorAgent:
         Returns:
             bool: True if the query is determined to be out of scope
         """
-        # Signal 1: Explicit is_out_of_scope boolean from LLM (primary)
+        # Signal 1: Explicit is_out_of_scope boolean from LLM (authoritative)
+        # When the LLM explicitly sets this field, trust it as the primary signal
         explicit_out_of_scope = response_object.get("is_out_of_scope")
         if explicit_out_of_scope is not None:
             # Handle both boolean and string values
+            is_oos = False
             if isinstance(explicit_out_of_scope, bool):
-                if explicit_out_of_scope:
-                    logger.info("Out-of-scope detected via explicit is_out_of_scope=true")
-                    return True
+                is_oos = explicit_out_of_scope
             elif isinstance(explicit_out_of_scope, str):
-                if explicit_out_of_scope.lower() == "true":
-                    logger.info("Out-of-scope detected via explicit is_out_of_scope='true'")
-                    return True
+                is_oos = explicit_out_of_scope.lower() == "true"
 
-        # Signal 2: Confidence threshold (secondary signal)
+            if is_oos:
+                logger.info("Out-of-scope detected via explicit is_out_of_scope=true")
+                return True
+            else:
+                # LLM explicitly said it's in scope - trust this decision
+                logger.info("Query confirmed in scope via explicit is_out_of_scope=false")
+                return False
+
+        # Signal 2: Confidence threshold (only checked if is_out_of_scope not set)
+        # This handles cases where older prompts don't return is_out_of_scope
         confidence_threshold = OUT_OF_SCOPE_CONFIDENCE_THRESHOLD if OUT_OF_SCOPE_CONFIDENCE_THRESHOLD else 0.4
         try:
             confidence = float(response_object.get("Confidence", 1.0))
@@ -726,7 +729,8 @@ class ResponseGeneratorAgent:
         except (ValueError, TypeError) as e:
             logger.warning(f"Could not parse confidence score: {e}")
 
-        # Signal 3: Text-based matching (fallback for backwards compatibility)
+        # Signal 3: Text-based matching (legacy fallback for backwards compatibility)
+        # Only used when is_out_of_scope is not set and confidence is above threshold
         answer = response_object.get("Answer", "")
         out_of_scope_phrases = [
             "This question is outside the scope",
@@ -749,20 +753,6 @@ class ResponseGeneratorAgent:
             if phrase.lower() in answer.lower():
                 logger.info(f"Out-of-scope detected via text matching: '{phrase}'")
                 return True
-
-        # Signal 4: Response type check
-        response_type = response_object.get("Type", "").lower()
-        if response_type == "generic":
-            # Generic type combined with low-ish confidence might indicate out of scope
-            try:
-                confidence = float(response_object.get("Confidence", 1.0))
-                if confidence < 0.6:
-                    logger.info(
-                        f"Out-of-scope detected via generic type with moderate confidence: {confidence:.2f}"
-                    )
-                    return True
-            except (ValueError, TypeError):
-                pass
 
         logger.info("Query determined to be in scope")
         return False

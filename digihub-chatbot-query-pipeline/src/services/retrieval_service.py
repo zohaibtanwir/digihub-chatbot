@@ -327,8 +327,9 @@ class RetreivalService:
         query_filter = f"WHERE {' AND '.join(filters)}"
 
         # Query CosmosDB with QUESTION-FIRST ordering using questionsEmbedding
-        # For chunks with questionsEmbedding, order by question similarity
-        # For legacy chunks without questionsEmbedding, fall back to content embedding
+        # Chunks with questionsEmbedding are ordered by question similarity (prioritized)
+        # Legacy chunks without questionsEmbedding will have NULL question_score and sort to end
+        # Post-retrieval re-ranking handles proper scoring for all chunks
         query_stmt = f"""
             SELECT TOP 20
                 c.id,
@@ -345,7 +346,7 @@ class RetreivalService:
                 VectorDistance(c.embedding, {query_embedding}) as content_score
             FROM c
             {query_filter}
-            ORDER BY VectorDistance(c.embedding, {query_embedding})
+            ORDER BY VectorDistance(c.questionsEmbedding, {query_embedding})
         """
 
         docs = list(container.query_items(
@@ -360,31 +361,37 @@ class RetreivalService:
         logger.info(f"Retrieved {len(docs)} chunks: {valid_chunk_count} validated, {legacy_chunk_count} legacy (no validChunk field)")
 
         # Calculate hybrid scores using both question and content similarity
+        # Legacy chunks without questionsEmbedding are penalized since we can't verify question relevance
+        LEGACY_CHUNK_PENALTY = 0.15  # Reduce legacy chunk scores by 15%
+
         for doc in docs:
             # Convert VectorDistance to similarity: smaller distance = higher similarity
             # Handle legacy chunks that may not have questionsEmbedding
             raw_question_score = doc.get('question_score')
             raw_content_score = doc.get('content_score', 1.0)
 
-            # If no question score (legacy chunk), use content score for both
+            # If no question score (legacy chunk), use only content similarity with penalty
             if raw_question_score is None:
-                question_similarity = 1 - raw_content_score
                 content_similarity = 1 - raw_content_score
+                # Legacy chunks only have content similarity, no question relevance verification
+                # Apply penalty and use content-only scoring
+                doc['question_similarity'] = 0.0  # No question embedding to compare
+                doc['content_similarity'] = content_similarity
                 doc['is_legacy_chunk'] = True
+                # Legacy score: content similarity with penalty (not hybrid weighted)
+                doc['hybrid_score'] = content_similarity * (1 - LEGACY_CHUNK_PENALTY)
+                logger.debug(f"Legacy chunk {doc.get('id')}: content_sim={content_similarity:.4f}, penalized_score={doc['hybrid_score']:.4f}")
             else:
                 question_similarity = 1 - raw_question_score
                 content_similarity = 1 - raw_content_score
+                doc['question_similarity'] = question_similarity
+                doc['content_similarity'] = content_similarity
                 doc['is_legacy_chunk'] = False
-
-            # Store for later use and logging
-            doc['question_similarity'] = question_similarity
-            doc['content_similarity'] = content_similarity
-
-            # Calculate hybrid score with question-first weighting
-            doc['hybrid_score'] = (
-                question_boost_weight * question_similarity +
-                (1 - question_boost_weight) * content_similarity
-            )
+                # Proper hybrid score with question-first weighting
+                doc['hybrid_score'] = (
+                    question_boost_weight * question_similarity +
+                    (1 - question_boost_weight) * content_similarity
+                )
 
         # Filter out chunks with only headings
         filtered_docs = [

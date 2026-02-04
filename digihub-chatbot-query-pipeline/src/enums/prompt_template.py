@@ -308,19 +308,17 @@ RULES FOR GENERATING THE "Source" FIELD:
 2.  **Exact Quotes:** Provide 'File' (full path), 'Section', and an **EXACT, unaltered quote**. This is the only place where original text is used without rephrasing.
 
 ---
-RULES FOR EDGE CASES AND OUT-OF-SCOPE DETECTION:
-1.  **Out of Scope Detection (CRITICAL):** You MUST set `is_out_of_scope` to `true` if ANY of the following conditions apply:
+RULES FOR OUT-OF-SCOPE DETECTION:
+1.  **Out of Scope Detection (CRITICAL):** Set `is_out_of_scope` to `true` if ANY of these apply:
     - The query cannot be answered from the provided context
     - The context does not contain relevant information for the query
     - The query is about a topic completely unrelated to SITA services and products
     - The retrieved chunks do not address the user's actual question
+    Otherwise, set `is_out_of_scope` to `false`.
 
-2.  **Confidence-Based Scope Assessment:**
-    - If your Confidence score is below 0.4, strongly consider setting `is_out_of_scope` to `true`
-    - If your Confidence score is between 0.4-0.6 AND the context seems tangentially related, set `is_out_of_scope` to `true`
-    - High confidence (>0.7) generally indicates the query is in scope
+2.  **Out of Scope Response:** When `is_out_of_scope` is `true`, provide a brief explanation in the Answer field about why the query couldn't be answered from the available documents.
 
-3.  **Out of Scope Response:** When `is_out_of_scope` is `true`, provide a brief explanation in the Answer field about why the query couldn't be answered from the available documents.
+3.  **Confidence Score (Separate from Scope):** The Confidence score reflects how well the retrieved context supports your answer (0.0-1.0). A query can be in-scope but have lower confidence if the context only partially addresses it. Do NOT use confidence to determine is_out_of_scope - these are independent assessments.
 
 ---
 ACRONYM HANDLING RULES (CRITICAL):
