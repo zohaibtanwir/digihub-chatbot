@@ -364,15 +364,32 @@ class RetreivalService:
         # Legacy chunks without questionsEmbedding are penalized since we can't verify question relevance
         LEGACY_CHUNK_PENALTY = 0.15  # Reduce legacy chunk scores by 15%
 
+        def distance_to_similarity(distance: float) -> float:
+            """
+            Convert CosmosDB VectorDistance (cosine) to similarity score.
+
+            CosmosDB VectorDistance with cosine returns values in range [0, 2]:
+            - 0 = identical vectors (similarity 1.0)
+            - 1 = orthogonal vectors (similarity 0.0)
+            - 2 = opposite vectors (similarity -1.0, but we clamp to 0)
+
+            Formula: similarity = 1 - (distance / 2), clamped to [0, 1]
+            """
+            if distance is None:
+                return 0.0
+            # Normalize from [0, 2] to [0, 1] and clamp
+            similarity = 1 - (distance / 2)
+            return max(0.0, min(1.0, similarity))
+
         for doc in docs:
-            # Convert VectorDistance to similarity: smaller distance = higher similarity
+            # Convert VectorDistance to similarity using proper normalization
             # Handle legacy chunks that may not have questionsEmbedding
             raw_question_score = doc.get('question_score')
-            raw_content_score = doc.get('content_score', 1.0)
+            raw_content_score = doc.get('content_score', 2.0)  # Default to max distance if missing
 
             # If no question score (legacy chunk), use only content similarity with penalty
             if raw_question_score is None:
-                content_similarity = 1 - raw_content_score
+                content_similarity = distance_to_similarity(raw_content_score)
                 # Legacy chunks only have content similarity, no question relevance verification
                 # Apply penalty and use content-only scoring
                 doc['question_similarity'] = 0.0  # No question embedding to compare
@@ -380,10 +397,10 @@ class RetreivalService:
                 doc['is_legacy_chunk'] = True
                 # Legacy score: content similarity with penalty (not hybrid weighted)
                 doc['hybrid_score'] = content_similarity * (1 - LEGACY_CHUNK_PENALTY)
-                logger.debug(f"Legacy chunk {doc.get('id')}: content_sim={content_similarity:.4f}, penalized_score={doc['hybrid_score']:.4f}")
+                logger.debug(f"Legacy chunk {doc.get('id')}: raw_dist={raw_content_score:.4f}, content_sim={content_similarity:.4f}, penalized_score={doc['hybrid_score']:.4f}")
             else:
-                question_similarity = 1 - raw_question_score
-                content_similarity = 1 - raw_content_score
+                question_similarity = distance_to_similarity(raw_question_score)
+                content_similarity = distance_to_similarity(raw_content_score)
                 doc['question_similarity'] = question_similarity
                 doc['content_similarity'] = content_similarity
                 doc['is_legacy_chunk'] = False
@@ -392,6 +409,7 @@ class RetreivalService:
                     question_boost_weight * question_similarity +
                     (1 - question_boost_weight) * content_similarity
                 )
+                logger.debug(f"Chunk {doc.get('id')}: q_dist={raw_question_score:.4f}, c_dist={raw_content_score:.4f}, q_sim={question_similarity:.4f}, c_sim={content_similarity:.4f}, hybrid={doc['hybrid_score']:.4f}")
 
         # Filter out chunks with only headings
         filtered_docs = [
