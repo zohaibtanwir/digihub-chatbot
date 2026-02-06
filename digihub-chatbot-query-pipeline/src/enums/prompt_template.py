@@ -205,6 +205,32 @@ class PromptTemplate(Enum):
            - Include all products mentioned in the query
            - If no products are mentioned, return an empty array []
 
+        e) **detected_entities**: Detect any SPECIFIC product names, feature names, report names, or technical entities mentioned in the query that are NOT in the predefined service lines list above.
+
+           **What counts as a detected entity:**
+           - Product names: "SITA Mission Watch", "AirportHub", "FlightHub", "BagJourney", etc.
+           - Report names: "Impact Report", "Annual Report", "Survey Report", etc.
+           - Feature names: "CI Analysis", "Real-time Tracking", "API Gateway", etc.
+           - Tool names: "Dashboard", "Analytics Tool", "Monitoring System", etc.
+           - Any proper noun or capitalized term that appears to be a specific SITA product, tool, or feature
+
+           **What does NOT count as a detected entity:**
+           - Generic terms: "billing", "support", "help", "invoice", "error"
+           - Service line names (already captured in service_lines)
+           - Common words: "how", "what", "where", "can", "is"
+
+           **Rules for detected_entities:**
+           - Only include specific named entities that suggest a particular product/feature
+           - Include the full entity name as it appears (e.g., "SITA Mission Watch", not just "Mission Watch")
+           - If no specific entities are detected, return an empty array []
+
+           **Examples:**
+           - "What is SITA Mission Watch?" → ["SITA Mission Watch"]
+           - "Tell me about the Impact Report 2024" → ["Impact Report 2024"]
+           - "How does CI Analysis work?" → ["CI Analysis"]
+           - "What is billing?" → [] (generic term, not a specific entity)
+           - "How do I configure WorldTracer?" → [] (WorldTracer is a service line, not a detected entity)
+
 
     Input:
     User Query: "{prompt}"
@@ -236,7 +262,8 @@ class PromptTemplate(Enum):
       "contentType": "UserGuide or Marketing or MeetingMinutes or ReleaseNotes or APIDocs or Others or null",
       "year": "YYYY or null",
       "month": "month name or number or null",
-      "products": ["Product 1", "Product 2"]
+      "products": ["Product 1", "Product 2"],
+      "detected_entities": ["Entity 1", "Entity 2"]
     }}
     """
 

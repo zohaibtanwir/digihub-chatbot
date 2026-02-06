@@ -948,6 +948,7 @@ class ResponseGeneratorAgent:
             expanded_queries = result.get("expanded_queries", [])
             is_session_dependent = result.get("is_session_dependent", False)
             detected_service_names = result.get("service_lines") or []
+            detected_entities = result.get("detected_entities") or []
 
             # Filter out excluded acronyms
             exclude_words = {"SITA", "DIGIHUB"}
@@ -986,8 +987,17 @@ class ResponseGeneratorAgent:
             USER_GUIDE_SERVICE_LINES = [0, 440]
             authorized_user_guides = [sl for sl in USER_GUIDE_SERVICE_LINES if sl in final_service_lines]
 
-            if not detected_service_names and not is_session_dependent:
-                # GENERIC QUERY: No service line detected, not a follow-up
+            # Determine if query is truly generic (no service line, no entities, not a follow-up)
+            # detected_entities contains product/feature names like "SITA Mission Watch", "CI Analysis"
+            # that indicate the query is about a specific topic even if no service line was detected
+            is_truly_generic = (
+                not detected_service_names and
+                not is_session_dependent and
+                not detected_entities
+            )
+
+            if is_truly_generic:
+                # GENERIC QUERY: No service line detected, no entities detected, not a follow-up
                 # RESTRICT search to only user guide service lines to prevent
                 # high-volume service lines (WorldTracer: 2,968 chunks) from drowning out
                 # relevant user guide content (General Info: 10 chunks)
@@ -996,6 +1006,16 @@ class ResponseGeneratorAgent:
                     logger.info(f"Generic query detected - restricting to user guide service lines: {authorized_user_guides}")
                 else:
                     logger.info(f"Generic query but user not authorized for user guide service lines - using full list")
+            elif detected_entities and not detected_service_names:
+                # ENTITY-SPECIFIC QUERY: No service line detected but specific entities found
+                # (e.g., "What is SITA Mission Watch?", "Tell me about CI Analysis")
+                # Search ALL authorized service lines to find content about the entity
+                # Hybrid search will rank the correct content higher
+                logger.info(f"Entity-specific query detected - entities: {detected_entities}")
+                logger.info(f"Searching all authorized service lines: {retrieval_service_lines}")
+                # Include user guides as well so they can compete
+                if authorized_user_guides:
+                    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
             elif authorized_user_guides:
                 # SPECIFIC QUERY: Service line detected or session-dependent
                 # ADD user guide service lines alongside detected service lines

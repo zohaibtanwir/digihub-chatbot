@@ -66,6 +66,8 @@ class QueryAnalyzer:
                 - year (str or None): Four-digit year (YYYY) extracted from the query
                 - month (str or None): Month name or number extracted from the query
                 - products (list): List of SITA products/service lines mentioned in the query
+                - detected_entities (list): Specific product/feature/report names detected in the query
+                    that are NOT predefined service lines (e.g., "SITA Mission Watch", "CI Analysis")
 
         Raises:
             Exception: Logs error and returns minimal fallback dict with "language": "unknown" and original query
@@ -151,7 +153,8 @@ class QueryAnalyzer:
                 "contentType": parsed_response.get("contentType", None),
                 "year": parsed_response.get("year", None),
                 "month": parsed_response.get("month", None),
-                "products": parsed_response.get("products", [])
+                "products": parsed_response.get("products", []),
+                "detected_entities": parsed_response.get("detected_entities", [])
             }
         except Exception as e:
             logger.error(f"Error during language detection: {e}")
