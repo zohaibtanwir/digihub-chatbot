@@ -62,9 +62,12 @@ docker run -p 8080:8080 digihub-chatbot-query-pipeline
 - Parses responses and determines if query is in/out of scope
 
 **RetreivalService** (`src/services/retrieval_service.py`):
+- **Hybrid Search**: Combines semantic similarity (70%) with keyword matching (30%)
 - Vector similarity search using CosmosDB with Azure OpenAI embeddings
+- Keyword scoring with heading boost and exact phrase matching
 - Filters results by user's authorized service lines
-- Returns top 7 chunks ordered by cosine similarity
+- Content type boosting for UserGuide/DigiHubUserGuide (5% boost)
+- Returns top 7 chunks ordered by hybrid score
 - Filters out chunks that only contain headings
 
 **AuthorizationService** (`src/services/auth_service.py`):
@@ -118,7 +121,7 @@ The system uses a sophisticated **Conversational Context Engine** to preserve co
 - **Reference Resolution**: Resolves pronouns (e.g., "it", "that") to specific entities from conversation history
 - **Smart Query Merging**: Combines last 3 user messages with entity context for improved retrieval
 - **Entity Tracking**: Extracts and stores services, topics, and technical terms per conversation turn
-- **Question-First Vector Retrieval**: Uses dual-embedding architecture (100% question-based ranking)
+- **Hybrid Search Retrieval**: Combines semantic similarity (70%) with keyword matching (30%)
 
 **Example Flow:**
 ```
@@ -128,7 +131,7 @@ Bot:  [Explains WorldTracer...]
 User: "How do I configure it?"
 → CCE resolves "it" → "WorldTracer"
 → Merges context: "Previous: What is WorldTracer? Current: How do I configure WorldTracer?"
-→ Retrieves relevant docs via question embeddings
+→ Retrieves relevant docs via hybrid search (semantic + keyword)
 → Generates contextual response
 ```
 
@@ -156,7 +159,7 @@ digihub-chatbot-query-pipeline/
 │   │   └── azure_sas_url_generator.py
 │   ├── services/                 # External service integrations
 │   │   ├── auth_service.py         # User authorization
-│   │   ├── retrieval_service.py    # Vector search & retrieval (question-first)
+│   │   ├── retrieval_service.py    # Hybrid search (semantic + keyword)
 │   │   ├── session_service.py      # Session persistence & entity tracking
 │   │   ├── azure_openai_service.py
 │   │   ├── cosmos_db_service.py
@@ -212,88 +215,96 @@ The service can generate time-limited Azure Blob Storage SAS URLs. Requires Serv
 
 ---
 
-## Session Context (February 4, 2026)
+## Session Context (February 5, 2026)
 
-### Work Completed This Session
+### Problem Solved: Generic Queries and CI Analysis
 
-#### Critical Response Quality Fixes (8 issues - ALL COMPLETED)
+**Original Issue:** Generic queries like "What is CI Analysis?", "What is DigiHub?" returned out-of-scope responses due to:
+1. Pure semantic search matching "What is X?" patterns instead of actual content
+2. High-volume service lines (WorldTracer: 2,968 chunks) drowning out user guides (General Info: 10 chunks)
+3. No keyword matching to find exact terms in headings
+
+**Solution Implemented:** Hybrid Search (Semantic + Keyword)
+
+### Hybrid Search Architecture (`src/services/retrieval_service.py`)
+
+```python
+# Final score formula
+final_score = 0.7 * semantic_score + 0.3 * keyword_score
+
+# Keyword score components:
+# - Base score: proportion of query terms found in content (0-1)
+# - Heading boost: +30% if query terms appear in heading
+# - Phrase boost: +40% if exact phrase matches heading (e.g., "CI Analysis")
+```
+
+**Key Methods Added:**
+- `_tokenize()`: Tokenizes text, removes stopwords
+- `_extract_key_phrases()`: Extracts key phrases from query
+- `_calculate_keyword_score()`: Calculates BM25-like keyword score
+
+### Service Line Handling for Generic Queries
+
+**Step 6.6 in `response_generator.py`:**
+- **Generic queries** (no service line detected): RESTRICT search to [0, 440] only
+- **Specific queries** (service line detected): ADD [0, 440] alongside detected service lines
+
+```python
+USER_GUIDE_SERVICE_LINES = [0, 440]  # General Info, Operational Support
+
+if not detected_service_names and not is_session_dependent:
+    # Generic: restrict to user guides only
+    retrieval_service_lines = authorized_user_guides
+else:
+    # Specific: add user guides alongside detected
+    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+```
+
+### CosmosDB Service Line Reference
+
+| Service Line | ID | Chunks | Content |
+|--------------|-----|--------|---------|
+| General Info | 0 | 10 | DigiHub user guide, Acronym list |
+| Operational Support | 440 | 10 | AIR Dashboard guide (CI Analysis), Support guide |
+| Billing | 400 | 103 | User guides + BillingUpdate newsletters |
+| WorldTracer | 240 | 2,968 | WorldTracer documentation |
+| Bag Manager | 360 | 2,868 | Bag Manager documentation |
+| Euro CAB | 460 | 711 | Meeting notes |
+
+**Total Chunks:** ~7,356
+
+### Completed Beads Issues (February 5, 2026)
+
+| Beads ID | Description | File |
+|----------|-------------|------|
+| `digihub-chatbot-101` | Hybrid search (semantic + keyword) | retrieval_service.py |
+| `digihub-chatbot-inb` | Default service lines for generic queries | response_generator.py |
+| `digihub-chatbot-tgx` | Content type boosting (5% for UserGuide) | retrieval_service.py |
+| `digihub-chatbot-9mv` | Content-first ORDER BY | retrieval_service.py |
+| `digihub-chatbot-t9i` | Always include user guide service lines | response_generator.py |
+| `digihub-chatbot-b9e` | Fix Step 6.6 restriction logic | response_generator.py |
+| `digihub-chatbot-a3d` | Remove question similarity scoring | retrieval_service.py |
+
+### Previous Session Fixes (Still Active)
 
 | Issue ID | Fix | File |
 |----------|-----|------|
-| `digihub-chatbot-gre` | ORDER BY uses questionsEmbedding | retrieval_service.py |
+| `digihub-chatbot-63a` | VectorDistance to similarity conversion | retrieval_service.py |
 | `digihub-chatbot-eip` | Legacy chunks get 15% penalty | retrieval_service.py |
-| `digihub-chatbot-syj` | Reference resolution works regardless of is_session_dependent | response_generator.py |
-| `digihub-chatbot-dzp` | Removed MIN_RELEVANCE_CHUNKS forcing | response_generator.py |
-| `digihub-chatbot-cq5` | Consolidated out-of-scope detection signals | response_generator.py |
-| `digihub-chatbot-apv` | Service line filtering uses ALL authorized lines | response_generator.py |
-| `digihub-chatbot-0yz` | Contextual service lines don't override authorization | response_generator.py |
-| `digihub-chatbot-ehd` | Simplified conflicting prompt instructions | prompt_template.py |
+| `digihub-chatbot-c39` | Service line filtering after relevance judge | response_generator.py |
+| `digihub-chatbot-89x` | Relaxed relevance judge prompt | prompt_template.py |
 
-#### VectorDistance Bug Fix (CRITICAL - Commit 7959fd2)
+### Test UI
 
-**Problem:** CosmosDB VectorDistance with cosine returns [0, 2] range, but code assumed [0, 1].
-- Distance 1.2 → Similarity -0.2 (NEGATIVE!) - chunks filtered out incorrectly
+Location: `ui/app.py` with `ui/requirements.txt`
 
-**Fix:** Added `distance_to_similarity()` helper in `retrieval_service.py`:
-```python
-def distance_to_similarity(distance: float) -> float:
-    if distance is None:
-        return 0.0
-    similarity = 1 - (distance / 2)  # Normalize [0,2] to [0,1]
-    return max(0.0, min(1.0, similarity))  # Clamp
+```bash
+cd /Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline
+streamlit run ui/app.py
+# Opens at http://localhost:8501
 ```
 
-### Beads Issue Tracker Status
-
-**Total: 35 issues**
-- Closed: 25
-- In Progress: 1 (digihub-chatbot-srv - Split monolithic query analyzer prompt)
-- Open: 9 (Unit testing tasks)
-
-#### Open Testing Tasks (Priority Order)
-
-| Priority | Issue ID | Task |
-|----------|----------|------|
-| P1 | `digihub-chatbot-5qq` | Create unit tests for response_generator.py |
-| P1 | `digihub-chatbot-5by` | Create unit tests for query_analyzer.py |
-| P1 | `digihub-chatbot-2u1` | Create unit tests for dataprocessor.py |
-| P2 | `digihub-chatbot-6hh` | Create test infrastructure (conftest.py, pytest.ini) |
-| P2 | `digihub-chatbot-bv4` | Create unit tests for relevance_judge.py |
-| P2 | `digihub-chatbot-jis` | Create unit tests for authorization_checker.py |
-| P2 | `digihub-chatbot-zom` | Improve existing test coverage to 80% |
-| P2 | `digihub-chatbot-dti` | Add CI/CD test integration in Azure Pipelines |
-| P3 | `digihub-chatbot-vyh` | Create integration tests for end-to-end flows |
-
-### Documentation Created
-
-- `DigiHub_Chatbot_Changes_Report.docx` - Comprehensive changes report with 9 tables
-- `.env.example` - Environment configuration template
-
-### Local Development Setup
-
-#### Environment File Location
-The `.env` file with credentials is in the root folder:
-```
-/Users/zohaibtanwir/projects/digihub-chatbot/.env
-```
-
-It has been copied to:
-```
-/Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline/.env
-```
-
-#### Required Environment Variables
-```
-CONFIG_URL=https://digihubdev.sita.aero/api/configserver/digihub-chatbot-query-pipeline/dev
-KEY_VAULT_URL=https://kv-dev-westeurope-02.vault.azure.net/
-AZURE_CLIENT_ID=<service-principal-id>
-AZURE_TENANT_ID=<tenant-id>
-AZURE_CLIENT_SECRET=<client-secret>
-```
-
-#### Running Locally
-
-**IMPORTANT:** Config server requires SITA VPN connection.
+### Local Development
 
 ```bash
 # Connect to VPN first, then:
@@ -301,30 +312,19 @@ cd /Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline
 python -m uvicorn src.app:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-### Python Version
+### SharePoint Analysis Report
 
-Upgraded to **Python 3.13.11** (from 3.12.7)
-- Path: `/opt/homebrew/opt/python@3.13/libexec/bin/python3`
-- Updated `~/.zprofile` to use Python 3.13 as default
+Location: `SharePoint_Analysis_Report.docx` (generated by `SharePoint_Analysis_Report.py`)
 
-### Git Commits This Session
+Contains:
+- Total SharePoint overview (6.0 GB, ~1,100 files)
+- Indexed files breakdown (999 files, excluding videos/Excel)
+- CosmosDB gap analysis
+- Implemented fixes documentation
+- Recommended test questions
 
-| Commit | Description |
-|--------|-------------|
-| `5f59a37` | chore: Sync Beads export state |
-| `a9e3de7` | chore: Update Beads with VectorDistance bug fix tracking |
-| `7959fd2` | **fix(retrieval): Fix VectorDistance to similarity conversion** |
-| `7d23732` | chore: Add unit test implementation tasks to Beads |
-| `711f23b` | fix(query-pipeline): Fix 8 critical issues impacting response quality |
-| `62dfb14` | docs: Add comprehensive changes report |
+### Next Steps
 
-### Next Steps When Resuming
-
-1. **Connect to SITA VPN** to access config server
-2. **Run the application** to test the VectorDistance fix:
-   ```bash
-   cd /Users/zohaibtanwir/projects/digihub-chatbot/digihub-chatbot-query-pipeline
-   python -m uvicorn src.app:app --host 0.0.0.0 --port 8080 --reload
-   ```
-3. **Test with a sample query** to verify chunks are not filtered incorrectly
-4. **Implement unit tests** starting with `digihub-chatbot-6hh` (test infrastructure)
+1. User is compiling a list of questions that still don't work correctly
+2. Review and fix remaining edge cases
+3. Consider additional data quality improvements (e.g., question regeneration for some chunks)

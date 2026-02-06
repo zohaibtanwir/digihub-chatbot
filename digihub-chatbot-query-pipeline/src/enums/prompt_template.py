@@ -507,7 +507,7 @@ This is the most critical part of your task. Follow these rules precisely.
         """
 
     RELEVANCE_JUDGE_TEMPLATE_BULK = """
-    You are a relevance analysis agent. Your task is to determine if any of the provided document chunks contain information that can directly answer a user's query. The answer must be found within the text of the chunk itself.
+    You are a relevance analysis agent. Your task is to determine if any of the provided document chunks contain information relevant to a user's query. A chunk is relevant if it can help answer the query, provide useful context, or contains related information.
 
     User Query: "{prompt}"
 
@@ -516,10 +516,13 @@ This is the most critical part of your task. Follow these rules precisely.
     {chunks_json}
     ---
 
-    For each chunk, determine if it contains a direct and substantial answer to the user query.
-    - If a chunk only mentions a keyword but doesn't explain it in the context of the user's query, it is NOT relevant.
-    - If a chunk is about a completely different topic, it is NOT relevant.
-    - If a chunk directly addresses the user's question, it IS relevant.
+    For each chunk, determine if it contains information that could help answer the user's query:
+    - If a chunk contains information about the same topic, service, or process mentioned in the query, it IS relevant.
+    - If a chunk explains concepts, steps, or details that relate to what the user is asking, it IS relevant.
+    - If a chunk is about a completely different topic with no connection to the query, it is NOT relevant.
+    - If a chunk only mentions a keyword in passing without useful context, it is NOT relevant.
+
+    Be inclusive rather than exclusive - if the chunk could potentially help the user, mark it as relevant.
 
     Respond ONLY with a valid JSON object containing a single key "relevant_chunks". The value of this key should be an array of objects. Each object in the array should represent a chunk you've identified as relevant and must contain the "serviceNameid" of that chunk. If no chunks are relevant, return an empty array.
 

@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from src.utils.config import CORS_ORIGINS
 from src.views.sas_view import router as azure_sas_router
 from src.views.chat_views import router as chatbot_router
@@ -124,8 +128,8 @@ app.include_router(azure_sas_router, prefix="/chatbot/v1", tags=["Azure Blob SAS
 app.include_router(session_router, prefix="/chatbot/v1", tags=["Sessions"])
 
 
-# if __name__ == '__main__':
-#     import uvicorn
+if __name__ == '__main__':
+    import uvicorn
 
-#     logger.info("Server is starting")
-#     uvicorn.run(app, host="0.0.0.0", port=8080)
+    logger.info("Server is starting")
+    uvicorn.run(app, host="0.0.0.0", port=8080)

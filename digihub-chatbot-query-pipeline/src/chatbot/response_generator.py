@@ -231,13 +231,26 @@ class ResponseGeneratorAgent:
             is_out_of_scope = self._detect_out_of_scope(response_object, prompt, detected_language)
 
             if is_out_of_scope:
-                keyword_message = get_keyword_aware_message(prompt, detected_language)
-                if keyword_message:
-                    final_response = keyword_message
+                llm_answer = response_object.get("Answer", "")
+                # Check if LLM provided a contextual response (mentions specific services/products)
+                # These responses are more helpful than generic canned messages
+                service_keywords = ["WorldTracer", "Billing", "Airport", "Bag Manager", "BagManager",
+                                    "AeroPerformance", "Messaging", "CUTE", "document", "documentation"]
+                is_contextual_response = any(kw.lower() in llm_answer.lower() for kw in service_keywords)
+
+                if is_contextual_response and llm_answer:
+                    # LLM provided a contextual response based on actual document search - use it
+                    logger.info("Using LLM's contextual out-of-scope response instead of canned message")
+                    final_response = self.response_formatter.parse_response(llm_answer)
                 else:
-                    # Randomly select a message for the detected language
-                    language_messages = OUT_OF_SCOPE_MESSAGES.get(detected_language.lower(), OUT_OF_SCOPE_MESSAGES["english"])
-                    final_response = random.choice(language_messages)
+                    # Use canned messages for truly generic out-of-scope queries
+                    keyword_message = get_keyword_aware_message(prompt, detected_language)
+                    if keyword_message:
+                        final_response = keyword_message
+                    else:
+                        # Randomly select a message for the detected language
+                        language_messages = OUT_OF_SCOPE_MESSAGES.get(detected_language.lower(), OUT_OF_SCOPE_MESSAGES["english"])
+                        final_response = random.choice(language_messages)
                 is_out_of_scope = True
             else:
                 final_response = self.response_formatter.parse_response(response_object.get("Answer"))
@@ -397,7 +410,7 @@ class ResponseGeneratorAgent:
         # Log detected service lines for debugging (but don't filter by them)
         if service_lines_requested:
             logger.info(f"Detected service lines from query: {service_lines_requested} (used for logging only)")
-
+        final_id_list = [i for i in final_id_list if i is not None]
         logger.info(f"Final ID List (all authorized): {final_id_list}")
         final_id_list = list(set([int(i) for i in final_id_list] + [0]))
 
@@ -622,7 +635,7 @@ class ResponseGeneratorAgent:
         logger.info(f"Formatted {len(retrieved_context)} chunks into structured context")
         return formatted_context
 
-    def _filter_relevant_chunks(self, query: str, chunks: list) -> list:
+    def _filter_relevant_chunks(self, query: str, chunks: list, detected_service_names: list = None) -> list:
         """
         Filters chunks using LLM-based relevance judgment.
 
@@ -633,10 +646,13 @@ class ResponseGeneratorAgent:
         Args:
             query (str): The user's query
             chunks (list): List of retrieved chunks to filter
+            detected_service_names (list): Service names detected from user query (e.g., ['Bag Manager', 'WorldTracer'])
 
         Returns:
             list: Filtered list of relevant chunks
         """
+        if detected_service_names is None:
+            detected_service_names = []
         if not ENABLE_RELEVANCE_FILTERING:
             logger.info("Relevance filtering disabled, returning all chunks")
             return chunks
@@ -662,11 +678,56 @@ class ResponseGeneratorAgent:
                 filter_type="llm_relevance"
             )
 
-            # Note: We intentionally do NOT force minimum chunks here.
-            # If no chunks are relevant, the out-of-scope detection will handle it.
-            # Forcing irrelevant chunks into context degrades response quality.
-            if len(relevant_chunks) == 0:
-                logger.info("No relevant chunks found after LLM filtering - query may be out of scope")
+            # Additional filter: If user explicitly asked about specific services,
+            # prefer chunks from those services over semantically similar but wrong services
+            if relevant_chunks and detected_service_names:
+                detected_names_lower = [name.lower().replace(" ", "") for name in detected_service_names]
+                service_matched_chunks = [
+                    chunk for chunk in relevant_chunks
+                    if chunk.get('serviceName', '').lower().replace(" ", "") in detected_names_lower
+                ]
+                if service_matched_chunks:
+                    logger.info(f"Service-filtered {len(relevant_chunks)} -> {len(service_matched_chunks)} chunks to match detected services: {detected_service_names}")
+                    relevant_chunks = service_matched_chunks
+                else:
+                    # User asked about specific services but no relevant chunks match those services
+                    # Clear relevant_chunks to trigger fallback which will search in original chunks
+                    logger.info(f"No chunks from detected services {detected_service_names} found in relevant chunks - triggering fallback")
+                    relevant_chunks = []
+
+            # Fallback: If all chunks are filtered out, prefer chunks from detected services.
+            # This prevents complete context loss when the relevance judge is too strict.
+            if len(relevant_chunks) == 0 and len(chunks) > 0:
+                logger.info("No relevant chunks found after LLM filtering - applying fallback")
+
+                # Normalize detected service names for case-insensitive matching
+                detected_names_lower = [name.lower().replace(" ", "") for name in detected_service_names]
+
+                # Try to find chunks from detected service lines first
+                if detected_service_names:
+                    matching_chunks = [
+                        chunk for chunk in chunks
+                        if chunk.get('serviceName', '').lower().replace(" ", "") in detected_names_lower
+                    ]
+                    if matching_chunks:
+                        # Sort matching chunks by similarity and take top 2
+                        matching_chunks = sorted(
+                            matching_chunks,
+                            key=lambda x: x.get('hybrid_score', x.get('question_similarity', 0)),
+                            reverse=True
+                        )
+                        relevant_chunks = matching_chunks[:2]
+                        logger.info(f"Fallback: keeping top {len(relevant_chunks)} chunks from detected services: {detected_service_names}")
+
+                # If no matching chunks found, fall back to top 2 by similarity
+                if len(relevant_chunks) == 0:
+                    sorted_chunks = sorted(
+                        chunks,
+                        key=lambda x: x.get('hybrid_score', x.get('question_similarity', 0)),
+                        reverse=True
+                    )
+                    relevant_chunks = sorted_chunks[:2]
+                    logger.info(f"Fallback: keeping top {len(relevant_chunks)} chunks by similarity (no service match)")
 
             end = time.time()
             logger.info(f"[Latency] relevance_filtering: {end - start:.2f}s")
@@ -886,6 +947,7 @@ class ResponseGeneratorAgent:
             acronyms = result.get("acronyms")
             expanded_queries = result.get("expanded_queries", [])
             is_session_dependent = result.get("is_session_dependent", False)
+            detected_service_names = result.get("service_lines") or []
 
             # Filter out excluded acronyms
             exclude_words = {"SITA", "DIGIHUB"}
@@ -918,13 +980,37 @@ class ResponseGeneratorAgent:
                 is_session_dependent, final_service_lines
             )
 
+            # Step 6.6: Handle user guide service lines based on query type
+            # General Info (0) and Operational Support (440) contain DigiHub user guides
+            # that answer common questions about the platform.
+            USER_GUIDE_SERVICE_LINES = [0, 440]
+            authorized_user_guides = [sl for sl in USER_GUIDE_SERVICE_LINES if sl in final_service_lines]
+
+            if not detected_service_names and not is_session_dependent:
+                # GENERIC QUERY: No service line detected, not a follow-up
+                # RESTRICT search to only user guide service lines to prevent
+                # high-volume service lines (WorldTracer: 2,968 chunks) from drowning out
+                # relevant user guide content (General Info: 10 chunks)
+                if authorized_user_guides:
+                    retrieval_service_lines = authorized_user_guides
+                    logger.info(f"Generic query detected - restricting to user guide service lines: {authorized_user_guides}")
+                else:
+                    logger.info(f"Generic query but user not authorized for user guide service lines - using full list")
+            elif authorized_user_guides:
+                # SPECIFIC QUERY: Service line detected or session-dependent
+                # ADD user guide service lines alongside detected service lines
+                # This ensures user guides compete with service-specific content
+                retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+                logger.info(f"Including user guide service lines in search: {authorized_user_guides}")
+
             # Step 7: Retrieval from vector store using resolved query
             retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
                 RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines)
             )
 
             # Step 7.5: Filter chunks by relevance using LLM judge
-            retrieved_context = self._filter_relevant_chunks(resolved_query, retrieved_context)
+            # Pass detected service names to help fallback prefer relevant chunks
+            retrieved_context = self._filter_relevant_chunks(resolved_query, retrieved_context, detected_service_names)
 
             # Update top_doc after filtering
             if retrieved_context:

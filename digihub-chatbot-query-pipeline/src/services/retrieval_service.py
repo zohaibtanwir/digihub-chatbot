@@ -1,6 +1,8 @@
 import json
+import math
+import re
 import time
-from typing import Optional, Any, List, Dict, Tuple
+from typing import Optional, Any, List, Dict, Tuple, Set
 from src.services.cosmos_db_service import CosmosDBClientSingleton
 from src.services.embedding_service import AzureEmbeddingService
 from src.utils.config import (
@@ -22,9 +24,109 @@ class RetreivalService:
         self.database = CosmosDBClientSingleton().get_database()
         self.container = self.database.get_container_client(KNOWLEDGE_BASE_CONTAINER)
         self.embeddings = AzureEmbeddingService().get_embeddings()
+        # Common English stopwords to exclude from keyword matching
+        self._stopwords = {
+            'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
+            'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
+            'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+            'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'need',
+            'it', 'its', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she',
+            'we', 'they', 'what', 'which', 'who', 'whom', 'how', 'when', 'where',
+            'why', 'all', 'each', 'every', 'both', 'few', 'more', 'most', 'other',
+            'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than',
+            'too', 'very', 'just', 'also', 'now', 'here', 'there', 'then', 'once'
+        }
+
+    def _tokenize(self, text: str) -> List[str]:
+        """
+        Tokenize text into lowercase words, removing stopwords and short tokens.
+        """
+        if not text:
+            return []
+        # Convert to lowercase and extract alphanumeric tokens
+        tokens = re.findall(r'\b[a-zA-Z0-9]+\b', text.lower())
+        # Filter out stopwords and very short tokens (less than 2 chars)
+        return [t for t in tokens if t not in self._stopwords and len(t) >= 2]
+
+    def _extract_key_phrases(self, query: str) -> List[str]:
+        """
+        Extract potential key phrases from the query (multi-word terms).
+        For example: "What is CI Analysis?" -> ["ci analysis"]
+        """
+        # Remove common question words and clean up
+        cleaned = re.sub(r'\b(what|how|why|when|where|who|which|is|are|do|does|can|could|would|should|the|a|an)\b', '', query.lower())
+        cleaned = re.sub(r'[^\w\s]', ' ', cleaned)  # Remove punctuation
+        cleaned = ' '.join(cleaned.split())  # Normalize whitespace
+
+        phrases = []
+        if cleaned and len(cleaned) >= 2:
+            phrases.append(cleaned.strip())
+        return phrases
+
+    def _calculate_keyword_score(self, query: str, doc: Dict) -> float:
+        """
+        Calculate keyword/BM25-like score for a document given a query.
+
+        Uses a simplified BM25-inspired scoring:
+        1. Tokenize query and document
+        2. Calculate term frequency matches
+        3. Boost for exact phrase matches in heading
+        4. Normalize to 0-1 range
+
+        Args:
+            query: The search query
+            doc: Document dict with 'content' and 'heading' fields
+
+        Returns:
+            Keyword score between 0.0 and 1.0
+        """
+        heading = doc.get('heading', '') or ''
+        content = doc.get('content', '') or ''
+
+        # Tokenize query and document
+        query_tokens = self._tokenize(query)
+        if not query_tokens:
+            return 0.0
+
+        # Combine heading and content for matching, but weight heading higher
+        heading_tokens = set(self._tokenize(heading))
+        content_tokens = set(self._tokenize(content))
+
+        # Calculate term matches
+        query_token_set = set(query_tokens)
+        heading_matches = query_token_set & heading_tokens
+        content_matches = query_token_set & content_tokens
+        all_matches = heading_matches | content_matches
+
+        if not all_matches:
+            return 0.0
+
+        # Base score: proportion of query terms found
+        base_score = len(all_matches) / len(query_token_set)
+
+        # Heading boost: if query terms appear in heading, boost significantly
+        # Heading is typically more relevant than body content
+        heading_boost = 0.0
+        if heading_matches:
+            heading_match_ratio = len(heading_matches) / len(query_token_set)
+            heading_boost = 0.3 * heading_match_ratio  # Up to 30% boost for heading matches
+
+        # Exact phrase boost: check if key phrases appear in heading
+        phrase_boost = 0.0
+        key_phrases = self._extract_key_phrases(query)
+        heading_lower = heading.lower()
+        for phrase in key_phrases:
+            if phrase in heading_lower:
+                phrase_boost = 0.4  # 40% boost for exact phrase in heading
+                break
+
+        # Combine scores (cap at 1.0)
+        final_score = min(1.0, base_score + heading_boost + phrase_boost)
+
+        return final_score
 
     @timing_decorator
-    def rag_retriever_agent(self,query: str, container_name: str, service_line: Optional[list[int]], top_k: int = 5):
+    def rag_retriever_agent(self,query: str, container_name: str, service_line: Optional[list[int]], top_k: int = 5, content_type_filter: Optional[str] = None):
         """
         Retrieve the most relevant context (chunks) from CosmosDB for the given query.
 
@@ -33,14 +135,14 @@ class RetreivalService:
             container_name (str): The CosmosDB container name.
             service_line (str): The service line to filter documents.
             top_k (int): The number of top relevant documents to retrieve.
-            similarity_threshold (float): The minimum similarity score to consider a document relevant.
+            content_type_filter (str): Optional content type to filter by (e.g., 'UserGuide' for generic queries).
 
         Returns:
             tuple: The concatenated context and metadata of the most relevant document.
         """
 
-        # Retrieve the top relevant documents using question-based hybrid matching (70% question, 30% content)
-        top_docs,query_embedding,citation = self.retrieve_with_question_matching(query, container_name, service_line, top_k=top_k, question_boost_weight=0.7)
+        # Retrieve the top relevant documents using content-only matching (0% question, 100% content)
+        top_docs,query_embedding,citation = self.retrieve_with_question_matching(query, container_name, service_line, top_k=top_k, question_boost_weight=0.0, content_type_filter=content_type_filter)
         top_docs =  top_docs
         logger.info(f"#$#-top_docs {json.dumps(top_docs,indent=4)}")
         if not top_docs:
@@ -266,33 +368,36 @@ class RetreivalService:
         container_name: str,
         service_line: Optional[list[int]],
         top_k: int = 7,
-        question_boost_weight: float = 0.7,
+        question_boost_weight: float = 0.0,
         min_question_similarity: float = None,
         content_type_filter: str = None,
         year_filter: str = None
     ) -> Tuple[list, list, list]:
         """
-        Retrieve chunks using question-first hybrid approach with native CosmosDB vector search.
+        Retrieve chunks using hybrid search: semantic similarity + keyword matching.
 
-        This method prioritizes question matching over content matching:
-        1. Queries CosmosDB ordering by questionsEmbedding similarity (question-first)
-        2. Fetches both question and content scores from the database
-        3. Re-ranks using weighted hybrid score (default: 70% questions, 30% content)
-        4. Filters by minimum similarity threshold (configurable via MIN_SIMILARITY_THRESHOLD)
-        5. Optionally filters by metadata (content type, year)
+        This method combines vector similarity with BM25-like keyword matching:
+        1. Queries CosmosDB ordering by content embedding similarity (semantic)
+        2. Calculates keyword scores based on query term matches in heading/content
+        3. Combines scores: final = 0.7 * semantic + 0.3 * keyword
+        4. Applies content type boost for user guides
+        5. Filters by minimum similarity threshold
+
+        The hybrid approach ensures:
+        - Semantic similarity captures meaning/intent
+        - Keyword matching captures exact term matches (e.g., "CI Analysis" in heading)
+        - Queries like "What is CI Analysis?" find chunks with "CI Analysis" in heading
+          even if semantic similarity alone would rank "What is X?" patterns higher
 
         Args:
             query: The user's query
             container_name: CosmosDB container name
             service_line: Service line IDs to filter by
             top_k: Number of results to return
-            question_boost_weight: Weight for question matching (0.0 to 1.0)
-                                  0.7 = 70% questions, 30% content (default)
-                                  1.0 = only question matching
-            min_question_similarity: Minimum question similarity score to include a chunk (0.0 to 1.0)
-                                    Chunks below this threshold are deprioritized
+            question_boost_weight: Deprecated - kept for backward compatibility, not used
+            min_question_similarity: Minimum similarity score threshold (0.0 to 1.0)
                                     Default: MIN_SIMILARITY_THRESHOLD from config (0.35)
-            content_type_filter: Optional content type to filter by (e.g., 'UserGuide', 'APIDocs')
+            content_type_filter: Optional content type to filter by (e.g., 'UserGuide')
             year_filter: Optional year to filter by (e.g., '2024')
 
         Returns:
@@ -326,10 +431,10 @@ class RetreivalService:
 
         query_filter = f"WHERE {' AND '.join(filters)}"
 
-        # Query CosmosDB with QUESTION-FIRST ordering using questionsEmbedding
-        # Chunks with questionsEmbedding are ordered by question similarity (prioritized)
-        # Legacy chunks without questionsEmbedding will have NULL question_score and sort to end
-        # Post-retrieval re-ranking handles proper scoring for all chunks
+        # Query CosmosDB with CONTENT-FIRST ordering using content embedding
+        # This ensures chunks with relevant content are retrieved even if generated questions don't match
+        # Solves issues like "What is CI Analysis?" where no matching question was generated
+        # Post-retrieval re-ranking applies hybrid scoring (30% questions, 70% content)
         query_stmt = f"""
             SELECT TOP 20
                 c.id,
@@ -346,7 +451,7 @@ class RetreivalService:
                 VectorDistance(c.embedding, {query_embedding}) as content_score
             FROM c
             {query_filter}
-            ORDER BY VectorDistance(c.questionsEmbedding, {query_embedding})
+            ORDER BY VectorDistance(c.embedding, {query_embedding})
         """
 
         docs = list(container.query_items(
@@ -360,9 +465,16 @@ class RetreivalService:
         legacy_chunk_count = sum(1 for d in docs if not d.get('validChunk'))
         logger.info(f"Retrieved {len(docs)} chunks: {valid_chunk_count} validated, {legacy_chunk_count} legacy (no validChunk field)")
 
-        # Calculate hybrid scores using both question and content similarity
-        # Legacy chunks without questionsEmbedding are penalized since we can't verify question relevance
+        # Hybrid Search: Combine semantic similarity with keyword matching
+        # This ensures both semantic meaning AND keyword matches are considered
+        # Formula: final_score = SEMANTIC_WEIGHT * semantic_score + KEYWORD_WEIGHT * keyword_score
+        SEMANTIC_WEIGHT = 0.7  # 70% weight for semantic/vector similarity
+        KEYWORD_WEIGHT = 0.3   # 30% weight for keyword/BM25 matching
         LEGACY_CHUNK_PENALTY = 0.15  # Reduce legacy chunk scores by 15%
+
+        # Content type boosting: User guides should rank higher than newsletters/meeting notes
+        USER_GUIDE_CONTENT_TYPES = {'UserGuide', 'DigiHubUserGuide'}
+        CONTENT_TYPE_BOOST = 0.05  # 5% boost for user guide content types
 
         def distance_to_similarity(distance: float) -> float:
             """
@@ -383,33 +495,59 @@ class RetreivalService:
 
         for doc in docs:
             # Convert VectorDistance to similarity using proper normalization
-            # Handle legacy chunks that may not have questionsEmbedding
-            raw_question_score = doc.get('question_score')
             raw_content_score = doc.get('content_score', 2.0)  # Default to max distance if missing
+            content_similarity = distance_to_similarity(raw_content_score)
+            doc['content_similarity'] = content_similarity
 
-            # If no question score (legacy chunk), use only content similarity with penalty
+            # Calculate keyword score for hybrid search
+            keyword_score = self._calculate_keyword_score(query, doc)
+            doc['keyword_score'] = keyword_score
+
+            # Handle legacy chunks (no questionsEmbedding)
+            raw_question_score = doc.get('question_score')
             if raw_question_score is None:
-                content_similarity = distance_to_similarity(raw_content_score)
-                # Legacy chunks only have content similarity, no question relevance verification
-                # Apply penalty and use content-only scoring
-                doc['question_similarity'] = 0.0  # No question embedding to compare
-                doc['content_similarity'] = content_similarity
+                doc['question_similarity'] = 0.0
                 doc['is_legacy_chunk'] = True
-                # Legacy score: content similarity with penalty (not hybrid weighted)
-                doc['hybrid_score'] = content_similarity * (1 - LEGACY_CHUNK_PENALTY)
-                logger.debug(f"Legacy chunk {doc.get('id')}: raw_dist={raw_content_score:.4f}, content_sim={content_similarity:.4f}, penalized_score={doc['hybrid_score']:.4f}")
+                # Legacy: use semantic + keyword with penalty
+                semantic_score = content_similarity * (1 - LEGACY_CHUNK_PENALTY)
             else:
                 question_similarity = distance_to_similarity(raw_question_score)
-                content_similarity = distance_to_similarity(raw_content_score)
                 doc['question_similarity'] = question_similarity
-                doc['content_similarity'] = content_similarity
                 doc['is_legacy_chunk'] = False
-                # Proper hybrid score with question-first weighting
-                doc['hybrid_score'] = (
-                    question_boost_weight * question_similarity +
-                    (1 - question_boost_weight) * content_similarity
-                )
-                logger.debug(f"Chunk {doc.get('id')}: q_dist={raw_question_score:.4f}, c_dist={raw_content_score:.4f}, q_sim={question_similarity:.4f}, c_sim={content_similarity:.4f}, hybrid={doc['hybrid_score']:.4f}")
+                # Use content similarity as the semantic score (question similarity no longer used)
+                semantic_score = content_similarity
+
+            # Hybrid score: combine semantic and keyword scores
+            doc['semantic_score'] = semantic_score
+            doc['hybrid_score'] = (
+                SEMANTIC_WEIGHT * semantic_score +
+                KEYWORD_WEIGHT * keyword_score
+            )
+
+            logger.debug(
+                f"Chunk {doc.get('id')}: content_sim={content_similarity:.4f}, "
+                f"keyword={keyword_score:.4f}, semantic={semantic_score:.4f}, "
+                f"hybrid={doc['hybrid_score']:.4f}, heading='{doc.get('heading', '')[:30]}'"
+            )
+
+            # Apply content type boost for user guides
+            content_type = doc.get('contentType', '')
+            if content_type in USER_GUIDE_CONTENT_TYPES:
+                original_score = doc['hybrid_score']
+                doc['hybrid_score'] = min(1.0, doc['hybrid_score'] * (1 + CONTENT_TYPE_BOOST))
+                doc['content_type_boosted'] = True
+                logger.debug(f"Content type boost applied: {content_type}, score {original_score:.4f} -> {doc['hybrid_score']:.4f}")
+            else:
+                doc['content_type_boosted'] = False
+
+        # Log hybrid search summary
+        keyword_boost_count = sum(1 for d in docs if d.get('keyword_score', 0) > 0.3)
+        content_type_boost_count = sum(1 for d in docs if d.get('content_type_boosted', False))
+        logger.info(
+            f"Hybrid search scores: {len(docs)} chunks | "
+            f"Keyword matches (>0.3): {keyword_boost_count} | "
+            f"Content type boosted: {content_type_boost_count}"
+        )
 
         # Filter out chunks with only headings
         filtered_docs = [
@@ -418,24 +556,25 @@ class RetreivalService:
                    and doc['content'].strip().startswith("## "))
         ]
 
-        # Sort by hybrid score (descending) - question similarity is the dominant factor
+        # Sort by hybrid score (descending) - combines 70% semantic + 30% keyword
         ordered_list = sorted(
             filtered_docs,
-            key=lambda x: (-x['hybrid_score'], -x.get('question_similarity', 0))
+            key=lambda x: (-x['hybrid_score'], -x.get('keyword_score', 0), -x.get('content_similarity', 0))
         )
 
         # Log top results for debugging retrieval quality
         if ordered_list:
             top_doc = ordered_list[0]
             logger.info(
-                f"Top chunk: hybrid_score={top_doc.get('hybrid_score', 0):.4f}, "
-                f"question_sim={top_doc.get('question_similarity', 0):.4f}, "
-                f"content_sim={top_doc.get('content_similarity', 0):.4f}, "
-                f"legacy={top_doc.get('is_legacy_chunk', False)}"
+                f"Top chunk: hybrid={top_doc.get('hybrid_score', 0):.4f}, "
+                f"semantic={top_doc.get('semantic_score', 0):.4f}, "
+                f"keyword={top_doc.get('keyword_score', 0):.4f}, "
+                f"heading='{top_doc.get('heading', '')[:40]}', "
+                f"content_type={top_doc.get('contentType', 'N/A')}"
             )
 
         # Log comprehensive retrieval quality metrics for all chunks
-        RetrievalMetrics.log_chunk_scores(ordered_list, query=query, stage="question_matching")
+        RetrievalMetrics.log_chunk_scores(ordered_list, query=query, stage="hybrid_search")
 
         # Filter by minimum similarity threshold (configurable)
         original_count = len(ordered_list)

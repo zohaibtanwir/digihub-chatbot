@@ -40,7 +40,7 @@ class AuthorizationService:
             if(self.is_user_impersonation_allowed(email_id, request_headers)):
                 return None
            
-            auth_response = requests.get(url, headers = request_headers)
+            auth_response = requests.get(url, headers = request_headers, verify=False)
             if(auth_response.status_code != 200):
                 logger.error(f"Failed to fetch subscriptions for {email_id}. Status code: {auth_response.status_code}")
                 raise HTTPException(status_code=401, detail="Unauthorized: Unable to verify user subscriptions.")
@@ -94,7 +94,7 @@ class AuthorizationService:
         impersonation_url = f"{DIGIHUB_USER_MANAGEMENT_URL}/v1/users?emailid={email_id}"
 
         try:
-            response = requests.get(url=impersonation_url, headers=request_headers)
+            response = requests.get(url=impersonation_url, headers=request_headers, verify=False)
             if response.status_code != 200:
                 return False
             data = response.json()
