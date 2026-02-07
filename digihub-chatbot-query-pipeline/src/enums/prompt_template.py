@@ -11,6 +11,18 @@ class PromptTemplate(Enum):
     1. Detect the language of the input.
     2. If the input is not in English, translate it to English.
     3. If the input is in English, return it as is.
+
+    **IMPORTANT - Statement to Question Conversion:**
+    If the user input is a statement expressing a need or requirement (not a question), convert it to a question format for better retrieval.
+
+    Examples of statement-to-question conversion:
+    - "I need report and statistic about incidents" → "How do I find reports and statistics about incidents?"
+    - "I want to see my invoices" → "How can I view my invoices?"
+    - "I need help with billing" → "How can I get help with billing?"
+    - "I have a dispute with an invoice" → "How do I resolve a dispute with an invoice?" or "Who do I contact about an invoice dispute?"
+    - "I am looking for incident reports" → "Where can I find incident reports?"
+
+    Keep the original intent but phrase it as a question starting with "How", "Where", "What", "Who", or "Can I".
     4. Analyze whether the User Input/Query is dependent on the previous session context. A query is considered session-dependent if:
        - User Query is continuation on previous question
        - It builds upon or follows up on a previous question or answer.
@@ -37,10 +49,21 @@ class PromptTemplate(Enum):
         2. Contextually relevant phrases or keywords.
         3. Clarifications or inferred intent based on common usage.
         4. Expanded Queries Should be in English
-        5. Try to Add context of previous question like service name and nouns       
+        5. Try to Add context of previous question like service name and nouns
            Example if Session Question is "What is Community Messaging"
            And User Session dependent question is "Tell me more about above service"
            So expanded question should be "Tell me more about community messaging", "What is communitu messaging all about",....
+
+        **IMPORTANT - Use these synonym mappings in expanded queries:**
+        - dispute → support case, complaint, issue, problem
+        - complaint → support case, dispute, issue
+        - problem → issue, incident, trouble
+        - invoice issue → billing dispute, invoice dispute, payment issue
+        - report → dashboard, statistics, analytics, metrics
+        - view → see, access, check, find
+        - raise → create, submit, open, log
+        - ticket → case, incident, request, support case
+        - error → issue, problem, failure, bug
         
         Instructions:
         - Expand the query to include multiple variations in english that could help retrieve more relevant documents.
@@ -244,7 +267,7 @@ class PromptTemplate(Enum):
     Respond only in this JSON format dont include ```json''' in the Response:
     {{
       "language": "detected_language",
-      "translation": "If input is in another language, translate to English. If already in English, keep original. Also fix any spelling mistakes or similar errors and provide the corrected output."
+      "translation": "Translate to English if needed. Fix spelling mistakes. IMPORTANT: If input is a statement (e.g., 'I need X', 'I want Y', 'I have a problem'), convert it to a question format (e.g., 'How do I find X?', 'How can I get Y?', 'How do I resolve a problem?')."
       "is_session_dependent": true_or_false,
       "prompt_vulnerability_level": from 0.0 to 1.0,
       "is_prompt_vulnerable": true_or_false,

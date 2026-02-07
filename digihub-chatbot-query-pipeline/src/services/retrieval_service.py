@@ -36,6 +36,18 @@ class RetreivalService:
             'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than',
             'too', 'very', 'just', 'also', 'now', 'here', 'there', 'then', 'once'
         }
+        # Synonym mappings for keyword matching
+        # Key = query term, Value = list of synonyms to also search for
+        self._synonyms = {
+            'dispute': ['support', 'case', 'complaint', 'issue', 'problem'],
+            'complaint': ['support', 'case', 'dispute', 'issue'],
+            'problem': ['issue', 'incident', 'trouble'],
+            'report': ['dashboard', 'statistics', 'analytics', 'metrics', 'view'],  # 'view' matches "View Company Incidents"
+            'incidents': ['incident'],  # Singular/plural matching
+            'incident': ['incidents'],  # Singular/plural matching
+            'ticket': ['case', 'incident', 'request'],
+            'view': ['see', 'access', 'check', 'find'],
+        }
 
     def _tokenize(self, text: str) -> List[str]:
         """
@@ -47,6 +59,17 @@ class RetreivalService:
         tokens = re.findall(r'\b[a-zA-Z0-9]+\b', text.lower())
         # Filter out stopwords and very short tokens (less than 2 chars)
         return [t for t in tokens if t not in self._stopwords and len(t) >= 2]
+
+    def _expand_with_synonyms(self, tokens: List[str]) -> set:
+        """
+        Expand a list of tokens to include their synonyms.
+        Returns a set to avoid duplicates.
+        """
+        expanded = set(tokens)
+        for token in tokens:
+            if token in self._synonyms:
+                expanded.update(self._synonyms[token])
+        return expanded
 
     def _extract_key_phrases(self, query: str) -> List[str]:
         """
@@ -88,27 +111,32 @@ class RetreivalService:
         if not query_tokens:
             return 0.0
 
+        # Expand query tokens with synonyms for better matching
+        # e.g., "dispute" will also match content with "support", "case", etc.
+        expanded_query_tokens = self._expand_with_synonyms(query_tokens)
+
         # Combine heading and content for matching, but weight heading higher
         heading_tokens = set(self._tokenize(heading))
         content_tokens = set(self._tokenize(content))
 
-        # Calculate term matches
-        query_token_set = set(query_tokens)
-        heading_matches = query_token_set & heading_tokens
-        content_matches = query_token_set & content_tokens
+        # Calculate term matches using expanded query tokens
+        # This allows "dispute" in query to match "support case" in content
+        heading_matches = expanded_query_tokens & heading_tokens
+        content_matches = expanded_query_tokens & content_tokens
         all_matches = heading_matches | content_matches
 
         if not all_matches:
             return 0.0
 
-        # Base score: proportion of query terms found
-        base_score = len(all_matches) / len(query_token_set)
+        # Base score: proportion of original query terms (or their synonyms) found
+        # Use original query token count for normalization
+        base_score = min(1.0, len(all_matches) / len(query_tokens))
 
-        # Heading boost: if query terms appear in heading, boost significantly
+        # Heading boost: if query terms (or synonyms) appear in heading, boost significantly
         # Heading is typically more relevant than body content
         heading_boost = 0.0
         if heading_matches:
-            heading_match_ratio = len(heading_matches) / len(query_token_set)
+            heading_match_ratio = min(1.0, len(heading_matches) / len(query_tokens))
             heading_boost = 0.3 * heading_match_ratio  # Up to 30% boost for heading matches
 
         # Exact phrase boost: check if key phrases appear in heading
@@ -126,7 +154,7 @@ class RetreivalService:
         return final_score
 
     @timing_decorator
-    def rag_retriever_agent(self,query: str, container_name: str, service_line: Optional[list[int]], top_k: int = 5, content_type_filter: Optional[str] = None):
+    def rag_retriever_agent(self,query: str, container_name: str, service_line: Optional[list[int]], top_k: int = 5, content_type_filter: Optional[str] = None, is_definitional_query: bool = False):
         """
         Retrieve the most relevant context (chunks) from CosmosDB for the given query.
 
@@ -136,13 +164,14 @@ class RetreivalService:
             service_line (str): The service line to filter documents.
             top_k (int): The number of top relevant documents to retrieve.
             content_type_filter (str): Optional content type to filter by (e.g., 'UserGuide' for generic queries).
+            is_definitional_query (bool): Whether this is a "What is X?" type query (boosts General Info).
 
         Returns:
             tuple: The concatenated context and metadata of the most relevant document.
         """
 
         # Retrieve the top relevant documents using content-only matching (0% question, 100% content)
-        top_docs,query_embedding,citation = self.retrieve_with_question_matching(query, container_name, service_line, top_k=top_k, question_boost_weight=0.0, content_type_filter=content_type_filter)
+        top_docs,query_embedding,citation = self.retrieve_with_question_matching(query, container_name, service_line, top_k=top_k, question_boost_weight=0.0, content_type_filter=content_type_filter, is_definitional_query=is_definitional_query)
         top_docs =  top_docs
         logger.info(f"#$#-top_docs {json.dumps(top_docs,indent=4)}")
         if not top_docs:
@@ -371,7 +400,8 @@ class RetreivalService:
         question_boost_weight: float = 0.0,
         min_question_similarity: float = None,
         content_type_filter: str = None,
-        year_filter: str = None
+        year_filter: str = None,
+        is_definitional_query: bool = False
     ) -> Tuple[list, list, list]:
         """
         Retrieve chunks using hybrid search: semantic similarity + keyword matching.
@@ -474,7 +504,11 @@ class RetreivalService:
 
         # Content type boosting: User guides should rank higher than newsletters/meeting notes
         USER_GUIDE_CONTENT_TYPES = {'UserGuide', 'DigiHubUserGuide'}
-        CONTENT_TYPE_BOOST = 0.05  # 5% boost for user guide content types
+        CONTENT_TYPE_BOOST = 0.15  # 15% boost for user guide content types (increased from 5%)
+
+        # General Info boosting: For definitional queries, boost General Info service line
+        GENERAL_INFO_SERVICE_LINE_ID = 0
+        GENERAL_INFO_BOOST = 0.25  # 25% boost for General Info on definitional queries
 
         def distance_to_similarity(distance: float) -> float:
             """
@@ -540,13 +574,24 @@ class RetreivalService:
             else:
                 doc['content_type_boosted'] = False
 
+            # Apply General Info boost for definitional queries
+            # "What is X?" queries should prioritize General Info (service line 0) content
+            doc['general_info_boosted'] = False
+            if is_definitional_query and doc.get('serviceNameid') == GENERAL_INFO_SERVICE_LINE_ID:
+                original_score = doc['hybrid_score']
+                doc['hybrid_score'] = min(1.0, doc['hybrid_score'] * (1 + GENERAL_INFO_BOOST))
+                doc['general_info_boosted'] = True
+                logger.debug(f"General Info boost applied: service_line=0, score {original_score:.4f} -> {doc['hybrid_score']:.4f}")
+
         # Log hybrid search summary
         keyword_boost_count = sum(1 for d in docs if d.get('keyword_score', 0) > 0.3)
         content_type_boost_count = sum(1 for d in docs if d.get('content_type_boosted', False))
+        general_info_boost_count = sum(1 for d in docs if d.get('general_info_boosted', False))
         logger.info(
             f"Hybrid search scores: {len(docs)} chunks | "
             f"Keyword matches (>0.3): {keyword_boost_count} | "
-            f"Content type boosted: {content_type_boost_count}"
+            f"Content type boosted: {content_type_boost_count} | "
+            f"General Info boosted: {general_info_boost_count}"
         )
 
         # Filter out chunks with only headings

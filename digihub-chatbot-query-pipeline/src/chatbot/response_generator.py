@@ -471,6 +471,44 @@ class ResponseGeneratorAgent:
         # Always return full authorized list - let relevance judge handle filtering
         return final_id_list
 
+    def _is_definitional_query(self, query: str) -> bool:
+        """
+        Detect if a query is definitional (asking for a definition or explanation).
+
+        Definitional queries like "What is X?", "What's X?", "What are X?",
+        "What does X mean?" should prioritize General Info content which contains
+        the DigiHub User Guide and glossary definitions.
+
+        Args:
+            query (str): The user query
+
+        Returns:
+            bool: True if query is definitional, False otherwise
+        """
+        import re
+
+        query_lower = query.lower().strip()
+
+        # Patterns for definitional queries
+        # Matches: "what is X", "what's X", "what are X", "what does X mean"
+        # Does NOT match: "what is the status of", "what is the process for" (operational queries)
+        definitional_patterns = [
+            r"^what\s+is\s+(?!the\s+(status|process|step|way|procedure|method))",  # "what is X" but not "what is the status/process"
+            r"^what's\s+",  # "what's X"
+            r"^what\s+are\s+(?!the\s+(steps|ways|procedures|methods))",  # "what are X" but not "what are the steps"
+            r"^what\s+does\s+.+\s+mean",  # "what does X mean"
+            r"^define\s+",  # "define X"
+            r"^explain\s+(?!how)",  # "explain X" but not "explain how"
+            r"^tell\s+me\s+about\s+",  # "tell me about X"
+            r"^what.+available\s+under",  # "what's available under X"
+        ]
+
+        for pattern in definitional_patterns:
+            if re.search(pattern, query_lower):
+                return True
+
+        return False
+
     def _resolve_query_references(self, translated_text: str, is_session_dependent: bool,
                                    session_entities: dict, user_chat_history: list):
         """
@@ -929,11 +967,18 @@ class ResponseGeneratorAgent:
         chunk_service_line = []
 
         try:
+            # Start timing for performance analysis
+            pipeline_start = time.time()
+
             # Step 1: Retrieve session context
+            step_start = time.time()
             user_chat_history, session_context_window = self._retrieve_session_context()
+            logger.info(f"[Timing] Step 1 (Session Context): {time.time() - step_start:.2f}s")
 
             # Step 2: Analyze query
+            step_start = time.time()
             result = self._analyze_query(prompt, session_context_window)
+            logger.info(f"[Timing] Step 2 (Query Analysis): {time.time() - step_start:.2f}s")
 
             # Step 3: Determine service lines - Nazeel change method name to get Autorized Service line per user
             final_service_lines, suppress_disclaimer = self._determine_service_lines(result, service_line, prompt)
@@ -987,13 +1032,29 @@ class ResponseGeneratorAgent:
             USER_GUIDE_SERVICE_LINES = [0, 440]
             authorized_user_guides = [sl for sl in USER_GUIDE_SERVICE_LINES if sl in final_service_lines]
 
+            # Code-based keyword detection for specific products
+            # This is more reliable than LLM-based detection for known product names
+            PRODUCT_KEYWORDS = {
+                'dataconnect': 340,  # Community Messaging KB
+                'sdc': 340,
+                'sitatex': 340,
+            }
+            query_lower = resolved_query.lower()
+            detected_product_service_line = None
+            for keyword, service_line_id in PRODUCT_KEYWORDS.items():
+                if keyword in query_lower:
+                    detected_product_service_line = service_line_id
+                    logger.info(f"Product keyword '{keyword}' detected - will include service line {service_line_id}")
+                    break
+
             # Determine if query is truly generic (no service line, no entities, not a follow-up)
             # detected_entities contains product/feature names like "SITA Mission Watch", "CI Analysis"
             # that indicate the query is about a specific topic even if no service line was detected
             is_truly_generic = (
                 not detected_service_names and
                 not is_session_dependent and
-                not detected_entities
+                not detected_entities and
+                not detected_product_service_line  # Not generic if product keyword found
             )
 
             if is_truly_generic:
@@ -1016,6 +1077,14 @@ class ResponseGeneratorAgent:
                 # Include user guides as well so they can compete
                 if authorized_user_guides:
                     retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+            elif detected_product_service_line:
+                # PRODUCT-SPECIFIC QUERY: Code-based keyword detection found a product
+                # (e.g., "What is SITA DataConnect?" -> dataconnect -> service line 340)
+                # Include the detected service line in the search
+                logger.info(f"Product-specific query detected - adding service line {detected_product_service_line}")
+                retrieval_service_lines = list(set(retrieval_service_lines + [detected_product_service_line]))
+                if authorized_user_guides:
+                    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
             elif authorized_user_guides:
                 # SPECIFIC QUERY: Service line detected or session-dependent
                 # ADD user guide service lines alongside detected service lines
@@ -1023,14 +1092,76 @@ class ResponseGeneratorAgent:
                 retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
                 logger.info(f"Including user guide service lines in search: {authorized_user_guides}")
 
+            # Step 6.7: Detect definitional queries for General Info boosting
+            # "What is X?", "What's X?", "What are X?" type queries should prioritize General Info
+            # BUT: Skip Two-Stage if a specific product keyword was detected
+            is_definitional_query = self._is_definitional_query(resolved_query)
+            if is_definitional_query:
+                if detected_product_service_line:
+                    logger.info(f"Definitional query detected but product keyword found - skipping Two-Stage, will search service line {detected_product_service_line}")
+                else:
+                    logger.info(f"Definitional query detected - will use Two-Stage Retrieval with General Info boost")
+
             # Step 7: Retrieval from vector store using resolved query
-            retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
-                RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines)
+            # For definitional queries, use Two-Stage Retrieval:
+            # Stage 1: Search General Info only
+            # Stage 2: If no good results (score < threshold), expand to all service lines
+            # EXCEPTION: Skip Two-Stage if product keyword detected (e.g., "dataconnect")
+            GENERAL_INFO_SERVICE_LINE_ID = 0
+            # Threshold for Stage 1: Use higher threshold (0.75) so we expand to Stage 2 more often
+            # This ensures queries like "What is SITA DataConnect?" expand to find specialized content
+            # while queries like "What is DigiHub?" still use General Info results
+            MIN_CONFIDENCE_THRESHOLD = 0.75
+
+            # Use Two-Stage only if no product keyword detected
+            use_two_stage = (
+                is_definitional_query and
+                GENERAL_INFO_SERVICE_LINE_ID in retrieval_service_lines and
+                not detected_product_service_line  # Skip if product keyword found
             )
+
+            if use_two_stage:
+                # Stage 1: Try General Info first
+                step_start = time.time()
+                logger.info("Two-Stage Retrieval: Stage 1 - Searching General Info only")
+                stage1_context, _, stage1_top_doc, stage1_service_lines, query_embedding, stage1_citations = (
+                    RetreivalService().rag_retriever_agent(resolved_query, container_name, [GENERAL_INFO_SERVICE_LINE_ID], is_definitional_query=True)
+                )
+                logger.info(f"[Timing] Step 7 Stage 1 (Retrieval): {time.time() - step_start:.2f}s")
+
+                # Check if Stage 1 returned good results
+                stage1_max_score = max([doc.get('hybrid_score', 0) for doc in stage1_context]) if stage1_context else 0
+                logger.info(f"Two-Stage Retrieval: Stage 1 max score = {stage1_max_score:.4f}")
+
+                if stage1_context and stage1_max_score >= MIN_CONFIDENCE_THRESHOLD:
+                    # Stage 1 has good results - use them
+                    logger.info(f"Two-Stage Retrieval: Stage 1 successful - using General Info results")
+                    retrieved_context = stage1_context
+                    top_doc = stage1_top_doc
+                    chunk_service_line = stage1_service_lines
+                    citations = stage1_citations
+                else:
+                    # Stage 2: Expand to all service lines
+                    step_start = time.time()
+                    logger.info(f"Two-Stage Retrieval: Stage 1 insufficient (score={stage1_max_score:.4f}) - expanding to all service lines")
+                    retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
+                        RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines, is_definitional_query=is_definitional_query)
+                    )
+                    logger.info(f"[Timing] Step 7 Stage 2 (Retrieval): {time.time() - step_start:.2f}s")
+            else:
+                # Non-definitional query OR definitional with product keyword - standard single-stage retrieval
+                logger.info(f"Single-stage retrieval with service lines: {retrieval_service_lines}")
+                step_start = time.time()
+                retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
+                    RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines, is_definitional_query=is_definitional_query)
+                )
+                logger.info(f"[Timing] Step 7 (Retrieval): {time.time() - step_start:.2f}s")
 
             # Step 7.5: Filter chunks by relevance using LLM judge
             # Pass detected service names to help fallback prefer relevant chunks
+            step_start = time.time()
             retrieved_context = self._filter_relevant_chunks(resolved_query, retrieved_context, detected_service_names)
+            logger.info(f"[Timing] Step 7.5 (Relevance Filter): {time.time() - step_start:.2f}s")
 
             # Update top_doc after filtering
             if retrieved_context:
@@ -1088,6 +1219,9 @@ class ResponseGeneratorAgent:
 
             # Step 12: Handle disclaimer
             structured_response = self._append_disclaimer(structured_response, suppress_disclaimer)
+
+            # Log total pipeline time
+            logger.info(f"[Timing] Total Pipeline: {time.time() - pipeline_start:.2f}s")
 
         except UnAuthorizedServiceLineException as e:
             structured_response = self._create_error_response(str(e))
