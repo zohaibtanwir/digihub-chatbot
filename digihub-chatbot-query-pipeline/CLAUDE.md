@@ -328,3 +328,138 @@ Contains:
 1. User is compiling a list of questions that still don't work correctly
 2. Review and fix remaining edge cases
 3. Consider additional data quality improvements (e.g., question regeneration for some chunks)
+
+---
+
+## Session Context (February 7, 2026)
+
+### Features Implemented This Session
+
+#### 1. Two-Stage Retrieval for Definitional Queries
+**File:** `src/chatbot/response_generator.py`
+
+For "What is X?" queries:
+- **Stage 1**: Search General Info (service line 0) only
+- **Stage 2**: If score < 0.75, expand to all authorized service lines
+
+```python
+MIN_CONFIDENCE_THRESHOLD = 0.75  # Trigger Stage 2 if below this
+
+if is_definitional_query and GENERAL_INFO_SERVICE_LINE_ID in retrieval_service_lines:
+    # Stage 1: Try General Info first
+    # Stage 2: Expand if Stage 1 score < threshold
+```
+
+#### 2. PRODUCT_KEYWORDS for Code-Based Detection
+**File:** `src/chatbot/response_generator.py`
+
+Bypasses LLM detection for known product names:
+```python
+PRODUCT_KEYWORDS = {
+    'dataconnect': 340,  # Community Messaging KB
+    'sdc': 340,
+    'sitatex': 340,
+}
+```
+
+When detected:
+- Skips Two-Stage Retrieval
+- Routes directly to correct service line
+
+#### 3. Synonym Expansion for Keyword Matching
+**File:** `src/services/retrieval_service.py`
+
+```python
+self._synonyms = {
+    'dispute': ['support', 'case', 'complaint', 'issue', 'problem'],
+    'complaint': ['support', 'case', 'dispute', 'issue'],
+    'problem': ['issue', 'incident', 'trouble'],
+    'report': ['dashboard', 'statistics', 'analytics', 'metrics', 'view'],
+    'incidents': ['incident'],  # Singular/plural
+    'incident': ['incidents'],
+    'ticket': ['case', 'incident', 'request'],
+    'view': ['see', 'access', 'check', 'find'],
+}
+```
+
+#### 4. Pipeline Timing Logs
+Added timing logs throughout the pipeline for performance analysis:
+```
+[Timing] Step 1 (Session Context): 0.12s
+[Timing] Step 2 (Query Analysis): 1.45s
+[Timing] Step 7 (Retrieval): 0.89s
+[Timing] Step 7.5 (Relevance Filter): 0.23s
+[Timing] Total Pipeline: 3.21s
+```
+
+#### 5. Service Line Keywords File
+**File:** `src/data/service_line_keywords.json`
+
+JSON mapping of service lines to keywords for LLM prompt context.
+
+### Test Results (February 7, 2026)
+
+**Working Queries (15):**
+- What is Digihub?
+- How can I find report and statistic about incidents? ✓ (Fixed this session)
+- What is Airport Committee?
+- What is Airport Solutions?
+- How can we install SITA Data Connect?
+- Give me a summary of the SITA DataConnect release notes
+- How can I submit a payment query?
+- What are the possible actions on digihub?
+- How customers can vote on digihub?
+- What type of Service Requests can I issue?
+- Can you tell me how many incidents were raised for IndiGo in July 2025
+- I am getting error "Something Went Wrong" in Digihub
+- Where do I find a dashboard about my incidents with SITA?
+- I need report and statistic about incidents we have with SITA
+- What are the minimum PC requirements to install SITATEX/Worldtracer?
+
+**Correctly No Answer (Content Gaps):**
+- What do you know about OptiFlight?
+- What is SITA DataConnect? (technical docs exist, no definitional content)
+- What is SITA Mission Watch? (only mentioned in tables)
+- What is the requirement to install CUTE services?
+- What is new with SITA for 2026?
+- What is SITA Border Control?
+- Is CUTE installed in Mumbai Airport?
+
+**Still Not Working (1):**
+- "I have a dispute with an invoice, who to contact?" → Returns 2021 newsletter instead of Billing Guide
+
+### Open Beads Issues
+
+| Issue ID | Priority | Description |
+|----------|----------|-------------|
+| `digihub-chatbot-p0c` | P2 | Invoice dispute query returns old newsletter |
+| `digihub-chatbot-lxr` | P2 | SITA Mission Watch - Content Gap |
+| `digihub-chatbot-389` | P2 | AIR Dashboard incidents query (FIXED) |
+| `digihub-chatbot-yyt` | P2 | Content gaps for products |
+| `digihub-chatbot-kmk` | P2 | Response time optimization |
+| `digihub-chatbot-gqn` | P2 | Review LLM prompts |
+| `digihub-chatbot-ceb` | P2 | Session entity resolution |
+| `digihub-chatbot-5zd` | P2 | Out-of-scope detection |
+
+### CosmosDB Content Analysis
+
+**AIR Dashboard (Operational Support 440):**
+- `chunk-0`: "DIGIHUB AIR DASHBOARD" - User Guide
+- `chunk-2`: "View Company Incidents" - Directly relevant
+- `chunk-3`: "Open Incident Resolution"
+
+**SITA Mission Watch:** Content gap confirmed
+- Only appears in Billing newsletter tables (product name changes)
+- One descriptive sentence in Euro CAB chunk-37 (heading: "ASISTIM")
+- No dedicated documentation
+
+### Local Development Notes
+
+**Config File:**
+- `src/utils/config.py` - No secrets (use config server)
+- `src/utils/config.py.local` - Local copy with secrets (gitignored)
+
+**To restore local secrets:**
+```bash
+cp src/utils/config.py.local src/utils/config.py
+```
