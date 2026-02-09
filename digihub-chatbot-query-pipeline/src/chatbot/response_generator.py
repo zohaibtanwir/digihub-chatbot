@@ -1036,6 +1036,7 @@ class ResponseGeneratorAgent:
             # This is more reliable than LLM-based detection for known product names
             PRODUCT_KEYWORDS = {
                 'dataconnect': 340,  # Community Messaging KB
+                'sita data connect': 340,  # Full product name
                 'sdc': 340,
                 'sitatex': 340,
             }
@@ -1102,9 +1103,25 @@ class ResponseGeneratorAgent:
                 else:
                     logger.info(f"Definitional query detected - will use Two-Stage Retrieval with General Info boost")
 
+            # Step 6.8: Convert LLM-detected service names to IDs for Two-Stage Retrieval
+            # When LLM detects service lines (e.g., ['Billing', 'World Tracer']), convert them to IDs
+            # so Stage 1 can search both General Info AND the detected service lines
+            detected_service_line_ids = []
+            if detected_service_names:
+                # Get service line name-to-ID mapping
+                all_mappings = RetreivalService().get_all_service_line()
+                name_to_id = {item['name'].lower(): item['id'] for item in all_mappings if item.get('id') is not None}
+                # Convert detected names to IDs
+                for name in detected_service_names:
+                    name_lower = name.lower()
+                    if name_lower in name_to_id:
+                        detected_service_line_ids.append(name_to_id[name_lower])
+                if detected_service_line_ids:
+                    logger.info(f"Detected service lines converted to IDs: {detected_service_names} -> {detected_service_line_ids}")
+
             # Step 7: Retrieval from vector store using resolved query
             # For definitional queries, use Two-Stage Retrieval:
-            # Stage 1: Search General Info only
+            # Stage 1: Search General Info AND any LLM-detected service lines
             # Stage 2: If no good results (score < threshold), expand to all service lines
             # EXCEPTION: Skip Two-Stage if product keyword detected (e.g., "dataconnect")
             GENERAL_INFO_SERVICE_LINE_ID = 0
@@ -1121,26 +1138,45 @@ class ResponseGeneratorAgent:
             )
 
             if use_two_stage:
-                # Stage 1: Try General Info first
+                # Stage 1: Search General Info AND any detected service lines
+                # This ensures queries like "What is Manage Subscriptions in Billing?" search both
+                # General Info (0) and Billing (400) in Stage 1
+                stage1_service_line_ids = [GENERAL_INFO_SERVICE_LINE_ID]
+                if detected_service_line_ids:
+                    stage1_service_line_ids = list(set(stage1_service_line_ids + detected_service_line_ids))
                 step_start = time.time()
-                logger.info("Two-Stage Retrieval: Stage 1 - Searching General Info only")
+                logger.info(f"Two-Stage Retrieval: Stage 1 - Searching service lines: {stage1_service_line_ids}")
                 stage1_context, _, stage1_top_doc, stage1_service_lines, query_embedding, stage1_citations = (
-                    RetreivalService().rag_retriever_agent(resolved_query, container_name, [GENERAL_INFO_SERVICE_LINE_ID], is_definitional_query=True)
+                    RetreivalService().rag_retriever_agent(resolved_query, container_name, stage1_service_line_ids, is_definitional_query=True)
                 )
                 logger.info(f"[Timing] Step 7 Stage 1 (Retrieval): {time.time() - step_start:.2f}s")
 
                 # Check if Stage 1 returned good results
+                # Must check BOTH hybrid_score AND keyword_score
+                # If keyword_score is 0, the query terms don't appear in the chunks at all
+                # e.g., "What is CI Analysis?" returning chunks about "Learning Hub" with no "CI" match
                 stage1_max_score = max([doc.get('hybrid_score', 0) for doc in stage1_context]) if stage1_context else 0
-                logger.info(f"Two-Stage Retrieval: Stage 1 max score = {stage1_max_score:.4f}")
+                stage1_max_keyword = max([doc.get('keyword_score', 0) for doc in stage1_context]) if stage1_context else 0
+                logger.info(f"Two-Stage Retrieval: Stage 1 max score = {stage1_max_score:.4f}, max keyword = {stage1_max_keyword:.4f}")
 
-                if stage1_context and stage1_max_score >= MIN_CONFIDENCE_THRESHOLD:
-                    # Stage 1 has good results - use them
+                # Stage 1 is only successful if BOTH:
+                # 1. hybrid_score >= threshold (0.75)
+                # 2. keyword_score > 0.1 (at least some query terms found in content)
+                # This prevents "What is CI Analysis?" from accepting irrelevant General Info chunks
+                MIN_KEYWORD_THRESHOLD = 0.1
+                stage1_has_keyword_match = stage1_max_keyword >= MIN_KEYWORD_THRESHOLD
+
+                if stage1_context and stage1_max_score >= MIN_CONFIDENCE_THRESHOLD and stage1_has_keyword_match:
+                    # Stage 1 has good results with keyword matches - use them
                     logger.info(f"Two-Stage Retrieval: Stage 1 successful - using General Info results")
                     retrieved_context = stage1_context
                     top_doc = stage1_top_doc
                     chunk_service_line = stage1_service_lines
                     citations = stage1_citations
                 else:
+                    # Log reason for expansion
+                    if not stage1_has_keyword_match:
+                        logger.info(f"Two-Stage Retrieval: Stage 1 has no keyword matches (max={stage1_max_keyword:.4f}) - expanding to find relevant content")
                     # Stage 2: Expand to all service lines
                     step_start = time.time()
                     logger.info(f"Two-Stage Retrieval: Stage 1 insufficient (score={stage1_max_score:.4f}) - expanding to all service lines")

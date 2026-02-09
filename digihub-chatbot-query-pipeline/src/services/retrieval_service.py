@@ -502,9 +502,65 @@ class RetreivalService:
         KEYWORD_WEIGHT = 0.3   # 30% weight for keyword/BM25 matching
         LEGACY_CHUNK_PENALTY = 0.15  # Reduce legacy chunk scores by 15%
 
-        # Content type boosting: User guides should rank higher than newsletters/meeting notes
-        USER_GUIDE_CONTENT_TYPES = {'UserGuide', 'DigiHubUserGuide'}
-        CONTENT_TYPE_BOOST = 0.15  # 15% boost for user guide content types (increased from 5%)
+        # Content Authority Tiers: Multiplier based on content type hierarchy
+        # More principled than simple boost - scales to new content types
+        CONTENT_AUTHORITY = {
+            # Tier 1: Primary/Authoritative sources (20% boost)
+            'UserGuide': 1.20,
+            'DigiHubUserGuide': 1.20,
+            # Tier 2: Technical documentation (10% boost)
+            'ReleaseNotes': 1.10,
+            'TechnicalDoc': 1.10,
+            # Tier 3: Neutral (no change)
+            'FAQ': 1.00,
+            # Tier 4: Supplementary/Historical (15% penalty)
+            'BillingUpdate': 0.85,
+            'MeetingNotes': 0.85,
+            'Survey': 0.80,
+        }
+        DEFAULT_AUTHORITY = 0.95  # Slight penalty for unknown content types
+
+        def extract_year_from_path(citation: str) -> int:
+            """Extract year from file path like 'Billing/Billing Updates/2021/...'"""
+            if not citation:
+                return 0
+            # Look for 4-digit year pattern in path
+            import re
+            year_match = re.search(r'[/\\]?(20[0-2][0-9])[/\\]', citation)
+            if year_match:
+                return int(year_match.group(1))
+            # Also check for year in filename like "2021_Billing_Update.pdf"
+            year_match = re.search(r'(20[0-2][0-9])[-_]', citation)
+            if year_match:
+                return int(year_match.group(1))
+            return 0
+
+        def calculate_recency_factor(doc: dict) -> float:
+            """
+            Calculate recency multiplier based on document age.
+            Newer documents get boost, older ones get penalty.
+            """
+            from datetime import datetime
+            current_year = datetime.now().year  # 2026
+
+            # Try to get year from citation path
+            citation = doc.get('citation', '') or doc.get('pathwithfilename', '')
+            doc_year = extract_year_from_path(citation)
+
+            if doc_year == 0:
+                # Unknown year - neutral factor
+                return 1.00
+
+            age = current_year - doc_year
+
+            if age <= 1:      # 2025-2026: Recent content
+                return 1.10
+            elif age <= 3:    # 2023-2024: Fairly recent
+                return 1.00
+            elif age <= 5:    # 2021-2022: Getting old
+                return 0.90
+            else:             # Pre-2021: Old content
+                return 0.85
 
         # General Info boosting: For definitional queries, boost General Info service line
         GENERAL_INFO_SERVICE_LINE_ID = 0
@@ -564,15 +620,26 @@ class RetreivalService:
                 f"hybrid={doc['hybrid_score']:.4f}, heading='{doc.get('heading', '')[:30]}'"
             )
 
-            # Apply content type boost for user guides
+            # Apply Content Authority + Recency scoring
+            # This replaces the simple content type boost with a principled scoring system
             content_type = doc.get('contentType', '')
-            if content_type in USER_GUIDE_CONTENT_TYPES:
-                original_score = doc['hybrid_score']
-                doc['hybrid_score'] = min(1.0, doc['hybrid_score'] * (1 + CONTENT_TYPE_BOOST))
-                doc['content_type_boosted'] = True
-                logger.debug(f"Content type boost applied: {content_type}, score {original_score:.4f} -> {doc['hybrid_score']:.4f}")
-            else:
-                doc['content_type_boosted'] = False
+            authority_multiplier = CONTENT_AUTHORITY.get(content_type, DEFAULT_AUTHORITY)
+            recency_factor = calculate_recency_factor(doc)
+
+            original_score = doc['hybrid_score']
+            doc['hybrid_score'] = min(1.0, doc['hybrid_score'] * authority_multiplier * recency_factor)
+
+            # Track what adjustments were made for logging/debugging
+            doc['authority_multiplier'] = authority_multiplier
+            doc['recency_factor'] = recency_factor
+            doc['content_type_boosted'] = authority_multiplier > 1.0  # For backward compatibility
+
+            if authority_multiplier != 1.0 or recency_factor != 1.0:
+                logger.debug(
+                    f"Authority+Recency applied: type={content_type}, "
+                    f"authority={authority_multiplier:.2f}, recency={recency_factor:.2f}, "
+                    f"score {original_score:.4f} -> {doc['hybrid_score']:.4f}"
+                )
 
             # Apply General Info boost for definitional queries
             # "What is X?" queries should prioritize General Info (service line 0) content
@@ -583,14 +650,18 @@ class RetreivalService:
                 doc['general_info_boosted'] = True
                 logger.debug(f"General Info boost applied: service_line=0, score {original_score:.4f} -> {doc['hybrid_score']:.4f}")
 
-        # Log hybrid search summary
+        # Log hybrid search summary with Authority + Recency stats
         keyword_boost_count = sum(1 for d in docs if d.get('keyword_score', 0) > 0.3)
-        content_type_boost_count = sum(1 for d in docs if d.get('content_type_boosted', False))
+        authority_boosted = sum(1 for d in docs if d.get('authority_multiplier', 1.0) > 1.0)
+        authority_penalized = sum(1 for d in docs if d.get('authority_multiplier', 1.0) < 1.0)
+        recency_boosted = sum(1 for d in docs if d.get('recency_factor', 1.0) > 1.0)
+        recency_penalized = sum(1 for d in docs if d.get('recency_factor', 1.0) < 1.0)
         general_info_boost_count = sum(1 for d in docs if d.get('general_info_boosted', False))
         logger.info(
             f"Hybrid search scores: {len(docs)} chunks | "
             f"Keyword matches (>0.3): {keyword_boost_count} | "
-            f"Content type boosted: {content_type_boost_count} | "
+            f"Authority boosted/penalized: {authority_boosted}/{authority_penalized} | "
+            f"Recency boosted/penalized: {recency_boosted}/{recency_penalized} | "
             f"General Info boosted: {general_info_boost_count}"
         )
 
