@@ -1036,6 +1036,8 @@ class ResponseGeneratorAgent:
             # This is more reliable than LLM-based detection for known product names
             PRODUCT_KEYWORDS = {
                 'dataconnect': 340,  # Community Messaging KB
+                'data connect': 340,  # Space variant
+                'sita dataconnect': 340,  # With SITA prefix
                 'sita data connect': 340,  # Full product name
                 'sdc': 340,
                 'sitatex': 340,
