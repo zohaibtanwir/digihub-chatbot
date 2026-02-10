@@ -171,7 +171,7 @@ class ResponseGeneratorAgent:
 
         end = time.time()
         logger.info(f"[Latency] get_response_from_agent.response : {end - start:.2f}s")
-        logger.info(f"response : {response}")
+        logger.debug(f"response : {response}")
         message_content = response.choices[0].message.content
         response_object = {}
 
@@ -314,6 +314,104 @@ class ResponseGeneratorAgent:
         except BadRequestError as e:
             logger.error(f"Unexpected error while generating response: {e}")
             raise Exception(f"OpenAI API Error: {e}")
+
+    def get_response_from_agent_streaming(
+        self,
+        trace_id,
+        prompt,
+        user_chat_history,
+        context,
+        context_session,
+        top_doc,
+        chunk_service_line,
+        retrieved_context,
+        user_service_line,
+        detected_language,
+        is_generic,
+        expanded_queries,
+        citations
+    ):
+        """
+        Streaming version of get_response_from_agent that yields tokens as they arrive.
+
+        Yields:
+            dict: Either {"type": "token", "content": str} for tokens,
+                  or {"type": "metadata", "data": dict} for final metadata
+        """
+        log_context.set(trace_id)
+        start = time.time()
+        current_date_str = time.strftime("%A, %B %d, %Y", time.localtime())
+
+        # Format context as structured markdown for better LLM comprehension
+        formatted_context = self._format_context_for_llm(context)
+        formatted_session_context = json.dumps(context_session, indent=2, default=str)
+
+        enriched_prompt = PromptTemplate.RESPONSE_TEMPLATE.value.format(
+            Date=current_date_str,
+            prompt=str(prompt),
+            retrieved_data_source_1=formatted_context,
+            retrieved_data_source_2=formatted_session_context,
+            language=detected_language,
+        )
+        logger.info(f"[Streaming] Starting streaming response generation")
+
+        # Call Azure OpenAI API with streaming enabled
+        response_stream = self.client.chat.completions.create(
+            temperature=0,
+            model=OPENAI_DEPLOYMENT_NAME,
+            messages=user_chat_history + [{"role": "user", "content": enriched_prompt}],
+            max_tokens=self.max_tokens,
+            stream=True
+        )
+
+        # Collect full response while streaming tokens
+        full_response = ""
+        for chunk in response_stream:
+            if chunk.choices and len(chunk.choices) > 0:
+                delta = chunk.choices[0].delta
+                if delta and delta.content:
+                    token = delta.content
+                    full_response += token
+                    yield {"type": "token", "content": token}
+
+        end = time.time()
+        logger.info(f"[Latency] get_response_from_agent_streaming: {end - start:.2f}s")
+
+        # Parse the collected response
+        response_object = {}
+        try:
+            response_object = json.loads(full_response)
+        except json.JSONDecodeError:
+            response_object = {
+                "Answer": str(full_response),
+                "Source": [],
+                "Confidence": "0.0"
+            }
+
+        if "Answer" in response_object:
+            response_object["Answer"] = (
+                response_object["Answer"]
+                .replace("![Image](image_path)!", " ")
+                .replace("![Image](image_path)", " ")
+                .replace("https://my.sita.aero", "https://digihub.sita.aero")
+                .replace("my.sita", "digihub.sita")
+            )
+
+        # Format the answer
+        final_response = self.response_formatter.parse_response(response_object.get("Answer", full_response))
+
+        citation = response_object.get("Source", None)
+
+        # Build structured response metadata
+        structured_response = {
+            "response": final_response,
+            "citation": citation,
+            "confidence": response_object.get("Confidence", 0),
+            "score": top_doc.get("question_score", 0) if top_doc else 0
+        }
+
+        # Yield the final metadata
+        yield {"type": "metadata", "data": structured_response}
 
     def _retrieve_session_context(self):
         """
@@ -1070,6 +1168,17 @@ class ResponseGeneratorAgent:
                     logger.info(f"Generic query detected - restricting to user guide service lines: {authorized_user_guides}")
                 else:
                     logger.info(f"Generic query but user not authorized for user guide service lines - using full list")
+            elif detected_product_service_line:
+                # PRODUCT-SPECIFIC QUERY: Code-based keyword detection found a product
+                # (e.g., "What is SITA DataConnect?" -> dataconnect -> service line 340)
+                # IMPORTANT: Check this BEFORE entity-specific to ensure product keywords take precedence
+                # RESTRICT search to ONLY the detected product service line + user guides
+                # This prevents other service lines (e.g., Bag Manager) from competing
+                retrieval_service_lines = [detected_product_service_line]
+                logger.info(f"Product-specific query detected - restricting to service line {detected_product_service_line}")
+                if authorized_user_guides:
+                    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+                    logger.info(f"Including user guide service lines: {authorized_user_guides}")
             elif detected_entities and not detected_service_names:
                 # ENTITY-SPECIFIC QUERY: No service line detected but specific entities found
                 # (e.g., "What is SITA Mission Watch?", "Tell me about CI Analysis")
@@ -1078,14 +1187,6 @@ class ResponseGeneratorAgent:
                 logger.info(f"Entity-specific query detected - entities: {detected_entities}")
                 logger.info(f"Searching all authorized service lines: {retrieval_service_lines}")
                 # Include user guides as well so they can compete
-                if authorized_user_guides:
-                    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
-            elif detected_product_service_line:
-                # PRODUCT-SPECIFIC QUERY: Code-based keyword detection found a product
-                # (e.g., "What is SITA DataConnect?" -> dataconnect -> service line 340)
-                # Include the detected service line in the search
-                logger.info(f"Product-specific query detected - adding service line {detected_product_service_line}")
-                retrieval_service_lines = list(set(retrieval_service_lines + [detected_product_service_line]))
                 if authorized_user_guides:
                     retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
             elif authorized_user_guides:
@@ -1332,3 +1433,269 @@ class ResponseGeneratorAgent:
             chunk_service_line=chunk_service_line or []
         )
         return message_id
+
+    def generate_response_streaming(self, prompt: str, container_name: str, service_line: list[int] | None = None):
+        """
+        Streaming version of generate_response that yields tokens as they arrive.
+
+        This method runs the same RAG pipeline but uses streaming for the final
+        response generation step, allowing the UI to display tokens as they arrive.
+
+        Yields:
+            dict: Either {"type": "token", "content": str} for tokens,
+                  {"type": "metadata", "data": dict} for final metadata,
+                  or {"type": "error", "message": str} for errors
+        """
+        chunk_service_line = []
+
+        try:
+            # Start timing for performance analysis
+            pipeline_start = time.time()
+
+            # Step 1: Retrieve session context
+            step_start = time.time()
+            user_chat_history, session_context_window = self._retrieve_session_context()
+            logger.info(f"[Timing] Step 1 (Session Context): {time.time() - step_start:.2f}s")
+
+            # Step 2: Analyze query
+            step_start = time.time()
+            result = self._analyze_query(prompt, session_context_window)
+            logger.info(f"[Timing] Step 2 (Query Analysis): {time.time() - step_start:.2f}s")
+
+            # Step 3: Determine service lines
+            final_service_lines, suppress_disclaimer = self._determine_service_lines(result, service_line, prompt)
+
+            # Step 4: Extract query metadata
+            detected_language = result.get("language", "unknown")
+            is_generic = result.get("is_generic", False)
+            translated_text = result.get("translation", prompt)
+            is_prompt_vulnerable = result.get("is_prompt_vulnerable")
+            query_type = result.get("Query_classifier")
+            acronyms = result.get("acronyms")
+            expanded_queries = result.get("expanded_queries", [])
+            is_session_dependent = result.get("is_session_dependent", False)
+            detected_service_names = result.get("service_lines") or []
+            detected_entities = result.get("detected_entities") or []
+
+            # Filter out excluded acronyms
+            exclude_words = {"SITA", "DIGIHUB"}
+            if acronyms:
+                acronyms = [a for a in acronyms if a.upper() not in exclude_words]
+            logger.info(f"The query is an Acronym type. {query_type} {acronyms}")
+
+            # Fetch acronym definitions if detected
+            acronym_definitions = []
+            if query_type == 'Acronym' or acronyms:
+                acronym_definitions = RetreivalService().get_acronym_definitions(acronyms)
+                logger.info(f"Fetched acronym definitions: {acronym_definitions}")
+
+            # Check for prompt injection
+            if is_prompt_vulnerable:
+                raise OutOfScopeException(
+                    message="", final_response="", detected_language=detected_language, auto_msg=True
+                )
+
+            # Step 5: Handle session entities
+            session_entities = self._handle_session_entities(is_session_dependent)
+
+            # Step 6: Resolve references in query
+            resolved_query = self._resolve_query_references(
+                translated_text, is_session_dependent, session_entities, user_chat_history
+            )
+
+            # Step 6.5: Get contextual service lines
+            retrieval_service_lines = self._get_contextual_service_lines(
+                is_session_dependent, final_service_lines
+            )
+
+            # Step 6.6: Handle user guide service lines based on query type
+            USER_GUIDE_SERVICE_LINES = [0, 440]
+            authorized_user_guides = [sl for sl in USER_GUIDE_SERVICE_LINES if sl in final_service_lines]
+
+            # Code-based keyword detection for specific products
+            PRODUCT_KEYWORDS = {
+                'dataconnect': 340,
+                'data connect': 340,
+                'sita dataconnect': 340,
+                'sita data connect': 340,
+                'sdc': 340,
+                'sitatex': 340,
+            }
+            query_lower = resolved_query.lower()
+            detected_product_service_line = None
+            for keyword, service_line_id in PRODUCT_KEYWORDS.items():
+                if keyword in query_lower:
+                    detected_product_service_line = service_line_id
+                    logger.info(f"Product keyword '{keyword}' detected - will include service line {service_line_id}")
+                    break
+
+            # Determine if query is truly generic
+            is_truly_generic = (
+                not detected_service_names and
+                not is_session_dependent and
+                not detected_entities and
+                not detected_product_service_line
+            )
+
+            if is_truly_generic:
+                if authorized_user_guides:
+                    retrieval_service_lines = authorized_user_guides
+                    logger.info(f"Generic query detected - restricting to user guide service lines: {authorized_user_guides}")
+            elif detected_product_service_line:
+                retrieval_service_lines = [detected_product_service_line]
+                logger.info(f"Product-specific query detected - restricting to service line {detected_product_service_line}")
+                if authorized_user_guides:
+                    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+            elif detected_entities and not detected_service_names:
+                logger.info(f"Entity-specific query detected - entities: {detected_entities}")
+                if authorized_user_guides:
+                    retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+            elif authorized_user_guides:
+                retrieval_service_lines = list(set(retrieval_service_lines + authorized_user_guides))
+
+            # Step 6.7: Detect definitional queries for General Info boosting
+            is_definitional_query = self._is_definitional_query(resolved_query)
+
+            # Step 6.8: Convert detected service names to IDs
+            detected_service_line_ids = []
+            if detected_service_names:
+                all_mappings = RetreivalService().get_all_service_line()
+                name_to_id = {item['name'].lower(): item['id'] for item in all_mappings if item.get('id') is not None}
+                for name in detected_service_names:
+                    name_lower = name.lower()
+                    if name_lower in name_to_id:
+                        detected_service_line_ids.append(name_to_id[name_lower])
+
+            # Step 7: Retrieval from vector store
+            GENERAL_INFO_SERVICE_LINE_ID = 0
+            MIN_CONFIDENCE_THRESHOLD = 0.75
+            MIN_KEYWORD_THRESHOLD = 0.1
+
+            use_two_stage = (
+                is_definitional_query and
+                GENERAL_INFO_SERVICE_LINE_ID in retrieval_service_lines and
+                not detected_product_service_line
+            )
+
+            if use_two_stage:
+                stage1_service_line_ids = [GENERAL_INFO_SERVICE_LINE_ID]
+                if detected_service_line_ids:
+                    stage1_service_line_ids = list(set(stage1_service_line_ids + detected_service_line_ids))
+                step_start = time.time()
+                logger.info(f"Two-Stage Retrieval: Stage 1 - Searching service lines: {stage1_service_line_ids}")
+                stage1_context, _, stage1_top_doc, stage1_service_lines, query_embedding, stage1_citations = (
+                    RetreivalService().rag_retriever_agent(resolved_query, container_name, stage1_service_line_ids, is_definitional_query=True)
+                )
+                logger.info(f"[Timing] Step 7 Stage 1 (Retrieval): {time.time() - step_start:.2f}s")
+
+                stage1_max_score = max([doc.get('hybrid_score', 0) for doc in stage1_context]) if stage1_context else 0
+                stage1_max_keyword = max([doc.get('keyword_score', 0) for doc in stage1_context]) if stage1_context else 0
+                stage1_has_keyword_match = stage1_max_keyword >= MIN_KEYWORD_THRESHOLD
+
+                if stage1_context and stage1_max_score >= MIN_CONFIDENCE_THRESHOLD and stage1_has_keyword_match:
+                    logger.info(f"Two-Stage Retrieval: Stage 1 successful - using General Info results")
+                    retrieved_context = stage1_context
+                    top_doc = stage1_top_doc
+                    chunk_service_line = stage1_service_lines
+                    citations = stage1_citations
+                else:
+                    step_start = time.time()
+                    logger.info(f"Two-Stage Retrieval: Stage 1 insufficient - expanding to all service lines")
+                    retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
+                        RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines, is_definitional_query=is_definitional_query)
+                    )
+                    logger.info(f"[Timing] Step 7 Stage 2 (Retrieval): {time.time() - step_start:.2f}s")
+            else:
+                logger.info(f"Single-stage retrieval with service lines: {retrieval_service_lines}")
+                step_start = time.time()
+                retrieved_context, _, top_doc, chunk_service_line, query_embedding, citations = (
+                    RetreivalService().rag_retriever_agent(resolved_query, container_name, retrieval_service_lines, is_definitional_query=is_definitional_query)
+                )
+                logger.info(f"[Timing] Step 7 (Retrieval): {time.time() - step_start:.2f}s")
+
+            # Step 7.5: Filter chunks by relevance
+            step_start = time.time()
+            retrieved_context = self._filter_relevant_chunks(resolved_query, retrieved_context, detected_service_names)
+            logger.info(f"[Timing] Step 7.5 (Relevance Filter): {time.time() - step_start:.2f}s")
+
+            # Update top_doc after filtering
+            if retrieved_context:
+                top_doc = retrieved_context[0]
+
+            # Step 8: Deduplicate citations
+            citation_keys = []
+            for cit in citations:
+                if cit.get("File") not in citation_keys:
+                    citation_keys.append(cit.get("File"))
+            citations = [{"File": cit, "Section": ""} for cit in citation_keys]
+
+            # Step 9: Prepare context for response generation
+            populated_context_session = {
+                "entities": session_entities,
+                "resolved_query": resolved_query if is_session_dependent else prompt,
+                "is_session_dependent": is_session_dependent,
+                "previous_service_lines": list(set([
+                    chunk.get('serviceNameid') for chunk in retrieved_context
+                    if chunk.get('serviceNameid') is not None
+                ])),
+                "acronym_definitions": acronym_definitions
+            }
+
+            logger.info(f"[Timing] Pre-stream pipeline: {time.time() - pipeline_start:.2f}s")
+
+            # Step 10: Generate streaming response
+            trace_id = log_context.get()
+            collected_response = ""
+            final_metadata = None
+
+            for event in self.get_response_from_agent_streaming(
+                trace_id=trace_id,
+                prompt=prompt,
+                user_chat_history=user_chat_history,
+                context=retrieved_context,
+                context_session=populated_context_session,
+                top_doc=top_doc,
+                chunk_service_line=chunk_service_line,
+                retrieved_context=retrieved_context,
+                user_service_line=service_line,
+                detected_language=detected_language,
+                is_generic=is_generic,
+                expanded_queries=expanded_queries,
+                citations=citations
+            ):
+                if event["type"] == "token":
+                    collected_response += event["content"]
+                    yield event
+                elif event["type"] == "metadata":
+                    final_metadata = event["data"]
+                    # Process citations
+                    citation_data = final_metadata.get("citation", [])
+                    if citation_data:
+                        processed_citations = self._process_citations(citation_data)
+                        final_metadata["citation"] = processed_citations
+                    yield event
+
+            # Log total pipeline time
+            logger.info(f"[Timing] Total Streaming Pipeline: {time.time() - pipeline_start:.2f}s")
+
+            # Save session in background (after streaming completes)
+            if final_metadata:
+                self.save_session_in_background(
+                    self.user_id, self.impersonated_user_id, prompt,
+                    final_metadata.get("response", collected_response),
+                    self.session_id,
+                    final_metadata.get("citation"),
+                    final_metadata.get("score"),
+                    final_metadata.get("confidence"),
+                    "",
+                    chunk_service_line=chunk_service_line
+                )
+
+        except UnAuthorizedServiceLineException as e:
+            yield {"type": "error", "message": str(e)}
+        except OutOfScopeException as e:
+            yield {"type": "error", "message": str(e)}
+        except Exception as e:
+            logger.error(f"Unexpected Error in streaming: {e}")
+            logger.error(traceback.format_exc())
+            yield {"type": "error", "message": "An unexpected error occurred. Please try again."}

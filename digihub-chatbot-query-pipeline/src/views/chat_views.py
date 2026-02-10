@@ -1,6 +1,8 @@
 import traceback
+import json
 
 from fastapi import APIRouter, Depends, Header, Query, HTTPException
+from fastapi.responses import StreamingResponse
 from typing import Annotated, Optional
 import uuid
 from pydantic import BaseModel, Field, EmailStr
@@ -106,6 +108,97 @@ class ChatView:
             traceback.print_exc()
             logger.error(f"Unable to create response for user query: {e}")
             raise HTTPException(status_code=500, detail="Internal Server Error")
+
+    @staticmethod
+    @router.post("/chat/stream", tags=["DigiHub ChatBot"], dependencies=[Depends(validate_incoming_request)])
+    def post_stream(query_request: Annotated[QueryRequest, Depends(validate_request_body)],
+             query_header: Annotated[BaseHeader, Header(convert_underscores=True)],
+             emailid: EmailStr | None = None,
+             ):
+        """
+        Streaming Chatbot API endpoint - streams tokens as they are generated.
+
+        Uses Server-Sent Events (SSE) format:
+        - data: {"type": "token", "content": "..."} for each token
+        - data: {"type": "metadata", "data": {...}} for final metadata
+        - data: {"type": "error", "message": "..."} for errors
+        - data: [DONE] when complete
+
+        Args:
+            query_header: Request headers
+            query_request (QueryRequest): The user query.
+            emailid (EmailStr, optional): Impersonation email.
+
+        Returns:
+            StreamingResponse: SSE stream of tokens and metadata
+        """
+        start_time = datetime.datetime.utcnow()
+
+        # Impersonation handling
+        if emailid and emailid != query_header.x_digihub_emailid:
+            query_header.x_digihub_emailid = emailid
+            logger.info(f"Impersonated Email:{query_header.x_digihub_emailid}")
+            impersonated_user_id = query_header.x_digihub_emailid
+        else:
+            logger.info(f"Non Impersonation User Flow Email: {query_header.x_digihub_emailid}")
+            impersonated_user_id = "Null"
+
+        user_id = HashUtils.hash_user_id(str(query_header.x_digihub_emailid))
+        chat_session_id = query_request.chat_session_id.strip()
+        if not chat_session_id or chat_session_id == "":
+            chat_session_id = SessionDBService().get_session_id(user_id)
+
+        if chat_session_id:
+            chat_session_userhash = chat_session_id.split('-')[0]
+            if user_id != chat_session_userhash:
+                raise HTTPException(status_code=400, detail="Invalid Session Id Passed")
+
+        logger.info("Starting streaming chat with user")
+        query = query_request.query.strip()
+        if not query:
+            logger.warning("Empty query received. Returning default response.")
+            async def empty_response():
+                yield f"data: {json.dumps({'type': 'token', 'content': 'Hi, I am DigiHub AI Bot. How may I help you?'})}\n\n"
+                yield f"data: {json.dumps({'type': 'metadata', 'data': {'session_id': chat_session_id, 'response': 'Hi, I am DigiHub AI Bot. How may I help you?', 'citation': None, 'score': None, 'confidence': 0}})}\n\n"
+                yield "data: [DONE]\n\n"
+            return StreamingResponse(empty_response(), media_type="text/event-stream")
+
+        def generate_stream():
+            try:
+                user_subscriptions = AuthorizationService().get_subscriptions(query_header)
+                logger.info(f"User Subscriptions : {user_subscriptions}")
+
+                agent = ResponseGeneratorAgent(
+                    user_id=user_id,
+                    session_id=chat_session_id,
+                    impersonated_user_id=impersonated_user_id
+                )
+
+                # Yield session_id first
+                yield f"data: {json.dumps({'type': 'session', 'session_id': chat_session_id})}\n\n"
+
+                # Stream the response
+                for event in agent.generate_response_streaming(query, KNOWLEDGE_BASE_CONTAINER, user_subscriptions):
+                    yield f"data: {json.dumps(event)}\n\n"
+
+                # Signal completion
+                yield "data: [DONE]\n\n"
+
+            except Exception as e:
+                logger.error(f"Streaming error: {e}")
+                traceback.print_exc()
+                yield f"data: {json.dumps({'type': 'error', 'message': 'Internal Server Error'})}\n\n"
+                yield "data: [DONE]\n\n"
+
+        return StreamingResponse(
+            generate_stream(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no"
+            }
+        )
 
     @staticmethod
     @router.post("/chat/{session_id}/message/{message_id}/feedback", tags=["DigiHub ChatBot"])
