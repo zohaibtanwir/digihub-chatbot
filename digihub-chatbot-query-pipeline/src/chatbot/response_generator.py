@@ -75,6 +75,168 @@ class ResponseGeneratorAgent:
         self.response_formatter = ResponseFormatter(model=model, max_tokens=max_tokens)
         self.context_manager = ContextManager()
 
+    # =========================================================================
+    # CONVERSATIONAL RESPONSES - Friendly responses for greetings, thanks, etc.
+    # =========================================================================
+    CONVERSATIONAL_RESPONSES = {
+        "greeting": {
+            "english": [
+                "Hello! I'm the DigiHub AI Assistant. How can I help you today?",
+                "Hi there! Welcome to DigiHub. What can I assist you with?",
+                "Hey! I'm here to help with your DigiHub questions. What would you like to know?"
+            ],
+            "french": [
+                "Bonjour! Je suis l'assistant IA DigiHub. Comment puis-je vous aider aujourd'hui?",
+                "Salut! Bienvenue sur DigiHub. Comment puis-je vous assister?"
+            ],
+            "german": [
+                "Hallo! Ich bin der DigiHub KI-Assistent. Wie kann ich Ihnen heute helfen?",
+                "Guten Tag! Willkommen bei DigiHub. Wie kann ich Ihnen behilflich sein?"
+            ],
+            "spanish": [
+                "¡Hola! Soy el asistente de IA de DigiHub. ¿Cómo puedo ayudarte hoy?",
+                "¡Bienvenido a DigiHub! ¿En qué puedo asistirte?"
+            ]
+        },
+        "thanks": {
+            "english": [
+                "You're welcome! Let me know if you need anything else.",
+                "Happy to help! Feel free to ask if you have more questions.",
+                "Glad I could assist! Is there anything else you'd like to know?"
+            ],
+            "french": [
+                "De rien! N'hésitez pas si vous avez d'autres questions.",
+                "Avec plaisir! Je reste à votre disposition."
+            ],
+            "german": [
+                "Gern geschehen! Lassen Sie mich wissen, wenn Sie weitere Fragen haben.",
+                "Freut mich, dass ich helfen konnte! Gibt es noch etwas?"
+            ],
+            "spanish": [
+                "¡De nada! Avísame si necesitas algo más.",
+                "¡Con gusto! No dudes en preguntar si tienes más dudas."
+            ]
+        },
+        "farewell": {
+            "english": [
+                "Goodbye! Feel free to come back anytime you have questions about DigiHub.",
+                "Take care! I'm here whenever you need assistance.",
+                "Bye! Have a great day!"
+            ],
+            "french": [
+                "Au revoir! N'hésitez pas à revenir si vous avez des questions.",
+                "À bientôt! Je suis là si vous avez besoin d'aide."
+            ],
+            "german": [
+                "Auf Wiedersehen! Kommen Sie gerne wieder, wenn Sie Fragen haben.",
+                "Tschüss! Ich bin hier, wenn Sie Hilfe brauchen."
+            ],
+            "spanish": [
+                "¡Adiós! Vuelve cuando tengas preguntas sobre DigiHub.",
+                "¡Hasta luego! Estoy aquí cuando me necesites."
+            ]
+        },
+        "affirmation": {
+            "english": [
+                "Great! Let me know if there's anything else I can help with.",
+                "Perfect! Feel free to ask more questions anytime.",
+                "Sounds good! I'm here if you need anything else."
+            ],
+            "french": [
+                "Parfait! N'hésitez pas si vous avez d'autres questions.",
+                "Très bien! Je suis là si vous avez besoin de plus d'informations."
+            ],
+            "german": [
+                "Prima! Lassen Sie mich wissen, wenn ich noch helfen kann.",
+                "Alles klar! Ich bin hier, falls Sie weitere Fragen haben."
+            ],
+            "spanish": [
+                "¡Perfecto! Avísame si hay algo más en lo que pueda ayudar.",
+                "¡Muy bien! Estoy aquí si necesitas más información."
+            ]
+        },
+        "small_talk": {
+            "english": [
+                "I'm doing great, thanks for asking! How can I help you with DigiHub today?",
+                "I'm here and ready to assist! What would you like to know about DigiHub?"
+            ],
+            "french": [
+                "Je vais bien, merci! Comment puis-je vous aider avec DigiHub aujourd'hui?",
+                "Tout va bien! Que puis-je faire pour vous?"
+            ],
+            "german": [
+                "Mir geht es gut, danke der Nachfrage! Wie kann ich Ihnen bei DigiHub helfen?",
+                "Alles bestens! Was kann ich für Sie tun?"
+            ],
+            "spanish": [
+                "¡Estoy muy bien, gracias por preguntar! ¿Cómo puedo ayudarte con DigiHub hoy?",
+                "¡Todo bien! ¿En qué puedo ayudarte?"
+            ]
+        }
+    }
+
+    # Fast path patterns for common English greetings (case-insensitive)
+    FAST_PATH_PATTERNS = {
+        "greeting": ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "howdy"],
+        "thanks": ["thanks", "thank you", "thx", "ty", "cheers", "appreciate it"],
+        "farewell": ["bye", "goodbye", "see you", "take care", "cya"],
+        "affirmation": ["ok", "okay", "got it", "understood", "sure", "alright", "cool", "great", "perfect"]
+    }
+
+    def _check_fast_path_conversational(self, query: str) -> tuple:
+        """
+        Fast path check for common English conversational patterns.
+        Avoids LLM call for obvious greetings/thanks/farewells.
+
+        Args:
+            query: User query string
+
+        Returns:
+            tuple: (is_conversational, conversational_type) or (False, None)
+        """
+        query_lower = query.lower().strip().rstrip('!?.,:;')
+
+        for conv_type, patterns in self.FAST_PATH_PATTERNS.items():
+            if query_lower in patterns:
+                logger.info(f"Fast path match: '{query}' -> {conv_type}")
+                return True, conv_type
+
+        return False, None
+
+    def _get_conversational_response(self, conv_type: str, language: str) -> dict:
+        """
+        Get a friendly response for conversational messages.
+
+        Args:
+            conv_type: Type of conversational message (greeting, thanks, farewell, etc.)
+            language: Detected language
+
+        Returns:
+            dict: Structured response with friendly message
+        """
+        # Normalize language
+        language_lower = language.lower() if language else "english"
+        if language_lower not in ["english", "french", "german", "spanish"]:
+            language_lower = "english"
+
+        # Get responses for this type and language
+        responses = self.CONVERSATIONAL_RESPONSES.get(conv_type, {}).get(
+            language_lower,
+            self.CONVERSATIONAL_RESPONSES.get(conv_type, {}).get("english", ["Hello! How can I help you?"])
+        )
+
+        # Pick a random response
+        response_text = random.choice(responses)
+
+        return {
+            "response": response_text,
+            "citation": [],
+            "confidence": 1.0,
+            "score": 1.0,
+            "disclaimer": None,
+            "is_conversational": True
+        }
+
     def get_filtered_context(self, query, container_name, service_line, query_embedding):
         """
         Retrieves and filters context chunks by service line.
@@ -752,7 +914,6 @@ class ResponseGeneratorAgent:
 
             # Calculate relevance indicators if available
             hybrid_score = chunk.get("hybrid_score", 0)
-            question_sim = chunk.get("question_similarity", 0)
 
             # Build formatted section
             section = f"""### Context {idx}
@@ -846,24 +1007,24 @@ class ResponseGeneratorAgent:
                         if chunk.get('serviceName', '').lower().replace(" ", "") in detected_names_lower
                     ]
                     if matching_chunks:
-                        # Sort matching chunks by similarity and take top 2
+                        # Sort matching chunks by hybrid score and take top 2
                         matching_chunks = sorted(
                             matching_chunks,
-                            key=lambda x: x.get('hybrid_score', x.get('question_similarity', 0)),
+                            key=lambda x: x.get('hybrid_score', 0),
                             reverse=True
                         )
                         relevant_chunks = matching_chunks[:2]
                         logger.info(f"Fallback: keeping top {len(relevant_chunks)} chunks from detected services: {detected_service_names}")
 
-                # If no matching chunks found, fall back to top 2 by similarity
+                # If no matching chunks found, fall back to top 2 by hybrid score
                 if len(relevant_chunks) == 0:
                     sorted_chunks = sorted(
                         chunks,
-                        key=lambda x: x.get('hybrid_score', x.get('question_similarity', 0)),
+                        key=lambda x: x.get('hybrid_score', 0),
                         reverse=True
                     )
                     relevant_chunks = sorted_chunks[:2]
-                    logger.info(f"Fallback: keeping top {len(relevant_chunks)} chunks by similarity (no service match)")
+                    logger.info(f"Fallback: keeping top {len(relevant_chunks)} chunks by hybrid score (no service match)")
 
             end = time.time()
             logger.info(f"[Latency] relevance_filtering: {end - start:.2f}s")
@@ -1064,6 +1225,22 @@ class ResponseGeneratorAgent:
         message_id = None
         chunk_service_line = []
 
+        # =====================================================================
+        # FAST PATH: Check for common English greetings before LLM call
+        # =====================================================================
+        is_fast_path, fast_conv_type = self._check_fast_path_conversational(prompt)
+        if is_fast_path:
+            logger.info(f"[Fast Path] Conversational message detected: {fast_conv_type}")
+            structured_response = self._get_conversational_response(fast_conv_type, "english")
+            # Save to session and return
+            message_id = self.save_session_in_background(
+                self.user_id, self.impersonated_user_id, prompt,
+                structured_response.get("response"),
+                self.session_id, [], 1.0, 1.0, ""
+            )
+            structured_response["message_id"] = message_id
+            return structured_response
+
         try:
             # Start timing for performance analysis
             pipeline_start = time.time()
@@ -1078,11 +1255,30 @@ class ResponseGeneratorAgent:
             result = self._analyze_query(prompt, session_context_window)
             logger.info(f"[Timing] Step 2 (Query Analysis): {time.time() - step_start:.2f}s")
 
+            # =====================================================================
+            # EARLY EXIT: Check for conversational messages (multi-language support)
+            # =====================================================================
+            is_conversational = result.get("is_conversational", False)
+            conversational_type = result.get("conversational_type")
+            detected_language = result.get("language", "english")
+
+            if is_conversational and conversational_type:
+                logger.info(f"[Conversational] Detected {conversational_type} in {detected_language}")
+                structured_response = self._get_conversational_response(conversational_type, detected_language)
+                # Save to session and return
+                message_id = self.save_session_in_background(
+                    self.user_id, self.impersonated_user_id, prompt,
+                    structured_response.get("response"),
+                    self.session_id, [], 1.0, 1.0, ""
+                )
+                structured_response["message_id"] = message_id
+                logger.info(f"[Timing] Conversational response: {time.time() - pipeline_start:.2f}s")
+                return structured_response
+
             # Step 3: Determine service lines - Nazeel change method name to get Autorized Service line per user
             final_service_lines, suppress_disclaimer = self._determine_service_lines(result, service_line, prompt)
 
-            # Step 4: Extract query metadata
-            detected_language = result.get("language", "unknown")
+            # Step 4: Extract query metadata (detected_language already extracted above)
             is_generic = result.get("is_generic", False)
             translated_text = result.get("translation", prompt)
             is_prompt_vulnerable = result.get("is_prompt_vulnerable")
@@ -1448,6 +1644,24 @@ class ResponseGeneratorAgent:
         """
         chunk_service_line = []
 
+        # =====================================================================
+        # FAST PATH: Check for common English greetings before LLM call
+        # =====================================================================
+        is_fast_path, fast_conv_type = self._check_fast_path_conversational(prompt)
+        if is_fast_path:
+            logger.info(f"[Fast Path Streaming] Conversational message detected: {fast_conv_type}")
+            structured_response = self._get_conversational_response(fast_conv_type, "english")
+            # Save to session
+            self.save_session_in_background(
+                self.user_id, self.impersonated_user_id, prompt,
+                structured_response.get("response"),
+                self.session_id, [], 1.0, 1.0, ""
+            )
+            # Yield the response as a single token and metadata
+            yield {"type": "token", "content": structured_response["response"]}
+            yield {"type": "metadata", "data": structured_response}
+            return
+
         try:
             # Start timing for performance analysis
             pipeline_start = time.time()
@@ -1462,11 +1676,32 @@ class ResponseGeneratorAgent:
             result = self._analyze_query(prompt, session_context_window)
             logger.info(f"[Timing] Step 2 (Query Analysis): {time.time() - step_start:.2f}s")
 
+            # =====================================================================
+            # EARLY EXIT: Check for conversational messages (multi-language support)
+            # =====================================================================
+            is_conversational = result.get("is_conversational", False)
+            conversational_type = result.get("conversational_type")
+            detected_language = result.get("language", "english")
+
+            if is_conversational and conversational_type:
+                logger.info(f"[Conversational Streaming] Detected {conversational_type} in {detected_language}")
+                structured_response = self._get_conversational_response(conversational_type, detected_language)
+                # Save to session
+                self.save_session_in_background(
+                    self.user_id, self.impersonated_user_id, prompt,
+                    structured_response.get("response"),
+                    self.session_id, [], 1.0, 1.0, ""
+                )
+                logger.info(f"[Timing] Conversational streaming response: {time.time() - pipeline_start:.2f}s")
+                # Yield the response as a single token and metadata
+                yield {"type": "token", "content": structured_response["response"]}
+                yield {"type": "metadata", "data": structured_response}
+                return
+
             # Step 3: Determine service lines
             final_service_lines, suppress_disclaimer = self._determine_service_lines(result, service_line, prompt)
 
-            # Step 4: Extract query metadata
-            detected_language = result.get("language", "unknown")
+            # Step 4: Extract query metadata (detected_language already extracted above)
             is_generic = result.get("is_generic", False)
             translated_text = result.get("translation", prompt)
             is_prompt_vulnerable = result.get("is_prompt_vulnerable")

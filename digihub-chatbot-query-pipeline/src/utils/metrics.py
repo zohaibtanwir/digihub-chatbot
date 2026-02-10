@@ -35,8 +35,8 @@ class RetrievalMetrics:
 
         # Extract scores
         hybrid_scores = [c.get('hybrid_score', 0) for c in chunks]
-        question_sims = [c.get('question_similarity', 0) for c in chunks]
         content_sims = [c.get('content_similarity', 0) for c in chunks]
+        keyword_scores = [c.get('keyword_score', 0) for c in chunks]
         legacy_count = sum(1 for c in chunks if c.get('is_legacy_chunk', False))
 
         # Compute statistics
@@ -49,15 +49,15 @@ class RetrievalMetrics:
                 "avg": sum(hybrid_scores) / len(hybrid_scores),
                 "scores": [f"{s:.4f}" for s in hybrid_scores]
             },
-            "question_similarity": {
-                "max": max(question_sims) if question_sims else 0,
-                "min": min(question_sims) if question_sims else 0,
-                "avg": sum(question_sims) / len(question_sims) if question_sims else 0
-            },
             "content_similarity": {
                 "max": max(content_sims) if content_sims else 0,
                 "min": min(content_sims) if content_sims else 0,
                 "avg": sum(content_sims) / len(content_sims) if content_sims else 0
+            },
+            "keyword_score": {
+                "max": max(keyword_scores) if keyword_scores else 0,
+                "min": min(keyword_scores) if keyword_scores else 0,
+                "avg": sum(keyword_scores) / len(keyword_scores) if keyword_scores else 0
             }
         }
 
@@ -65,7 +65,7 @@ class RetrievalMetrics:
         logger.info(
             f"[Metrics:{stage}] Retrieved {len(chunks)} chunks | "
             f"Hybrid: max={metrics['hybrid_score']['max']:.4f}, avg={metrics['hybrid_score']['avg']:.4f} | "
-            f"Question sim: avg={metrics['question_similarity']['avg']:.4f} | "
+            f"Content sim: avg={metrics['content_similarity']['avg']:.4f} | "
             f"Legacy chunks: {legacy_count}"
         )
 

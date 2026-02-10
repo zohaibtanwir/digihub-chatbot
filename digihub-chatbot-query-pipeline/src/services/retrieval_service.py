@@ -398,7 +398,7 @@ class RetreivalService:
         service_line: Optional[list[int]],
         top_k: int = 7,
         question_boost_weight: float = 0.0,
-        min_question_similarity: float = None,
+        min_similarity: float = None,
         content_type_filter: str = None,
         year_filter: str = None,
         is_definitional_query: bool = False
@@ -425,8 +425,8 @@ class RetreivalService:
             service_line: Service line IDs to filter by
             top_k: Number of results to return
             question_boost_weight: Deprecated - kept for backward compatibility, not used
-            min_question_similarity: Minimum similarity score threshold (0.0 to 1.0)
-                                    Default: MIN_SIMILARITY_THRESHOLD from config (0.35)
+            min_similarity: Minimum similarity score threshold (0.0 to 1.0)
+                           Default: MIN_SIMILARITY_THRESHOLD from config (0.35)
             content_type_filter: Optional content type to filter by (e.g., 'UserGuide')
             year_filter: Optional year to filter by (e.g., '2024')
 
@@ -436,8 +436,8 @@ class RetreivalService:
         start_time = time.time()
         logger.info(f"#Query before processing :{query}")
 
-        # Use config default if min_question_similarity not provided
-        effective_threshold = min_question_similarity if min_question_similarity is not None else (MIN_SIMILARITY_THRESHOLD or 0.35)
+        # Use config default if min_similarity not provided
+        effective_threshold = min_similarity if min_similarity is not None else (MIN_SIMILARITY_THRESHOLD or 0.35)
         logger.info(f"Using similarity threshold: {effective_threshold}")
 
         # Generate query embedding
@@ -477,7 +477,6 @@ class RetreivalService:
                 c.metadata.contentType as contentType,
                 c.metadata.year as year,
                 c.questions,
-                VectorDistance(c.questionsEmbedding, {query_embedding}) as question_score,
                 VectorDistance(c.embedding, {query_embedding}) as content_score
             FROM c
             {query_filter}
@@ -593,18 +592,12 @@ class RetreivalService:
             keyword_score = self._calculate_keyword_score(query, doc)
             doc['keyword_score'] = keyword_score
 
-            # Handle legacy chunks (no questionsEmbedding)
-            raw_question_score = doc.get('question_score')
-            if raw_question_score is None:
-                doc['question_similarity'] = 0.0
-                doc['is_legacy_chunk'] = True
-                # Legacy: use semantic + keyword with penalty
+            # Handle legacy chunks (no validChunk field) - apply penalty
+            is_legacy = not doc.get('validChunk')
+            doc['is_legacy_chunk'] = is_legacy
+            if is_legacy:
                 semantic_score = content_similarity * (1 - LEGACY_CHUNK_PENALTY)
             else:
-                question_similarity = distance_to_similarity(raw_question_score)
-                doc['question_similarity'] = question_similarity
-                doc['is_legacy_chunk'] = False
-                # Use content similarity as the semantic score (question similarity no longer used)
                 semantic_score = content_similarity
 
             # Hybrid score: combine semantic and keyword scores

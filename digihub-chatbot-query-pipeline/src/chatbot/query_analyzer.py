@@ -144,6 +144,8 @@ class QueryAnalyzer:
                 "translation": parsed_response.get("translation", query),
                 "Query_classifier": parsed_response.get("Query_classifier", None),
                 "is_session_dependent": parsed_response.get("is_session_dependent", False),
+                "is_conversational": parsed_response.get("is_conversational", False),
+                "conversational_type": parsed_response.get("conversational_type", None),
                 "acronyms": parsed_response.get("acronyms", []),
                 "service_lines": parsed_response.get("service_lines", []),
                 "expanded_queries": parsed_response.get("expanded_queries", []),
