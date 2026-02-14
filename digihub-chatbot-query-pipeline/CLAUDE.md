@@ -602,9 +602,9 @@ Removed unused `questionsEmbedding` from CosmosDB query:
 | Beads ID | Description |
 |----------|-------------|
 | `digihub-chatbot-str1` | Streaming response implementation |
-| `digihub-chatbot-conv1` | Conversational message handling |
-| `digihub-chatbot-outp1` | Output parser Python optimization |
-| `digihub-chatbot-qsim1` | Question similarity removal |
+| `digihub-chatbot-xlz` | Conversational message handling |
+| `digihub-chatbot-dz6` | Output parser Python optimization |
+| `digihub-chatbot-2bq` | Question similarity removal |
 
 ### Key Files Modified
 
