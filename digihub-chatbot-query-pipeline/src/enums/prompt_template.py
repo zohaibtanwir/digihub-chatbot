@@ -736,7 +736,7 @@ Resolve pronouns, references, and incomplete queries to explicit entities based 
 
 Current Query: {query}
 
-Recent Conversation Context:
+Recent Conversation Context (MOST RECENT FIRST):
 {history}
 
 Entities Previously Discussed:
@@ -747,18 +747,21 @@ Entities Previously Discussed:
 Your task:
 Analyze the current query and replace pronouns, vague references, or complete incomplete queries with the specific entities they refer to from the conversation context.
 
+**CRITICAL: For continuation queries like "tell me more", "explain further", "go on", etc., you MUST use the topic from the MOST RECENT user question in the conversation. Look at the LAST user question to determine what they want to know more about.**
+
 Types of references to resolve:
 1. Explicit pronouns: "it", "that", "them", "those", "this"
 2. Generic references: "the service", "the product", "the system", "the feature", "the solution"
 3. Contextual references: "above", "mentioned", "previous"
 4. Incomplete/implicit queries: queries where the object is missing (e.g., "Can you show me?", "Help me with", "Tell me about")
+5. Continuation queries: "tell me more", "explain further", "go on", "and?", "what else" - these refer to the MOST RECENT topic
 
 Instructions:
-1. Identify what each pronoun/reference refers to based on the recent conversation
-2. For incomplete queries (missing object), infer the object from the previous conversation context
+1. **ALWAYS look at the MOST RECENT user question first** - this is what the user is continuing to ask about
+2. For incomplete queries (missing object), infer the object from the LAST question/answer, not older ones
 3. Replace the pronoun or fill in the missing object with the explicit entity name
 4. Preserve the original intent but make the query self-contained and clear
-5. If multiple entities could be referenced, choose the most recent or most relevant one
+5. **PRIORITY: RECENCY over everything else** - if multiple entities exist, ALWAYS choose the one from the most recent exchange
 6. If no clear reference is found, return the original query unchanged
 
 Return a valid JSON object:
@@ -786,6 +789,19 @@ Output:
   "resolved_query": "What about Bag Manager pricing?",
   "entities_referenced": ["Bag Manager"]
 }}
+
+Example 3 (Continuation query - IMPORTANT):
+Query: "tell me more" or "explain further"
+Context:
+- User: "What is Bag Manager?"
+- Assistant: "Bag Manager is a baggage management solution..."
+- Earlier: User asked about DigiHub
+Output:
+{{
+  "resolved_query": "Tell me more about Bag Manager",
+  "entities_referenced": ["Bag Manager"]
+}}
+NOTE: Even though DigiHub was discussed earlier, the MOST RECENT question was about Bag Manager, so the continuation refers to Bag Manager.
 
 Example 3:
 Query: "Tell me more about that error"
