@@ -789,7 +789,7 @@ class ResponseGeneratorAgent:
             r"^what\s+are\s+(?!the\s+(steps|ways|procedures|methods))",  # "what are X" but not "what are the steps"
             r"^what\s+does\s+.+\s+mean",  # "what does X mean"
             r"^define\s+",  # "define X"
-            r"^explain\s+(?!how)",  # "explain X" but not "explain how"
+            r"^explain\s+(?!(how|more|further|me\s+more|to\s+me))",  # "explain X" but not "explain how/more/further"
             r"^tell\s+me\s+about\s+",  # "tell me about X"
             r"^what.+available\s+under",  # "what's available under X"
         ]
