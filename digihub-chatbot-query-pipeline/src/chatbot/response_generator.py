@@ -800,19 +800,23 @@ class ResponseGeneratorAgent:
 
         return False
 
+    # Maximum word count for short/vague queries that need resolution when session-dependent
+    SHORT_QUERY_WORD_LIMIT = 5
+
     def _resolve_query_references(self, translated_text: str, is_session_dependent: bool,
                                    session_entities: dict, user_chat_history: list):
         """
         Resolves references (pronouns, etc.) in the query.
 
-        Reference resolution runs whenever the query contains pronouns or references
-        (e.g., "it", "that", "this"), regardless of is_session_dependent status.
-        This ensures queries like "Tell me more about it" get resolved even when
-        service lines change (which sets is_session_dependent=False).
+        Reference resolution runs when:
+        1. Query contains pronouns or continuation patterns (e.g., "it", "tell me more")
+        2. OR query is session-dependent AND short (≤5 words) - likely a vague follow-up
+
+        This ensures we catch all follow-up queries without trying to enumerate every pattern.
 
         Args:
             translated_text (str): Translated query text
-            is_session_dependent (bool): Whether query depends on session (not used for resolution trigger)
+            is_session_dependent (bool): Whether query depends on session context
             session_entities (dict): Session entities for resolution
             user_chat_history (list): Previous conversation messages
 
@@ -822,9 +826,16 @@ class ResponseGeneratorAgent:
         resolved_query = translated_text
         has_references = self.context_manager.has_references(translated_text)
 
-        if has_references:
-            # Always attempt reference resolution when references are detected,
-            # regardless of is_session_dependent flag
+        # Check if query is short (likely vague/incomplete)
+        word_count = len(translated_text.split())
+        is_short_query = word_count <= self.SHORT_QUERY_WORD_LIMIT
+
+        # Determine if we should attempt resolution
+        should_resolve = has_references or (is_session_dependent and is_short_query)
+
+        if should_resolve:
+            resolution_reason = "pattern match" if has_references else f"session-dependent + short ({word_count} words)"
+            logger.info(f"Attempting reference resolution: '{translated_text}' (reason: {resolution_reason})")
             try:
                 resolved_query = self.context_manager.resolve_references(
                     query=translated_text,
@@ -837,7 +848,8 @@ class ResponseGeneratorAgent:
                 logger.error(f"Reference resolution failed, using original query: {e}")
                 resolved_query = translated_text
         else:
-            logger.debug(f"No references detected in query: '{translated_text}'")
+            logger.debug(f"No resolution needed for query: '{translated_text}' "
+                        f"(has_references={has_references}, session_dependent={is_session_dependent}, words={word_count})")
 
         return resolved_query
 
