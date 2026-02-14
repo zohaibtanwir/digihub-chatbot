@@ -183,6 +183,17 @@ class ResponseGeneratorAgent:
         "affirmation": ["ok", "okay", "got it", "understood", "sure", "alright", "cool", "great", "perfect"]
     }
 
+    # Follow-up patterns that should NEVER be treated as conversational
+    # These are session-dependent queries that need retrieval
+    FOLLOW_UP_PATTERNS = [
+        "tell me more", "more details", "explain further", "go on", "continue",
+        "elaborate", "can you elaborate", "what else", "and?", "more info",
+        "lets explore", "let's explore", "explore more", "dig deeper",
+        "explain more", "tell me about", "more about", "further details",
+        "can you explain", "please explain", "expand on", "clarify",
+        "what do you mean", "how so", "why is that", "give me more"
+    ]
+
     def _check_fast_path_conversational(self, query: str) -> tuple:
         """
         Fast path check for common English conversational patterns.
@@ -202,6 +213,26 @@ class ResponseGeneratorAgent:
                 return True, conv_type
 
         return False, None
+
+    def _is_follow_up_request(self, query: str) -> bool:
+        """
+        Check if query is a follow-up request that should NOT be treated as conversational.
+        These are session-dependent queries that need retrieval.
+
+        Args:
+            query: User query string
+
+        Returns:
+            bool: True if this is a follow-up request
+        """
+        query_lower = query.lower().strip()
+
+        for pattern in self.FOLLOW_UP_PATTERNS:
+            if pattern in query_lower:
+                logger.info(f"Follow-up pattern detected: '{pattern}' in '{query}'")
+                return True
+
+        return False
 
     def _get_conversational_response(self, conv_type: str, language: str) -> dict:
         """
@@ -1261,6 +1292,12 @@ class ResponseGeneratorAgent:
             is_conversational = result.get("is_conversational", False)
             conversational_type = result.get("conversational_type")
             detected_language = result.get("language", "english")
+            is_session_dependent = result.get("is_session_dependent", False)
+
+            # Safeguard: Don't treat follow-up requests as conversational
+            if is_conversational and (is_session_dependent or self._is_follow_up_request(prompt)):
+                logger.info(f"[Conversational Override] Query marked conversational but is follow-up request - proceeding with retrieval")
+                is_conversational = False
 
             if is_conversational and conversational_type:
                 logger.info(f"[Conversational] Detected {conversational_type} in {detected_language}")
@@ -1682,6 +1719,12 @@ class ResponseGeneratorAgent:
             is_conversational = result.get("is_conversational", False)
             conversational_type = result.get("conversational_type")
             detected_language = result.get("language", "english")
+            is_session_dependent = result.get("is_session_dependent", False)
+
+            # Safeguard: Don't treat follow-up requests as conversational
+            if is_conversational and (is_session_dependent or self._is_follow_up_request(prompt)):
+                logger.info(f"[Conversational Override Streaming] Query marked conversational but is follow-up request - proceeding with retrieval")
+                is_conversational = False
 
             if is_conversational and conversational_type:
                 logger.info(f"[Conversational Streaming] Detected {conversational_type} in {detected_language}")

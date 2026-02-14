@@ -30,8 +30,14 @@ You are a query analysis assistant. Analyze the user query and return structured
    - greeting: "Hi", "Hello", "Hey", "Good morning", "Bonjour", "Hola", "Guten Tag", "Salut"
    - thanks: "Thanks", "Thank you", "Merci", "Danke", "Gracias", "Appreciate it"
    - farewell: "Bye", "Goodbye", "See you", "Au revoir", "Auf Wiedersehen", "Adiós"
-   - affirmation: "OK", "Okay", "Got it", "Understood", "Sure", "Alright", "D'accord"
+   - affirmation: "OK", "Okay", "Got it", "Understood", "Sure", "Alright", "D'accord" (ONLY standalone acknowledgments)
    - small_talk: "How are you?", "What's up?", "Comment ça va?", "Wie geht's?"
+
+   **IMPORTANT - These are NOT conversational (set is_conversational=false, is_session_dependent=true):**
+   - Continuation requests: "Tell me more", "Explain further", "Go on", "Continue", "And?"
+   - Exploration requests: "Let's explore more", "Can you elaborate?", "What else?", "More details"
+   - Clarification requests: "What do you mean?", "Can you clarify?", "How so?"
+   - Any request for more information about a previous topic
 
    If conversational, skip other analysis and return early with minimal response.
 
