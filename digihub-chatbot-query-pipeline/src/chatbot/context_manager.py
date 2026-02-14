@@ -32,7 +32,8 @@ class ContextManager:
     INCOMPLETE_QUERY_PATTERNS = r'(?i)\b(show\s+me|tell\s+me|explain|help\s+me|give\s+me|send\s+me|get\s+me|find|display|view|see|download|access|open)\s*[\?\.\!]?\s*$'
 
     # Follow-up continuation patterns - these need reference resolution to identify the topic
-    CONTINUATION_PATTERNS = r'(?i)^(tell\s+me\s+more|more\s+details?|explain\s+(more|further)|go\s+on|continue|elaborate|can\s+you\s+elaborate|what\s+else|more\s+info|lets?\s+explore|explore\s+more|dig\s+deeper|further\s+details?|can\s+you\s+explain|please\s+explain|expand\s+on|clarify|what\s+do\s+you\s+mean|how\s+so|why\s+is\s+that|give\s+me\s+more|and\??)\s*[\?\.\!]?\s*$'
+    # Patterns support variations like "explain more", "explain me more", "explain to me more"
+    CONTINUATION_PATTERNS = r'(?i)^(tell\s+me\s+more|more\s+details?|explain(\s+to)?\s*(me\s+)?more|explain\s+further|go\s+on|continue|elaborate|can\s+you\s+elaborate|what\s+else|more\s+info|lets?\s+explore|explore\s+more|dig\s+deeper|further\s+details?|can\s+you\s+explain|please\s+explain|expand\s+on\s+(this|that|it)?|clarify|what\s+do\s+you\s+mean|how\s+so|why\s+is\s+that|give\s+me\s+more|and\??|more\s+please|keep\s+going|go\s+ahead)\s*[\?\.\!]?\s*$'
 
     def __init__(self):
         """Initialize the ContextManager with Azure OpenAI client."""
