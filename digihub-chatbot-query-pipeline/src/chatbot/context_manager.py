@@ -31,6 +31,9 @@ class ContextManager:
     # These indicate the user is referring to something from context
     INCOMPLETE_QUERY_PATTERNS = r'(?i)\b(show\s+me|tell\s+me|explain|help\s+me|give\s+me|send\s+me|get\s+me|find|display|view|see|download|access|open)\s*[\?\.\!]?\s*$'
 
+    # Follow-up continuation patterns - these need reference resolution to identify the topic
+    CONTINUATION_PATTERNS = r'(?i)^(tell\s+me\s+more|more\s+details?|explain\s+(more|further)|go\s+on|continue|elaborate|can\s+you\s+elaborate|what\s+else|more\s+info|lets?\s+explore|explore\s+more|dig\s+deeper|further\s+details?|can\s+you\s+explain|please\s+explain|expand\s+on|clarify|what\s+do\s+you\s+mean|how\s+so|why\s+is\s+that|give\s+me\s+more|and\??)\s*[\?\.\!]?\s*$'
+
     def __init__(self):
         """Initialize the ContextManager with Azure OpenAI client."""
         self.client = AzureOpenAIService().get_client()
@@ -147,6 +150,13 @@ class ContextManager:
 
         if incomplete_match:
             logger.info(f"Detected incomplete/implicit query: '{incomplete_match.group()}' in '{query}'")
+            return True
+
+        # Check for continuation patterns (e.g., "tell me more", "explain further")
+        continuation_match = re.search(self.CONTINUATION_PATTERNS, query)
+
+        if continuation_match:
+            logger.info(f"Detected continuation pattern in query: '{continuation_match.group()}' in '{query}'")
             return True
 
         return False
