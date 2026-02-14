@@ -463,3 +463,158 @@ JSON mapping of service lines to keywords for LLM prompt context.
 ```bash
 cp src/utils/config.py.local src/utils/config.py
 ```
+
+---
+
+## Session Context (February 8, 2026)
+
+### Unit Test Implementation
+
+Created comprehensive unit tests to increase coverage from 21% to ~45%.
+
+| Test File | Tests | Target Module |
+|-----------|-------|---------------|
+| `tests/tests/test_response_generator.py` | 25 | response_generator.py |
+| `tests/tests/test_query_analyzer.py` | 20 | query_analyzer.py |
+| `tests/tests/test_authorization_checker.py` | 20 | authorization_checker.py |
+| `tests/tests/test_relevance_judge.py` | 18 | relevance_judge.py |
+
+**Run tests:**
+```bash
+pytest tests/tests/ -v --cov=src --cov-report=html
+```
+
+### Content Authority + Recency Scoring
+**File:** `src/services/retrieval_service.py`
+
+Replaced narrow content type boost with principled scoring:
+
+```python
+# Authority tiers (multiplier)
+CONTENT_AUTHORITY = {
+    'UserGuide': 1.20,        # Tier 1: Authoritative
+    'DigiHubUserGuide': 1.20,
+    'ReleaseNotes': 1.10,     # Tier 2: Technical
+    'TechnicalDoc': 1.10,
+    'FAQ': 1.00,              # Tier 3: Neutral
+    'BillingUpdate': 0.85,    # Tier 4: Supplementary
+    'MeetingNotes': 0.85,
+}
+
+# Recency factor
+# 2025-2026: 1.10x | 2023-2024: 1.00x | 2021-2022: 0.90x | Pre-2021: 0.85x
+
+# Formula
+final_score = hybrid_score × authority_multiplier × recency_factor
+```
+
+### Completed Beads Issues (February 8, 2026)
+
+| Beads ID | Description |
+|----------|-------------|
+| `digihub-chatbot-5qq` | Unit tests for response_generator.py |
+| `digihub-chatbot-5by` | Unit tests for query_analyzer.py |
+| `digihub-chatbot-jis` | Unit tests for authorization_checker.py |
+| `digihub-chatbot-bv4` | Unit tests for relevance_judge.py |
+| `digihub-chatbot-hec` | Content Authority + Recency scoring |
+
+---
+
+## Session Context (February 10, 2026)
+
+### Streaming Response Implementation
+**Files:** `src/views/chat_views.py`, `src/chatbot/response_generator.py`, `ui/app.py`
+
+Implemented streaming for Response Generation LLM to reduce perceived wait time.
+
+**New Endpoint:** `POST /chat/stream`
+- Uses Server-Sent Events (SSE) via FastAPI `StreamingResponse`
+- `media_type="text/event-stream"`
+
+**SSE Event Types:**
+```
+data: {"type": "session", "session_id": "abc123"}\n\n
+data: {"type": "token", "content": "Hello"}\n\n
+data: {"type": "token", "content": "Hello, I"}\n\n
+...
+data: {"type": "metadata", "response_metadata": {...}, "session_id": "abc123"}\n\n
+data: [DONE]\n\n
+```
+
+**New Methods in `response_generator.py`:**
+- `get_response_from_agent_streaming()` - Yields tokens using Azure OpenAI `stream=True`
+- `generate_response_streaming()` - Full pipeline with streaming final step
+
+**Test UI Updates (`ui/app.py`):**
+- "Enable Streaming" toggle (default: ON)
+- Thinking indicator with elapsed time
+- Real-time token display
+
+### Conversational Message Handling
+**Files:** `src/chatbot/response_generator.py`, `src/chatbot/query_analyzer.py`, `src/enums/prompt_template.py`
+
+Instant friendly responses for greetings, thanks, farewells in multiple languages.
+
+**Fast Path (English - no LLM):**
+```python
+FAST_PATH_PATTERNS = {
+    "greeting": ["hi", "hello", "hey", "good morning", ...],
+    "thanks": ["thanks", "thank you", "thx", ...],
+    "farewell": ["bye", "goodbye", ...],
+    "affirmation": ["ok", "okay", "got it", ...]
+}
+```
+
+**Smart Path (Multi-language via Query Analyzer):**
+- French: "Bonjour", "Merci", "Au revoir"
+- German: "Guten Tag", "Danke", "Auf Wiedersehen"
+- Spanish: "Hola", "Gracias", "Adiós"
+
+**Response Time:** <0.5s (vs ~10s for full pipeline)
+
+### Output Parser Optimization
+**Files:** `src/chatbot/output_parser.py` (NEW), `src/chatbot/response_formatter.py`
+
+Replaced OUTPUT_PARSING LLM call with Python regex for ~2s savings.
+
+```python
+# response_formatter.py
+USE_PYTHON_OUTPUT_PARSER = True  # Toggle for Python vs LLM
+
+# output_parser.py
+def format_response(message: str) -> str:
+    result = message.replace('\n', '<br>')
+    result = re.sub(r'(?<!:)//', '/', result)  # Fix double slashes except URLs
+    # ... image and list formatting
+    return result
+```
+
+### Question Similarity Removal
+**File:** `src/services/retrieval_service.py`
+
+Removed unused `questionsEmbedding` from CosmosDB query:
+- Removed `VectorDistance(c.questionsEmbedding, ...)` from query
+- Removed `question_similarity` processing
+- Simplified scoring to content similarity only
+
+### Completed Beads Issues (February 10, 2026)
+
+| Beads ID | Description |
+|----------|-------------|
+| `digihub-chatbot-str1` | Streaming response implementation |
+| `digihub-chatbot-conv1` | Conversational message handling |
+| `digihub-chatbot-outp1` | Output parser Python optimization |
+| `digihub-chatbot-qsim1` | Question similarity removal |
+
+### Key Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/views/chat_views.py` | New `/chat/stream` SSE endpoint |
+| `src/chatbot/response_generator.py` | Streaming methods, conversational handling, FAST_PATH_PATTERNS |
+| `src/chatbot/query_analyzer.py` | `is_conversational`, `conversational_type` fields |
+| `src/enums/prompt_template.py` | Conversational detection in LANGUAGE_DETECTION_TEMPLATE |
+| `src/chatbot/output_parser.py` | NEW - Python output formatting |
+| `src/chatbot/response_formatter.py` | USE_PYTHON_OUTPUT_PARSER toggle |
+| `src/services/retrieval_service.py` | Removed questionsEmbedding query |
+| `ui/app.py` | Streaming toggle, thinking indicator, elapsed time |
