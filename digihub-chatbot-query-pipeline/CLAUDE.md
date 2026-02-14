@@ -618,3 +618,78 @@ Removed unused `questionsEmbedding` from CosmosDB query:
 | `src/chatbot/response_formatter.py` | USE_PYTHON_OUTPUT_PARSER toggle |
 | `src/services/retrieval_service.py` | Removed questionsEmbedding query |
 | `ui/app.py` | Streaming toggle, thinking indicator, elapsed time |
+
+---
+
+## Session Context (February 14, 2026)
+
+### Follow-up Query Reference Resolution Fix
+
+Fixed multiple issues where follow-up queries like "tell me more", "explain further", "explain to me more" were not working correctly.
+
+#### Issues Fixed:
+
+1. **Conversational Override** - Follow-up phrases were incorrectly classified as conversational
+2. **Session-Aware Resolution** - Short vague queries need reference resolution
+3. **Definitional Pattern** - "Explain further" was triggering Two-Stage Retrieval
+4. **Reference Resolution Recency** - LLM was picking wrong entity from session history
+
+#### Changes Made:
+
+**`src/chatbot/response_generator.py`:**
+```python
+# 1. FOLLOW_UP_PATTERNS - phrases that should NOT be conversational
+FOLLOW_UP_PATTERNS = [
+    "tell me more", "more details", "explain further", "go on", "continue",
+    "elaborate", "what else", "more info", "lets explore", "dig deeper", ...
+]
+
+# 2. Conversational override safeguard
+if is_conversational and (is_session_dependent or self._is_follow_up_request(prompt)):
+    is_conversational = False  # Proceed with retrieval instead
+
+# 3. Session-aware reference resolution
+SHORT_QUERY_WORD_LIMIT = 5
+should_resolve = has_references or (is_session_dependent and word_count <= 5)
+
+# 4. Definitional pattern excludes continuation phrases
+r"^explain\s+(?!(how|more|further|me\s+more|to\s+me))"
+```
+
+**`src/chatbot/context_manager.py`:**
+```python
+# CONTINUATION_PATTERNS for reference detection
+CONTINUATION_PATTERNS = r'(?i)^(tell\s+me\s+more|more\s+details?|explain(\s+to)?\s*(me\s+)?more|...)'
+```
+
+**`src/enums/prompt_template.py`:**
+- Updated REFERENCE_RESOLUTION_TEMPLATE to prioritize MOST RECENT topic
+- Added CRITICAL instruction for continuation queries
+- Added Example 3 showing correct recency behavior
+
+#### Flow After Fix:
+```
+User: "What is Bag Manager?"
+Bot:  [Explains Bag Manager...]
+
+User: "explain to me more"
+→ Detected as session-dependent (is_session_dependent=True)
+→ Short query (3 words ≤ 5) triggers reference resolution
+→ Resolves to: "Explain to me more about Bag Manager"
+→ Retrieves Bag Manager content (not DigiHub)
+→ Returns relevant Bag Manager details
+```
+
+### Completed Beads Issues (February 14, 2026)
+
+| Beads ID | Description |
+|----------|-------------|
+| `digihub-chatbot-ftx` | Follow-up query reference resolution fix |
+
+### Key Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/chatbot/response_generator.py` | FOLLOW_UP_PATTERNS, _is_follow_up_request(), session-aware resolution, definitional pattern fix |
+| `src/chatbot/context_manager.py` | CONTINUATION_PATTERNS for has_references() |
+| `src/enums/prompt_template.py` | REFERENCE_RESOLUTION_TEMPLATE recency prioritization |
