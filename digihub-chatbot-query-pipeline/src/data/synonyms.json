@@ -1,0 +1,10 @@
+{
+  "dispute": ["support", "case", "complaint", "issue", "problem"],
+  "complaint": ["support", "case", "dispute", "issue"],
+  "problem": ["issue", "incident", "trouble"],
+  "report": ["dashboard", "statistics", "analytics", "metrics", "view"],
+  "incidents": ["incident"],
+  "incident": ["incidents"],
+  "ticket": ["case", "incident", "request"],
+  "view": ["see", "access", "check", "find"]
+}

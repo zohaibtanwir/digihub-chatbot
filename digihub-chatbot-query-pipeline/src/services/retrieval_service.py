@@ -1,5 +1,6 @@
 import json
 import math
+import os
 import re
 import time
 from typing import Optional, Any, List, Dict, Tuple, Set
@@ -16,6 +17,19 @@ from src.utils.config import (
 from src.utils.logger import logger
 from src.utils.request_utils import timing_decorator
 from src.utils.metrics import RetrievalMetrics, LatencyTracker
+
+
+def _load_synonyms() -> dict:
+    """Load synonym mappings from JSON config file."""
+    config_path = os.path.join(
+        os.path.dirname(__file__), '..', 'data', 'synonyms.json'
+    )
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load synonyms.json: {e}")
+        return {}
 
 
 class RetreivalService:
@@ -37,17 +51,8 @@ class RetreivalService:
             'too', 'very', 'just', 'also', 'now', 'here', 'there', 'then', 'once'
         }
         # Synonym mappings for keyword matching
-        # Key = query term, Value = list of synonyms to also search for
-        self._synonyms = {
-            'dispute': ['support', 'case', 'complaint', 'issue', 'problem'],
-            'complaint': ['support', 'case', 'dispute', 'issue'],
-            'problem': ['issue', 'incident', 'trouble'],
-            'report': ['dashboard', 'statistics', 'analytics', 'metrics', 'view'],  # 'view' matches "View Company Incidents"
-            'incidents': ['incident'],  # Singular/plural matching
-            'incident': ['incidents'],  # Singular/plural matching
-            'ticket': ['case', 'incident', 'request'],
-            'view': ['see', 'access', 'check', 'find'],
-        }
+        # Loaded from src/data/synonyms.json for easy maintenance
+        self._synonyms = _load_synonyms()
 
     def _tokenize(self, text: str) -> List[str]:
         """
