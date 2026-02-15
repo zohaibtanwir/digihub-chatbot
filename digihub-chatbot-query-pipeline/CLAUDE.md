@@ -693,3 +693,73 @@ User: "explain to me more"
 | `src/chatbot/response_generator.py` | FOLLOW_UP_PATTERNS, _is_follow_up_request(), session-aware resolution, definitional pattern fix |
 | `src/chatbot/context_manager.py` | CONTINUATION_PATTERNS for has_references() |
 | `src/enums/prompt_template.py` | REFERENCE_RESOLUTION_TEMPLATE recency prioritization |
+
+---
+
+## Session Context (February 15, 2026)
+
+### Configuration Externalization
+
+Moved hardcoded maintenance items to JSON config files for easier updates without code changes.
+
+#### PRODUCT_KEYWORDS → JSON Config
+**File:** `src/data/product_keywords.json`
+
+Previously duplicated in two places in `response_generator.py`. Now consolidated and externalized.
+
+```json
+{
+  "dataconnect": 340,
+  "data connect": 340,
+  "sita dataconnect": 340,
+  "sita data connect": 340,
+  "sdc": 340,
+  "sitatex": 340
+}
+```
+
+**Usage:** Maps product name variations to service line IDs for code-based keyword detection.
+
+#### Synonyms → JSON Config
+**File:** `src/data/synonyms.json`
+
+Previously hardcoded in `retrieval_service.py`. Now externalized.
+
+```json
+{
+  "dispute": ["support", "case", "complaint", "issue", "problem"],
+  "complaint": ["support", "case", "dispute", "issue"],
+  "problem": ["issue", "incident", "trouble"],
+  "report": ["dashboard", "statistics", "analytics", "metrics", "view"],
+  "incidents": ["incident"],
+  "incident": ["incidents"],
+  "ticket": ["case", "incident", "request"],
+  "view": ["see", "access", "check", "find"]
+}
+```
+
+**Usage:** Expands search keywords with synonyms for better hybrid search matching.
+
+### Maintenance Guide
+
+| Config File | Purpose | How to Update |
+|-------------|---------|---------------|
+| `src/data/product_keywords.json` | Product → Service Line ID | Add `"product_name": service_line_id` |
+| `src/data/synonyms.json` | Keyword expansion | Add `"term": ["synonym1", "synonym2"]` |
+| `src/data/service_line_keywords.json` | Service line context for LLM | Update keywords per service line |
+
+### Open Beads Issues (Future Work)
+
+| Issue ID | Priority | Description |
+|----------|----------|-------------|
+| `digihub-chatbot-i7h` | P2 | Auto-generate product keywords at ingestion time |
+| `digihub-chatbot-0xo` | P3 | Auto-generate synonyms using embeddings or query logs |
+
+### Key Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/chatbot/response_generator.py` | Consolidated PRODUCT_KEYWORDS, loads from JSON |
+| `src/services/retrieval_service.py` | Loads synonyms from JSON |
+| `src/data/product_keywords.json` | NEW - Product keyword config |
+| `src/data/synonyms.json` | NEW - Synonym mapping config |
