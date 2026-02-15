@@ -6,6 +6,7 @@ Coordinates query analysis, retrieval, authorization, and response generation.
 """
 
 import json
+import os
 import re
 import traceback
 from openai import BadRequestError
@@ -36,6 +37,19 @@ from src.chatbot.relevance_judge import RelevanceJudge
 from src.chatbot.authorization_checker import AuthorizationChecker
 from src.chatbot.response_formatter import ResponseFormatter
 from src.chatbot.context_manager import ContextManager
+
+
+def _load_product_keywords() -> dict:
+    """Load product keywords from JSON config file."""
+    config_path = os.path.join(
+        os.path.dirname(__file__), '..', 'data', 'product_keywords.json'
+    )
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load product_keywords.json: {e}")
+        return {}
 
 
 class ResponseGeneratorAgent:
@@ -193,6 +207,11 @@ class ResponseGeneratorAgent:
         "can you explain", "please explain", "expand on", "clarify",
         "what do you mean", "how so", "why is that", "give me more"
     ]
+
+    # Code-based keyword detection for specific products
+    # Maps product keywords to their service line IDs
+    # Loaded from src/data/product_keywords.json for easy maintenance
+    PRODUCT_KEYWORDS = _load_product_keywords()
 
     def _check_fast_path_conversational(self, query: str) -> tuple:
         """
@@ -1376,18 +1395,9 @@ class ResponseGeneratorAgent:
             authorized_user_guides = [sl for sl in USER_GUIDE_SERVICE_LINES if sl in final_service_lines]
 
             # Code-based keyword detection for specific products
-            # This is more reliable than LLM-based detection for known product names
-            PRODUCT_KEYWORDS = {
-                'dataconnect': 340,  # Community Messaging KB
-                'data connect': 340,  # Space variant
-                'sita dataconnect': 340,  # With SITA prefix
-                'sita data connect': 340,  # Full product name
-                'sdc': 340,
-                'sitatex': 340,
-            }
             query_lower = resolved_query.lower()
             detected_product_service_line = None
-            for keyword, service_line_id in PRODUCT_KEYWORDS.items():
+            for keyword, service_line_id in self.PRODUCT_KEYWORDS.items():
                 if keyword in query_lower:
                     detected_product_service_line = service_line_id
                     logger.info(f"Product keyword '{keyword}' detected - will include service line {service_line_id}")
@@ -1803,17 +1813,9 @@ class ResponseGeneratorAgent:
             authorized_user_guides = [sl for sl in USER_GUIDE_SERVICE_LINES if sl in final_service_lines]
 
             # Code-based keyword detection for specific products
-            PRODUCT_KEYWORDS = {
-                'dataconnect': 340,
-                'data connect': 340,
-                'sita dataconnect': 340,
-                'sita data connect': 340,
-                'sdc': 340,
-                'sitatex': 340,
-            }
             query_lower = resolved_query.lower()
             detected_product_service_line = None
-            for keyword, service_line_id in PRODUCT_KEYWORDS.items():
+            for keyword, service_line_id in self.PRODUCT_KEYWORDS.items():
                 if keyword in query_lower:
                     detected_product_service_line = service_line_id
                     logger.info(f"Product keyword '{keyword}' detected - will include service line {service_line_id}")
