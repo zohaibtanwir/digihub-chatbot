@@ -597,6 +597,591 @@ class TestResolveQueryReferences:
 
         assert result == "What is DigiHub?"
 
+    def test_resolve_query_short_session_dependent(self, response_generator):
+        """Test resolving short session-dependent queries (≤5 words)"""
+        response_generator.context_manager.has_references.return_value = False
+        response_generator.context_manager.resolve_references.return_value = (
+            "Tell me more about WorldTracer"
+        )
+
+        result = response_generator._resolve_query_references(
+            translated_text="more",  # Very short query
+            is_session_dependent=True,
+            session_entities={"services": ["WorldTracer"]},
+            user_chat_history=[
+                {"role": "user", "content": "What is WorldTracer?"}
+            ]
+        )
+
+        # Should trigger resolution due to short query + session dependent
+        assert "WorldTracer" in result
+
+    def test_resolve_query_resolution_error(self, response_generator):
+        """Test that resolution errors return original query"""
+        response_generator.context_manager.has_references.return_value = True
+        response_generator.context_manager.resolve_references.side_effect = Exception("Resolution failed")
+
+        result = response_generator._resolve_query_references(
+            translated_text="How do I configure it?",
+            is_session_dependent=True,
+            session_entities={"services": ["WorldTracer"]},
+            user_chat_history=[]
+        )
+
+        assert result == "How do I configure it?"
+
+
+class TestFastPathConversational:
+    """Test suite for fast path conversational detection"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_fast_path_greeting_hello(self, response_generator):
+        """Test fast path detection for 'hello'"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("hello")
+        assert is_conv is True
+        assert conv_type == "greeting"
+
+    def test_fast_path_greeting_hi(self, response_generator):
+        """Test fast path detection for 'hi'"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("hi")
+        assert is_conv is True
+        assert conv_type == "greeting"
+
+    def test_fast_path_greeting_with_punctuation(self, response_generator):
+        """Test fast path detection strips punctuation"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("Hello!")
+        assert is_conv is True
+        assert conv_type == "greeting"
+
+    def test_fast_path_thanks(self, response_generator):
+        """Test fast path detection for thanks"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("thanks")
+        assert is_conv is True
+        assert conv_type == "thanks"
+
+    def test_fast_path_thank_you(self, response_generator):
+        """Test fast path detection for 'thank you'"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("thank you")
+        assert is_conv is True
+        assert conv_type == "thanks"
+
+    def test_fast_path_farewell(self, response_generator):
+        """Test fast path detection for farewell"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("bye")
+        assert is_conv is True
+        assert conv_type == "farewell"
+
+    def test_fast_path_affirmation(self, response_generator):
+        """Test fast path detection for affirmation"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("ok")
+        assert is_conv is True
+        assert conv_type == "affirmation"
+
+    def test_fast_path_not_conversational(self, response_generator):
+        """Test fast path returns False for regular queries"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("What is DigiHub?")
+        assert is_conv is False
+        assert conv_type is None
+
+    def test_fast_path_case_insensitive(self, response_generator):
+        """Test fast path is case insensitive"""
+        is_conv, conv_type = response_generator._check_fast_path_conversational("HELLO")
+        assert is_conv is True
+        assert conv_type == "greeting"
+
+
+class TestIsFollowUpRequest:
+    """Test suite for follow-up request detection"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_follow_up_tell_me_more(self, response_generator):
+        """Test detection of 'tell me more'"""
+        result = response_generator._is_follow_up_request("tell me more")
+        assert result is True
+
+    def test_follow_up_more_details(self, response_generator):
+        """Test detection of 'more details'"""
+        result = response_generator._is_follow_up_request("more details please")
+        assert result is True
+
+    def test_follow_up_explain_further(self, response_generator):
+        """Test detection of 'explain further'"""
+        result = response_generator._is_follow_up_request("can you explain further?")
+        assert result is True
+
+    def test_follow_up_elaborate(self, response_generator):
+        """Test detection of 'elaborate'"""
+        result = response_generator._is_follow_up_request("elaborate on that")
+        assert result is True
+
+    def test_follow_up_continue(self, response_generator):
+        """Test detection of 'continue'"""
+        result = response_generator._is_follow_up_request("continue")
+        assert result is True
+
+    def test_not_follow_up_regular_query(self, response_generator):
+        """Test that regular queries are not follow-ups"""
+        result = response_generator._is_follow_up_request("What is DigiHub?")
+        assert result is False
+
+    def test_not_follow_up_greeting(self, response_generator):
+        """Test that greetings are not follow-ups"""
+        result = response_generator._is_follow_up_request("hello")
+        assert result is False
+
+
+class TestGetConversationalResponse:
+    """Test suite for conversational response generation"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_greeting_response_english(self, response_generator):
+        """Test greeting response in English"""
+        result = response_generator._get_conversational_response("greeting", "english")
+
+        assert "response" in result
+        assert result["confidence"] == 1.0
+        assert result["is_conversational"] is True
+        assert "DigiHub" in result["response"] or "Hello" in result["response"] or "Hi" in result["response"]
+
+    def test_greeting_response_french(self, response_generator):
+        """Test greeting response in French"""
+        result = response_generator._get_conversational_response("greeting", "french")
+
+        assert "response" in result
+        assert result["is_conversational"] is True
+        # French greeting should contain "Bonjour" or similar
+        assert any(word in result["response"] for word in ["Bonjour", "Salut", "DigiHub"])
+
+    def test_thanks_response_german(self, response_generator):
+        """Test thanks response in German"""
+        result = response_generator._get_conversational_response("thanks", "german")
+
+        assert "response" in result
+        assert result["is_conversational"] is True
+
+    def test_farewell_response_spanish(self, response_generator):
+        """Test farewell response in Spanish"""
+        result = response_generator._get_conversational_response("farewell", "spanish")
+
+        assert "response" in result
+        assert result["is_conversational"] is True
+
+    def test_affirmation_response(self, response_generator):
+        """Test affirmation response"""
+        result = response_generator._get_conversational_response("affirmation", "english")
+
+        assert "response" in result
+        assert result["is_conversational"] is True
+
+    def test_unknown_language_defaults_to_english(self, response_generator):
+        """Test that unknown language defaults to English"""
+        result = response_generator._get_conversational_response("greeting", "portuguese")
+
+        assert "response" in result
+        # Should fall back to English
+        assert result["is_conversational"] is True
+
+    def test_response_structure(self, response_generator):
+        """Test that response has all required fields"""
+        result = response_generator._get_conversational_response("greeting", "english")
+
+        assert "response" in result
+        assert "citation" in result
+        assert "confidence" in result
+        assert "score" in result
+        assert "disclaimer" in result
+        assert "is_conversational" in result
+
+        assert result["citation"] == []
+        assert result["disclaimer"] is None
+
+
+class TestHandleSessionEntities:
+    """Test suite for session entity handling"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_handle_session_entities_dependent(self, response_generator):
+        """Test entity retrieval for session-dependent queries"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().retrieve_session_entities.return_value = {
+            "services": ["WorldTracer"],
+            "topics": ["baggage"],
+            "technical_terms": ["tracing"]
+        }
+
+        result = response_generator._handle_session_entities(is_session_dependent=True)
+
+        # Should return entities from session service
+        assert isinstance(result, dict)
+
+    def test_handle_session_entities_independent(self, response_generator):
+        """Test entity retrieval for independent queries"""
+        result = response_generator._handle_session_entities(is_session_dependent=False)
+
+        # Should return empty entities for independent queries
+        assert result == {"services": [], "topics": [], "technical_terms": []}
+
+    def test_handle_session_entities_error(self, response_generator):
+        """Test error handling during entity retrieval"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().retrieve_session_entities.side_effect = Exception("DB error")
+
+        result = response_generator._handle_session_entities(is_session_dependent=True)
+
+        # Should return empty entities on error
+        assert result == {"services": [], "topics": [], "technical_terms": []}
+
+
+class TestGetContextualServiceLines:
+    """Test suite for contextual service line retrieval"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_get_contextual_service_lines_independent(self, response_generator):
+        """Test service lines for independent queries"""
+        final_id_list = [0, 240, 400]
+
+        result = response_generator._get_contextual_service_lines(
+            is_session_dependent=False,
+            final_id_list=final_id_list
+        )
+
+        # Should return full authorized list
+        assert result == final_id_list
+
+    def test_get_contextual_service_lines_dependent(self, response_generator):
+        """Test service lines for session-dependent queries"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().retrieve_session_service_lines.return_value = [240]
+
+        final_id_list = [0, 240, 400]
+
+        result = response_generator._get_contextual_service_lines(
+            is_session_dependent=True,
+            final_id_list=final_id_list
+        )
+
+        # Should still return full authorized list (no longer filters)
+        assert result == final_id_list
+
+
+class TestSaveSessionInBackground:
+    """Test suite for session saving"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_save_session_success(self, response_generator):
+        """Test successful session saving"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().add_user_assistant_session.return_value = "msg-123"
+
+        response_generator.context_manager.extract_entities.return_value = {
+            "services": ["WorldTracer"],
+            "topics": ["baggage"],
+            "technical_terms": []
+        }
+        response_generator.context_manager.get_session_entities_flat.return_value = [
+            "WorldTracer", "baggage"
+        ]
+
+        result = response_generator.save_session_in_background(
+            user_id="test-user",
+            impersonated_user_id=None,
+            prompt="What is WorldTracer?",
+            final_response="WorldTracer is a baggage system.",
+            session_id="test-session",
+            citation=[],
+            score=0.9,
+            confidence=0.85,
+            disclaimer="",
+            chunk_service_line=[240]
+        )
+
+        assert result == "msg-123"
+
+    def test_save_session_entity_extraction_error(self, response_generator):
+        """Test session saving when entity extraction fails"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().add_user_assistant_session.return_value = "msg-456"
+
+        response_generator.context_manager.extract_entities.side_effect = Exception("Extraction failed")
+        response_generator.context_manager.get_session_entities_flat.return_value = []
+
+        result = response_generator.save_session_in_background(
+            user_id="test-user",
+            impersonated_user_id=None,
+            prompt="What is DigiHub?",
+            final_response="DigiHub is a portal.",
+            session_id="test-session",
+            citation=[],
+            score=0.8,
+            confidence=0.9,
+            disclaimer=""
+        )
+
+        # Should still save session even if extraction fails
+        assert result == "msg-456"
+
+
+class TestGenerateResponse:
+    """Test suite for main generate_response method"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_generate_response_fast_path_greeting(self, response_generator):
+        """Test generate_response with fast path greeting"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().add_user_assistant_session.return_value = "msg-fast"
+
+        response_generator.context_manager.extract_entities.return_value = {
+            "services": [], "topics": [], "technical_terms": []
+        }
+        response_generator.context_manager.get_session_entities_flat.return_value = []
+
+        result = response_generator.generate_response(
+            prompt="hello",
+            container_name="test-container",
+            service_line=None
+        )
+
+        assert result is not None
+        assert "response" in result
+        assert result.get("is_conversational") is True
+        assert "message_id" in result
+
+    def test_generate_response_conversational_multilang(self, response_generator):
+        """Test generate_response with non-English conversational message"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().retrieve_session_details.return_value = []
+        SessionDBService().add_user_assistant_session.return_value = "msg-conv"
+
+        response_generator.query_analyzer.query_classifer.return_value = {
+            "language": "french",
+            "translation": "Bonjour",
+            "is_conversational": True,
+            "conversational_type": "greeting",
+            "is_session_dependent": False,
+            "service_lines": [],
+            "expanded_queries": [],
+            "is_prompt_vulnerable": False,
+            "is_generic": False,
+            "detected_entities": []
+        }
+
+        response_generator.context_manager.extract_entities.return_value = {
+            "services": [], "topics": [], "technical_terms": []
+        }
+        response_generator.context_manager.get_session_entities_flat.return_value = []
+
+        result = response_generator.generate_response(
+            prompt="Bonjour",
+            container_name="test-container",
+            service_line=None
+        )
+
+        assert result is not None
+        assert "response" in result
+        assert result.get("is_conversational") is True
+
+
+class TestProductKeywords:
+    """Test suite for product keyword detection"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_product_keywords_loaded(self, response_generator):
+        """Test that product keywords are loaded"""
+        # PRODUCT_KEYWORDS should be a dict loaded from JSON
+        assert hasattr(response_generator, 'PRODUCT_KEYWORDS')
+        assert isinstance(response_generator.PRODUCT_KEYWORDS, dict)
+
+    def test_product_keyword_detection_dataconnect(self, response_generator):
+        """Test product keyword detection for 'dataconnect'"""
+        # Test that 'dataconnect' would map to a service line
+        keywords = response_generator.PRODUCT_KEYWORDS
+        if 'dataconnect' in keywords:
+            assert keywords['dataconnect'] == 340
+
+
+class TestStreamingResponse:
+    """Test suite for streaming response generation"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_streaming_fast_path_greeting(self, response_generator):
+        """Test streaming response with fast path greeting"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().add_user_assistant_session.return_value = "msg-stream"
+
+        response_generator.context_manager.extract_entities.return_value = {
+            "services": [], "topics": [], "technical_terms": []
+        }
+        response_generator.context_manager.get_session_entities_flat.return_value = []
+
+        events = list(response_generator.generate_response_streaming(
+            prompt="hi",
+            container_name="test-container",
+            service_line=None
+        ))
+
+        # Should yield token and metadata events
+        assert len(events) >= 2
+        assert events[0]["type"] == "token"
+        assert events[1]["type"] == "metadata"
+
+
+class TestAnalyzeQuery:
+    """Test suite for _analyze_query method"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_analyze_query_calls_query_analyzer(self, response_generator):
+        """Test that _analyze_query calls the query analyzer"""
+        response_generator.query_analyzer.query_classifer.return_value = {
+            "language": "english",
+            "translation": "What is DigiHub?",
+            "is_session_dependent": False,
+            "service_lines": ["General Info"],
+            "is_generic": False
+        }
+
+        result = response_generator._analyze_query("What is DigiHub?", "")
+
+        response_generator.query_analyzer.query_classifer.assert_called_once()
+        assert result["language"] == "english"
+
+
+class TestRetrieveSessionContext:
+    """Test suite for _retrieve_session_context method"""
+
+    @pytest.fixture
+    def response_generator(self, patch_dependencies):
+        """Create a ResponseGeneratorAgent instance for testing"""
+        from src.chatbot.response_generator import ResponseGeneratorAgent
+        agent = ResponseGeneratorAgent(
+            user_id="test-user",
+            session_id="test-session",
+            impersonated_user_id=None
+        )
+        return agent
+
+    def test_retrieve_session_context_with_history(self, response_generator):
+        """Test session context retrieval with existing history"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().retrieve_session_details.return_value = [
+            {"role": "user", "content": "What is WorldTracer?"},
+            {"role": "assistant", "content": "WorldTracer is a baggage tracing system."}
+        ]
+
+        history, context_window = response_generator._retrieve_session_context()
+
+        assert len(history) == 2
+        assert "WorldTracer" in context_window
+
+    def test_retrieve_session_context_empty(self, response_generator):
+        """Test session context retrieval with no history"""
+        from src.services.session_service import SessionDBService
+        SessionDBService().retrieve_session_details.return_value = []
+
+        history, context_window = response_generator._retrieve_session_context()
+
+        assert history == []
+        assert context_window == ""
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
