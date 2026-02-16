@@ -619,7 +619,7 @@ def test_retrieve_with_question_matching_min_threshold(patch_dependencies):
         "container",
         [1],
         top_k=2,
-        min_question_similarity=0.5
+        min_similarity=0.5
     )
 
     # high-sim has higher semantic similarity, should rank first
