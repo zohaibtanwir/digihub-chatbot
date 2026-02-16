@@ -47,14 +47,16 @@ def patch_dependencies(monkeypatch):
         mock_subscriptions
     )
 
-    # Mock exceptions
+    # Mock exceptions - must match real interface (note: 'disclaimar' is the typo in real code)
     class UnAuthorizedServiceLineException(Exception):
-        pass
+        def __init__(self, message="Query Belongs To UnAuthorized Service Line", disclaimar=""):
+            super().__init__(message)
+            self.disclaimar = disclaimar
 
     class PartialAccessServiceLineException(Exception):
-        def __init__(self, message, disclaimer):
-            super().__init__(message)
-            self.disclaimer = disclaimer
+        def __init__(self, message="Query Belongs To UnAuthorized Service Line", disclaimar=""):
+            super().__init__(message, disclaimar)
+            self.disclaimar = disclaimar
 
     mock_exceptions = MagicMock()
     mock_exceptions.UnAuthorizedServiceLineException = UnAuthorizedServiceLineException
@@ -191,8 +193,6 @@ class TestCrossCheckAuthorization:
 
     def test_cross_check_user_unauthorized_out_of_scope(self, authorization_checker):
         """Test when user lacks access and query is out of scope"""
-        from src.exceptions.service_line_exception import UnAuthorizedServiceLineException
-
         _mock_retrieval_service_instance.get_ranked_service_line_chunk.return_value = [
             {"content": "WorldTracer content", "serviceNameid": 240}
         ]
@@ -203,7 +203,8 @@ class TestCrossCheckAuthorization:
             {"id": 240, "name": "WorldTracer", "status": "UNSUBSCRIBED"}
         ]
 
-        with pytest.raises(UnAuthorizedServiceLineException):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization(
                 prompt="What is WorldTracer?",
                 service_line=service_line,
@@ -211,11 +212,13 @@ class TestCrossCheckAuthorization:
                 is_out_of_scope=True,
                 final_response=""
             )
+            pytest.fail("Expected UnAuthorizedServiceLineException to be raised")
+        except Exception as e:
+            assert "UnAuthorizedServiceLineException" in type(e).__name__
+            assert "WorldTracer" in str(e)
 
     def test_cross_check_user_unauthorized_in_scope(self, authorization_checker):
         """Test when user has partial access and query is in scope"""
-        from src.exceptions.service_line_exception import PartialAccessServiceLineException
-
         _mock_retrieval_service_instance.get_ranked_service_line_chunk.return_value = [
             {"content": "WorldTracer content", "serviceNameid": 240}
         ]
@@ -226,7 +229,8 @@ class TestCrossCheckAuthorization:
             {"id": 240, "name": "WorldTracer", "status": "UNSUBSCRIBED"}
         ]
 
-        with pytest.raises(PartialAccessServiceLineException):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization(
                 prompt="What is WorldTracer?",
                 service_line=service_line,
@@ -234,6 +238,10 @@ class TestCrossCheckAuthorization:
                 is_out_of_scope=False,
                 final_response="WorldTracer is a baggage system."
             )
+            pytest.fail("Expected PartialAccessServiceLineException to be raised")
+        except Exception as e:
+            assert "PartialAccessServiceLineException" in type(e).__name__
+            assert "WorldTracer" in str(e)
 
     def test_cross_check_sensitive_service_line_excluded(self, authorization_checker):
         """Test that sensitive service line is excluded when user lacks access"""
@@ -256,8 +264,6 @@ class TestCrossCheckAuthorization:
 
     def test_cross_check_german_message(self, authorization_checker):
         """Test unauthorized message in German"""
-        from src.exceptions.service_line_exception import UnAuthorizedServiceLineException
-
         _mock_retrieval_service_instance.get_ranked_service_line_chunk.return_value = [
             {"content": "WorldTracer content", "serviceNameid": 240}
         ]
@@ -268,7 +274,8 @@ class TestCrossCheckAuthorization:
             {"id": 240, "name": "WorldTracer", "status": "UNSUBSCRIBED"}
         ]
 
-        with pytest.raises(UnAuthorizedServiceLineException):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization(
                 prompt="Was ist WorldTracer?",
                 service_line=service_line,
@@ -276,6 +283,10 @@ class TestCrossCheckAuthorization:
                 is_out_of_scope=True,
                 final_response=""
             )
+            pytest.fail("Expected UnAuthorizedServiceLineException to be raised")
+        except Exception as e:
+            assert "UnAuthorizedServiceLineException" in type(e).__name__
+            assert "WorldTracer" in str(e)
 
 
 class TestCrossCheckAuthorizationDirect:
@@ -331,9 +342,8 @@ class TestCrossCheckAuthorizationDirect:
 
     def test_cross_check_direct_user_unauthorized(self, authorization_checker):
         """Test when user lacks access to required service lines"""
-        from src.exceptions.service_line_exception import UnAuthorizedServiceLineException
-
-        with pytest.raises(UnAuthorizedServiceLineException):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization_direct(
                 prompt="What is WorldTracer?",
                 service_line=[0],  # User only has General Info
@@ -345,13 +355,15 @@ class TestCrossCheckAuthorizationDirect:
                 final_response="",
                 is_generic=False
             )
+            pytest.fail("Expected UnAuthorizedServiceLineException to be raised")
+        except Exception as e:
+            assert "UnAuthorizedServiceLineException" in type(e).__name__
 
     def test_cross_check_direct_partial_access(self, authorization_checker):
         """Test when user has partial access to required service lines"""
-        from src.exceptions.service_line_exception import PartialAccessServiceLineException
-
         # User has 0, 400 but chunks need 0, 240
-        with pytest.raises((UnAuthorizedServiceLineException, PartialAccessServiceLineException)):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization_direct(
                 prompt="What is WorldTracer?",
                 service_line=[0, 400],
@@ -363,12 +375,15 @@ class TestCrossCheckAuthorizationDirect:
                 final_response="WorldTracer is...",
                 is_generic=False
             )
+            pytest.fail("Expected an authorization exception to be raised")
+        except Exception as e:
+            # Should raise either UnAuthorized or PartialAccess exception
+            assert "ServiceLineException" in type(e).__name__
 
     def test_cross_check_direct_french_message(self, authorization_checker):
         """Test unauthorized message in French"""
-        from src.exceptions.service_line_exception import UnAuthorizedServiceLineException
-
-        with pytest.raises(UnAuthorizedServiceLineException):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization_direct(
                 prompt="Qu'est-ce que WorldTracer?",
                 service_line=[0],
@@ -380,12 +395,14 @@ class TestCrossCheckAuthorizationDirect:
                 final_response="",
                 is_generic=False
             )
+            pytest.fail("Expected UnAuthorizedServiceLineException to be raised")
+        except Exception as e:
+            assert "UnAuthorizedServiceLineException" in type(e).__name__
 
     def test_cross_check_direct_spanish_message(self, authorization_checker):
         """Test unauthorized message in Spanish"""
-        from src.exceptions.service_line_exception import UnAuthorizedServiceLineException
-
-        with pytest.raises(UnAuthorizedServiceLineException):
+        # Use try/except since mocked exception class differs from imported class
+        try:
             authorization_checker.cross_check_authorization_direct(
                 prompt="¿Qué es WorldTracer?",
                 service_line=[0],
@@ -397,6 +414,9 @@ class TestCrossCheckAuthorizationDirect:
                 final_response="",
                 is_generic=False
             )
+            pytest.fail("Expected UnAuthorizedServiceLineException to be raised")
+        except Exception as e:
+            assert "UnAuthorizedServiceLineException" in type(e).__name__
 
 
 class TestGenerateUnauthorizedMessage:

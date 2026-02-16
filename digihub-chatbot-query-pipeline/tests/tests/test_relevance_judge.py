@@ -10,9 +10,21 @@ from unittest.mock import MagicMock, Mock, patch
 import sys
 
 
+# Store mock reference at module level for access in tests
+_mock_client_instance = MagicMock()
+
+
 @pytest.fixture(autouse=True)
 def patch_dependencies(monkeypatch):
     """Mock all dependencies before importing the module."""
+    global _mock_client_instance
+
+    # Reset mock for each test
+    _mock_client_instance.reset_mock()
+    _mock_client_instance.chat.completions.create.reset_mock()
+    _mock_client_instance.chat.completions.create.side_effect = None
+    _mock_client_instance.chat.completions.create.return_value = None
+
     # Mock config
     mock_config = MagicMock()
     mock_config.OPENAI_DEPLOYMENT_NAME = "gpt-4"
@@ -26,10 +38,9 @@ def patch_dependencies(monkeypatch):
         MagicMock(logger=mock_logger)
     )
 
-    # Mock Azure OpenAI Service
+    # Mock Azure OpenAI Service - use module-level mock_client
     mock_openai_service = MagicMock()
-    mock_client = MagicMock()
-    mock_openai_service.return_value.get_client.return_value = mock_client
+    mock_openai_service.return_value.get_client.return_value = _mock_client_instance
     monkeypatch.setitem(
         sys.modules,
         "src.services.azure_openai_service",
@@ -54,8 +65,7 @@ def relevance_judge(patch_dependencies):
     """Create a fresh RelevanceJudge instance for each test"""
     from src.chatbot.relevance_judge import RelevanceJudge
     judge = RelevanceJudge()
-    # Reset the mock for each test
-    judge.client.reset_mock()
+    # Client should already be reset by patch_dependencies
     return judge
 
 
